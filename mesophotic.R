@@ -238,21 +238,21 @@ anovas <- map2(comm_ps,names(comm_ps),~{
   perm <- 8000
   if (animals_only) {
     .x <- subset_taxa(.x,domain == 'Animals')
-    .x <- prune_samples(sample_sums(.x) > 0, animals)
+    .x <- prune_samples(sample_sums(.x) > 0, .x)
   }
   community <- otu_table(.x)
   sd <- sample_tibble(.x)
-  dd <- vegdist(community, method = "bray")
+  dd <- vegdist(community, method = "jaccard")
   list(
     adonis_shallowdeep = adonis(dd ~ depth_zone, data=sd, permutations=perm),
     adonis = adonis(dd ~ depth_f, data=sd, permutations = perm), 
     anosim_shallowdeep = anosim(dd,sd$depth_zone, permutations = perm),
     anosim = anosim(dd, sd$depth_f, permutations = perm),
-    indicators_shallowdeep = multipatt(community, sd$depth_zone, control = how(nperm=perm)),
-    indicators = multipatt(community, sd$depth_f, control = how(nperm=perm)),
+    # indicators_shallowdeep = multipatt(community, sd$depth_zone, control = how(nperm=perm)),
+    # indicators = multipatt(community, sd$depth_f, control = how(nperm=perm)),
     # simper = simper(community, sd$depth_f, permutations = perm),
     # pairwise = adonis.pair(dd, sd$depth_f, nper = perm, corr.method = "bonferroni")
-    pairwise = pairwise_adonis(dd, sd$depth_f, permutations = perm,correction = 'fdr')
+    pairwise = pairwise_adonis(dd, sd$depth_f, permutations = perm,correction = 'BH')
   )
 }) %>% set_names(names(comm_ps))
 

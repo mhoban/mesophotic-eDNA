@@ -4,7 +4,6 @@ library(beyonce)
 library(plotly)
 library(indicspecies)
 library(betapart)
-library(Polychrome)
 
 
 # Community setup and initial analysis ------------------------------------
@@ -13,27 +12,18 @@ library(Polychrome)
 sm <- suppressMessages            
 
 # set the project, directory, and markers for this analysis
-project <- "mesophotic"
-# project <- "marianas"
-# project <- "seagrant"
+project <- "marianas"
 project_dir <- here::here("working","flow-output",project)
-sample_pattern <- "^BMSP[0-9]+$"  # pattern to match sample IDs
-# sample_pattern <- "^SGP[0-9]+$"  # pattern to match sample IDs
-# sample_pattern <- "^NMI[0-9]+$"  # pattern to match sample IDs
-# blank_pattern <- "^Blank-[0-9]+$"      # pattern to match extraction blank IDs
-blank_pattern <- "^B[0-9]+$"      # pattern to match extraction blank IDs
-abundance_threshold <- 0.1     # minimum threshold for relative abundance
-abundance_threshold <- 5     # minimum threshold for relative abundance
+sample_pattern <- "^NMI[0-9]+$"  # pattern to match sample IDs
+blank_pattern <- "^Blank[0-9]+$"      # pattern to match extraction blank IDs
+abundance_threshold <- 0.001     # minimum threshold for relative abundance
 
-summary_grouping <- c("station_grouping","station")  # how to group samples for replication report
+summary_grouping <- c("island")  # how to group samples for replication report
 
 max_blank <- 5                    # maximum reads in blank to believe it
 min_total <- 1e4                   # minimum total reads in sample
 
-include_unassigned <- TRUE        # include zOTUs that didn't blast to anything
-
-distance_method <- "beta.sim"
-animals_only <- FALSE
+include_unassigned <- TRUE
 
 # load our OTU tables and sample data
 source("analyze.R")
@@ -55,7 +45,7 @@ negative_controls <- sample_data %>%
 
 comm_ps <- communities %>% 
   map(~{
-    rarefied <- .x$raw %>%
+    rarefied <- .x$relative %>%
       pivot_longer(matches(sample_pattern),names_to="site",values_to="reads") %>%
       pivot_wider(names_from="OTU",values_from="reads") %>%
       column_to_rownames("site") %>%
@@ -78,43 +68,19 @@ descriptions <- c(
 )
 
 # set up depth zone color palette
-pal <- rev(beyonce_palette(75))[5:12]
-pal <- pal[c(1:3,5,4,6:7)]
-pal[4] <- '#827222'
+# pal <- rev(beyonce_palette(75))[5:12]
+# pal <- pal[c(1:3,5,4,6:7)]
+# pal[4] <- '#827222'
+p <- beyonce_palette(75)
+pal <- c(p[1],p[3],p[6],p[8])
+p <- beyonce_palette(74)
+pal <- c(pal,p[1],p[3],p[6],p[7])
+
 
 
 # start here --------------------------------------------------------------
 
 
-
-# depth zones -------------------------------------------------------------
-# TODO: plot ideas
-# a bar plot showing average jaccard dissimilarity for each depth zone pair
-# with error bars, I guess
-
-# this plots average jaccard dissimilarity by depth comparison
-# is this useful? I don't know!
-
-diff_plotz <- map2(comm_ps,names(comm_ps),~{
-  community <- otu_table(.x)
-  sd <- sample_tibble(.x)
-  ddm <- as.matrix(vdist(community,method="jaccard"))
-  ddmd <- as_tibble(ddm,rownames="left") %>%
-    pivot_longer(-left,names_to="right",values_to="jaccard") %>%
-    filter(left != right) %>%
-    filter(!duplicated(paste0(pmax(left, right), pmin(left, right)))) %>%
-    left_join(sd %>% select(sample,depth_left=depth), by=c("left" = "sample")) %>%
-    left_join(sd %>% select(sample,depth_right=depth), by=c("right" = "sample")) %>%
-    filter(depth_left != depth_right) %>%
-    mutate(comparison = str_c(pmin(depth_left,depth_right),"-",pmax(depth_left,depth_right))) %>% 
-    select(comparison,jaccard) %>%
-    group_by(comparison) %>%
-    summarise(sd=sd(jaccard),jaccard=mean(jaccard),min=jaccard-sd,max=jaccard+sd)
-  ggplot(ddmd,aes(x=comparison,y=jaccard)) + 
-    geom_col(position="dodge") + 
-    geom_errorbar(aes(ymin=min,ymax=max),width=0.3) + 
-    ggtitle(.y)
-})
 
 # PCoA ordinations --------------------------------------------------------
 
@@ -124,17 +90,16 @@ ord_plotz <- map2(comm_ps,names(comm_ps),~{
   # # animals <- tax_glom(animals, taxrank = "genus")
   # .x <- subset_taxa(.x, !family %in% c("Hominidae","Bovidae","Felidae","Salmonidae"))
   # .x <- prune_samples(sample_sums(.x) > 0, .x)
-  dist <- distance_method
-  if (dist == "beta.sim") {
-    dist <- beta.pair(decostand(otu_table(.x),"pa"))$beta.sim
-  }
-  ord <- ordinate(.x,"PCoA",distance=dist)
-  ord_plot <- plot_ordination(.x,ord,type="samples",color="depth_f",shape="station_grouping") +
-    geom_point(size=8,aes(text=station)) + 
+  levs <- length(unique(sample_data(.x)$island))
+  clr <- unname(Polychrome::createPalette(levs,seedcolors = pal[c(1,4,7)]))
+  
+  ord <- ordinate(.x,"PCoA","jaccard")
+  ord_plot <- plot_ordination(.x,ord,type="samples",color="island") +
+    geom_point(size=8,aes(text=station),alpha=0.7) + 
     ggtitle(str_glue("PCoA ordination: {descriptions[.y]}")) + 
     # scale_color_manual(values=rev(beyonce_palette(75))[5:12], name="Depth Zone") + 
-    scale_color_manual(values=pal, name="Depth Zone") +
-    scale_shape(name="Sampling Site") + 
+    scale_color_manual(values=clr, name="Island") +
+    # scale_shape(name="Protection status") +
     theme_bw() + 
     theme(
       plot.background = element_rect(fill="#1a1a1a"),
@@ -146,42 +111,28 @@ ord_plotz <- map2(comm_ps,names(comm_ps),~{
       legend.key.size = unit(1.4,"line")
     )
   
-  ord_plot + 
-    guides(shape = guide_legend(override.aes = list(size=5)))
-})
+  ord_plot #j+ 
+    # guides(shape = guide_legend(override.aes = list(size=5)))
+}) %>% set_names(names(comm_ps))
 
-library(fs)
 walk2(ord_plotz,names(ord_plotz),~{
-  dir <- "~/projects/dissertation/admin/committee meetings/february 24, 2022/img"
-  ggsave(.x, file=path(dir,str_glue("pcoa_{.y}.svg")), device="svg", width = 16, height = 9, units="in")
+  dir <- "~/projects/dissertation/admin/committee meetings/february 24, 2022/img/marianas"
+  ggsave(.x, file=path(dir,str_glue("ord_{.y}.svg")), device="svg", width = 16, height = 9, units="in")
   # ggsave(.x, file=str_glue("~/school/presentations/icrs/2021/img/pcoa_{.y}.svg"), device="svg", width = 16, height = 9, units="in")
 })
 
 
 # Bar plots by depth zone -------------------------------------------------
 
-fills <- list(
-  fish = "family",
-  inverts = "class",
-  metazoans = "class"
-)
-
-### Bar plots by various taxa and depth zone
+### Bar plots by family and depth zone
 bar_plotz <- map2(comm_ps,names(comm_ps),~{
-  
-  fill <- fills[[.y]]
-  
-  .x <- merge_samples(.x,"depth_f")
-  sample_data(.x)$depth_f <- factor(sample_names(.x),levels=c("Surface","15m","30m","45m","60m","75m","90m"))
-  .x <- subset_taxa(.x,kingdom == "Metazoa" & family != "Hominidae")
-  otu_table(.x) <- otu_table(wisconsin(otu_table(.x)),taxa_are_rows = FALSE)
   
   pdata <- as_tibble(psmelt(.x)) %>%
     filter(
-      kingdom == "Metazoa",
+      domain == "Animals",
       family != "Hominidae"
     ) %>%
-    arrange(domain,kingdom,phylum,order,class,family,genus,species) %>%
+    arrange(domain,phylum,order,class,family,genus,species) %>%
     mutate(
       across(
         domain:species,
@@ -195,27 +146,26 @@ bar_plotz <- map2(comm_ps,names(comm_ps),~{
         ~factor(.x,levels=unique(.x))
       )
     ) %>%
-    group_by(depth_f,across(all_of(fill))) %>%
-    summarise(Abundance=sum(Abundance)) %>%
-    ungroup()
+    group_by(depth_f,family) %>%
+    summarise(Abundance=sum(Abundance))
   
   x <- "depth_f"
+  fill <- "family"
   y <- "Abundance"
   
   levs <- pdata %>%
     pull(fill) %>%
-    unique() %>%
+    levels() %>%
     length()
   
   clr <- unname(Polychrome::createPalette(levs,seedcolors = pal[c(1,4,7)]))
   
   p <- ggplot(pdata, aes_string(x = x, y = y, fill = fill)) +
-    geom_col(position = "stack", color = "black") #+ 
-    # facet_wrap(~station_grouping)
-  p <- p + scale_fill_manual(values=clr, name=fill)
+    geom_col(position = "fill", color = "black")
+  p <- p + scale_fill_manual(values=clr, name="family")
   # p <- p + scale_fill_discrete(name="family") 
   p + 
-    ggtitle(str_c(str_glue("Relative abundance by depth zone ({fill}) - "),descriptions[.y])) +
+    ggtitle(str_c("Relative abundance by depth zone (families) - ",descriptions[.y])) +
     xlab("Depth Zone") + 
     ylab("Sequence Reads") +
     theme_bw() +
@@ -232,9 +182,7 @@ bar_plotz <- map2(comm_ps,names(comm_ps),~{
 }) %>% set_names(names(comm_ps))
 
 walk2(bar_plotz,names(bar_plotz),~{
-  dir <- "~/projects/dissertation/admin/committee meetings/february 24, 2022/img"
-  ggsave(.x, file=path(dir,str_glue("stackedbar_{.y}.svg")), device="svg", width = 16, height = 9, units="in")
-  # ggsave(.x, file=str_glue("~/school/presentations/icrs/2021/img/stackedbar_{.y}.svg"), device="svg", width = 16, height = 9, units="in")
+  ggsave(.x, file=str_glue("~/school/presentations/icrs/2021/img/stackedbar_{.y}.svg"), device="svg", width = 16, height = 9, units="in")
 })
 
 
@@ -292,27 +240,27 @@ heatmap_plotz <- map2(comm_ps,names(comm_ps), ~{
 }) %>% set_names(names(comm_ps))
 
 walk2(heatmap_plotz,names(heatmap_plotz),~{
-  dir <- "~/projects/dissertation/admin/committee meetings/february 24, 2022/img"
-  ggsave(.x, file=path(dir,str_glue("heatmap_{.y}.svg")), device="svg", width = 16, height = 9, units="in")
-  # ggsave(.x, file=str_glue("~/school/presentations/icrs/2021/img/heatmap_{.y}.svg"), device="svg", width = 16, height = 9, units="in")
+  ggsave(.x, file=str_glue("~/school/presentations/icrs/2021/img/heatmap_{.y}.svg"), device="svg", width = 16, height = 9, units="in")
 })
 
 
 # permanova analyses ------------------------------------------------------
+
+animals_only <- FALSE
+
 anovas <- map2(comm_ps,names(comm_ps),~{
   perm <- 8000
-  # TODO: use kingdom metazoa for this instead of domain animals
-  # if (animals_only) {
-  #   .x <- subset_taxa(.x,domain == 'Animals')
-  #   .x <- prune_samples(sample_sums(.x) > 0, .x)
-  # }
+  if (animals_only) {
+    .x <- subset_taxa(.x,domain == 'Animals')
+    .x <- prune_samples(sample_sums(.x) > 0, .x)
+  }
   community <- otu_table(.x)
   sd <- sample_tibble(.x)
-  dd <- vdist(community, method = distance_method)
+  dd <- vegdist(community, method = "jaccard")
   list(
     adonis_shallowdeep = adonis(dd ~ depth_zone, data=sd, permutations=perm),
     adonis = adonis(dd ~ depth_f, data=sd, permutations = perm), 
-    adonis_sites = adonis(dd ~ depth_f+station_grouping, data=sd, permutations = perm), 
+    adonis_sites = adonis(dd ~ depth_f*station_grouping, data=sd, permutations = perm), 
     anosim_shallowdeep = anosim(dd,sd$depth_zone, permutations = perm), 
     anosim = anosim(dd, sd$depth_f, permutations = perm),
     # indicators_shallowdeep = multipatt(community, sd$depth_zone, control = how(nperm=perm)),
@@ -327,8 +275,9 @@ write_rds(anovas,here::here("data","anovas.rds"))
 
 
 # betadisper plots --------------------------------------------------------
+
 beta_plotz <- map2(comm_ps,names(comm_ps),~{
-  p <- plot_betadisp(.x, group="depth_f", method=distance_method, list=TRUE)
+  p <- plot_betadisp(.x, 'depth_f', 'jaccard', list=TRUE)
   p$plot <- p$plot +
     ggtitle(str_glue("Beta dispersion plot by depth ({descriptions[.y]}")) +
     scale_fill_manual(values=pal,name="Depth") +
@@ -348,25 +297,9 @@ beta_plotz <- map2(comm_ps,names(comm_ps),~{
 }) %>% set_names(names(comm_ps))
 
 walk2(beta_plotz,names(beta_plotz),~{
-  dir <- "~/projects/dissertation/admin/committee meetings/february 24, 2022/img"
-  ggsave(.x$plot, file=path(dir,str_glue("beta_{.y}.svg")), device="svg", width = 16, height = 9, units="in")
-  # ggsave(.x$plot, file=str_glue("~/school/presentations/icrs/2021/img/beta_{.y}.svg"), device="svg", width = 16, height = 9, units="in")
+  ggsave(.x$plot, file=str_glue("~/school/presentations/icrs/2021/img/beta_{.y}.svg"), device="svg", width = 16, height = 9, units="in")
 })
 
-
-# cluster plots -----------------------------------------------------------
-merge_factor <- "depth_f"
-cluster_plotz <- comm_ps %>%
-  map2(names(.),~{
-    comm_dist <- vdist(otu_table(.x),distance_method)
-    merged <- merge_samples(.x,merge_factor)
-    comm_merged <- vdist(otu_table(merged),distance_method)
-    
-    list(
-      samples = hclust(comm_dist),
-      merged = hclust(comm_merged)
-    )
-  })
 
 # beta diversity calculations ---------------------------------------------
 

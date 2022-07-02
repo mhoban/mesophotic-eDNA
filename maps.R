@@ -67,8 +67,8 @@ inset
   draw_plot(
     inset,
     x = -0.13,
-    y = 0.4,
+    y = 0.3,
     scale=0.4
   ))
 
-ggsave(p,file="~/school/presentations/icrs/2021/img/map.svg",device="svg",width = 8.5, height = 11, units = "in")
+ggsave(p,file=here("output/map.svg"),device="svg",width = 8.5, height = 11, units = "in")

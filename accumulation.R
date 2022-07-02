@@ -43,8 +43,10 @@ all_models <- map2(communities,names(communities),~{
   slopes <- c(1,slopes)
   
   # plot(Prediction ~ Area, data=predictions)
+  print(
   ggplot(predictions) + 
     geom_line(aes(x=Area,y=Prediction))
+  )
   
   asymp <- predictions$Area[slopes < 1][1]
   asymp_taxa <- predictions$Prediction[slopes < 1][1]
@@ -250,7 +252,7 @@ all_models <- map2(communities,names(communities),~{
 })
 
 # using normalized datasets
-all_models <- map2(comm_ps,names(comm_ps),~{
+all_models_normalized <- map2(comm_ps,names(comm_ps),~{
   raw_data <- otu_table(.x) %>%
     as("matrix") %>%
     as_tibble(rownames="sample")
@@ -307,6 +309,7 @@ all_models <- map2(comm_ps,names(comm_ps),~{
   asymp_taxa <- predictions$y[slopes < 1][1]
   taxa_6 <- predictions$y[6]
   percent_taxa <- taxa_6/asymp_taxa
+  
   
   cat("Community:",.y,"\n")
   cat("Best model:",best_mod,"\n")

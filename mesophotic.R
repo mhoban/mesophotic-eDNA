@@ -14,13 +14,8 @@ sm <- suppressMessages
 
 # set the project, directory, and markers for this analysis
 project <- "mesophotic"
-# project <- "marianas"
-# project <- "seagrant"
 project_dir <- here::here("working","flow-output",project)
 sample_pattern <- "^BMSP[0-9]+$"  # pattern to match sample IDs
-# sample_pattern <- "^SGP[0-9]+$"  # pattern to match sample IDs
-# sample_pattern <- "^NMI[0-9]+$"  # pattern to match sample IDs
-# blank_pattern <- "^Blank-[0-9]+$"      # pattern to match extraction blank IDs
 blank_pattern <- "^B[0-9]+$"      # pattern to match extraction blank IDs
 abundance_threshold <- 0.1     # minimum threshold for relative abundance
 abundance_threshold <- 5     # minimum threshold for relative abundance
@@ -120,14 +115,7 @@ diff_plotz <- map2(comm_ps,names(comm_ps),~{
 
 ### PCoA ordination by depth zone and station grouping
 ord_plotz <- map2(comm_ps,names(comm_ps),~{
-  # .x <- subset_taxa(.x,domain == 'Animals')
-  # # animals <- tax_glom(animals, taxrank = "genus")
-  # .x <- subset_taxa(.x, !family %in% c("Hominidae","Bovidae","Felidae","Salmonidae"))
-  # .x <- prune_samples(sample_sums(.x) > 0, .x)
-  dist <- distance_method
-  if (dist == "beta.sim") {
-    dist <- beta.pair(decostand(otu_table(.x),"pa"))$beta.sim
-  }
+  dist <- vdist(otu_table(.x),distance_method)
   ord <- ordinate(.x,"PCoA",distance=dist)
   ord_plot <- plot_ordination(.x,ord,type="samples",color="depth_f",shape="station_grouping") +
     geom_point(size=8,aes(text=station)) + 

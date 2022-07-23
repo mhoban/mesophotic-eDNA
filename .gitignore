@@ -1,6 +1,17 @@
 # History files
 .Rhistory
 .Rapp.history
+.DS_Store
+
+cdata/*
+output/*
+pipeline_output/*
+working/*
+tmp/*
+
+data/*
+!data/marker_config.csv
+!data/sample_data.csv
 
 # Session Data files
 .RData

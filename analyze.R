@@ -2,12 +2,15 @@ library(tidyverse)
 library(here)
 library(fs)
 library(phyloseq)
+library(insect)
+library(httr)
+library(ggrepel)
 
 ################################################################################################
 # functions to convert OTU tables & sample data to phyloseq objects, as well as do other things
 ################################################################################################
 vdist <- function(comm, method="jaccard", pa=TRUE,...) {
-  if (method == "beta.sim") {
+  if (method == "beta.sim" | method == "sim") {
     comm <- if(pa) decostand(comm,"pa") else comm
     beta.pair(comm,...)$beta.sim
   } else {
@@ -47,7 +50,8 @@ as_ps2 <- function(otutable,taxtable,sample_data) {
   sd <- sample_data %>% 
     filter(id %in% rownames(otutable)) %>%
     column_to_rownames('id')
-  taxtable <- make_matrix(taxtable %>% select(domain:species), taxtable$OTU)
+  # taxtable <- make_matrix(taxtable %>% select(domain:species), taxtable$OTU)
+  taxtable <- make_matrix(taxtable %>% select(-OTU), taxtable$OTU)
   phyloseq(
     otu_table(otutable,taxa_are_rows=FALSE),
     tax_table(taxtable),
@@ -69,6 +73,10 @@ summarize_communities <- function(comm,ctype='relative') {
   })
 }
 
+is_blank <- function(x) {
+  is.na(x) | x == ""
+}
+
 map_pal <- function(cg,ci,rev=FALSE) {
   map2_chr(ifelse(!rev,cg,rev(cg)),ci,~brewer.pal(9,.x)[9-.y])
 }
@@ -86,7 +94,8 @@ otu_tibble <- function(ps, rownames = 'sample') {
 }
 
 plot_betadisp <- function(ps, group, method="jaccard", list=FALSE) {
-  dd <- vdist(otu_table(ps),method=method)
+  # dd <- vdist(otu_table(ps),method=method)
+  dd <- distance(ps,method=method)
   sd <- sample_tibble(ps,sid="sample")
   bds <- betadisper(dd,group = sd %>% pull(all_of(group)))
   sco <- scores(bds)
@@ -107,7 +116,7 @@ plot_betadisp <- function(ps, group, method="jaccard", list=FALSE) {
     slice(chull(x,y))
   p <- ggplot(sd) + 
     geom_polygon(data=hull, aes_string(x=quote(x),y=quote(y),fill=group),alpha=0.7) + 
-    geom_label(data=centroids, aes_string(x=quote(x), y=quote(y), fill=group, label=group), show.legend = FALSE)
+    geom_label_repel(data=centroids, aes_string(x=quote(x), y=quote(y), fill=group, label=group), show.legend = FALSE, segment.color=NA)
   if (list) {
     list(plot = p, betadisp= bds, x_var = varx[[1]], y_var = varx[[2]])
   } else {
@@ -123,6 +132,31 @@ tukey <- function(bds) {
       rename(lower=lwr,upper=upr,p_adj=`p adj`)
   } else {
     return(NULL) 
+  }
+}
+
+print_anova <- function(model,name="") {
+  cat(name,"\n")
+  if (inherits(model,"adonis")) {
+    tab <- as_tibble(model$aov.tab,rownames = "term") %>%
+      rename(pval=`Pr(>F)`) %>% mutate(
+        ppval = case_when(
+          pval < 0.0001 ~ "*p* < 0.0001",
+          pval < 0.001 ~ "*p* < 0.001",
+          pval < 0.01 ~ "*p* < 0.01",
+          TRUE ~ as.character(str_glue("*p* = {round(pval,2)}"))
+        )
+      )
+    pwalk(tab,~{
+      row <- list(...)
+      if (!is.na(row$F.Model) & !is.na(row$pval)) {
+        p <- row$pval
+        s <- str_glue("pseudo-F = {round(row$F.Model,2)}, {row$ppval}")
+        ss <- str_glue("{row$term}:\t\t{s}")
+        f <- readline(ss)
+        clipr::write_clip(s) 
+      }
+    })
   }
 }
 
@@ -160,16 +194,45 @@ pairwise_adonis <- function(comm, factors, permutations = 1000, correction = "fd
 }
 
 
+get_ncbi_taxonomy <- function() {
+  nlf <- here("data","lineage.txt")
+  if (!file_exists(nlf)) {
+    url <- "https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/new_taxdump/new_taxdump.zip"
+    taxdir <- dir_create(here("data","taxonomy"),recurse=TRUE)
+    taxdump <- path(taxdir,"taxdump.zip")
+    resp <- GET(url,write_disk(taxdump,overwrite = T),progress())
+    if (resp$status_code == 200) {
+      unzip(taxdump,exdir=taxdir)       
+      lf <- path(taxdir,"rankedlineage.dmp")
+      system(str_glue("sed -E $'s!\\t\\|\\t!\\t!g;s!\\t\\|$!!g' {lf} > {nlf}"))
+    } else {
+      return(NULL)
+    }
+  }
+  read_delim(nlf,delim="\t",col_names = c("taxid","name","species","genus","family","order","class","phylum","kingdom","domain")) %>%
+    select(taxid,name,domain,kingdom,phylum,class,order,family,genus,species)
+}
+
+
 # shorten calls to suppressMessages (readr outputs all sorts of nonsense)
 sm <- suppressMessages            
 # read sample metadata (this is project-universal)
-sample_data <- sm(read_csv(here("data","sample_data.csv")))
+sample_data <- sm(read_csv(here("data","sample_data.csv"))) %>%
+  filter(project %in% active_project)
+  # filter(str_detect(id,sample_pattern))
 markers <- sm(read_csv(here::here("data","marker_config.csv")))
-targets <- markers %>%
+marker_descriptions <- markers %>%
   filter(skip == "N") %>%
-  pull(gene)
+  pull(gene) %>%
+  set_names %>%
+  map_chr(~markers %>% filter(gene == .x) %>% pull(description))
+
+targets <- names(marker_descriptions)
+
+ncbi <- get_ncbi_taxonomy()
 
 communities <- targets %>%
+  set_names(marker_descriptions[.]) %>%
   map(~{
     # read the OTU table and do some pre-filtration
     # we assume that rows are taxa and columns are samples
@@ -180,20 +243,56 @@ communities <- targets %>%
     tab_file <- path(project_dir,str_glue("{.x}_collapsed_taxa.tab"))
     if (file_exists(tab_file)) {
       
-      otu_table <- sm(read_tsv(tab_file)) %>%
-        mutate(
-          across(domain:species,~replace_na(.x,"unspecified"))
-        )
+      otu_table <- sm(read_tsv(tab_file)) #%>%
+        # mutate(
+        #   across(domain:species,~replace_na(.x,"unspecified"))
+        # )
       
       unassigned_file <- path(project_dir,str_glue("{.x}_all_taxa.tab"))
       if (include_unassigned & file_exists(unassigned_file)) {
         unassigned <- read_tsv(unassigned_file) %>% 
-          filter(!(OTU %in% otu_table$OTU)) %>%
-          mutate(domain="Unassigned",kingdom="Unassigned",phylum="Unassigned",class="Unassigned",order="Unassigned",family="Unassigned",genus="Unassigned",species="Unassigned",numberOfUnq_BlastHits=0) %>%
-          select(domain:species,numberOfUnq_BlastHits,everything()) %>%
-          select(any_of(names(otu_table)))
+          filter(!(OTU %in% otu_table$OTU)) 
+        classified_file <- path(project_dir,str_glue("{.x}_classified.csv"))    
+        if (insect_classify) {
+          if (!file_exists(classified_file)) {
+            classifier_file <- here("classifiers",str_glue("{.x}_classifier.rds"))
+            zotu_file <- path(project_dir,str_glue("{.x}_zotus.fasta"))
+            if (all(file_exists(c(classifier_file,zotu_file)))) {
+              classifier <- readRDS(classifier_file)
+              zotu <- readFASTA(zotu_file)
+              cores <- parallel::detectCores() 
+              cat("running insect classifier model....\n")
+              classified <- classify(zotu, classifier, threshold = 0.5, metadata = TRUE, offset = -2, mincount = 1, cores=cores)
+              write_csv(classified,classified_file) 
+            }
+          }
+        }
         
-        otu_table <- bind_rows(otu_table,unassigned) 
+        if (file_exists(classified_file)) {
+          insect_taxa <- read_csv(classified_file) %>%
+            rename(taxid=taxID) %>%
+            left_join(ncbi %>% select(taxid,domain),by="taxid") %>%
+            mutate(
+              domain = case_when(
+                taxon == "Eukaryota" ~ "Eukaryota",
+                TRUE ~ domain
+              ) 
+            ) %>%
+            # replace_na(list(domain = "Unassigned")) %>%
+            select(domain,kingdom:species,OTU=representative,id_method)
+          unassigned <- unassigned %>%
+            left_join(insect_taxa,by="OTU") %>%
+            mutate(numberOfUnq_BlastHits=0) %>%
+            select(domain:species,OTU,id_method,numberOfUnq_BlastHits,everything())
+           
+        } else {
+          unassigned <- unassigned %>%
+            mutate(domain="Unassigned",kingdom="Unassigned",phylum="Unassigned",class="Unassigned",order="Unassigned",family="Unassigned",genus="Unassigned",species="Unassigned",numberOfUnq_BlastHits=0) %>%
+            select(domain:species,numberOfUnq_BlastHits,everything()) %>%
+            select(any_of(names(otu_table)))
+        }
+        
+        otu_table <- bind_rows(otu_table,unassigned %>% select(all_of(names(otu_table)))) 
       }
       otu_table <- otu_table %>%
           rowwise() %>%
@@ -204,40 +303,54 @@ communities <- targets %>%
       
       filtered_blanks <- otu_table %>%
         filter(blanks >= max_blank)
+      unfiltered <- otu_table %>% select(-blanks)
       otu_table <- otu_table %>% 
         filter(blanks < max_blank) %>%
         select(-blanks,-matches(blank_pattern)) %>%
-        select(!matches(sample_pattern) | where(~(is.numeric(.x) && sum(.x,na.rm=T) > min_total)))
+        select(!matches(sample_pattern) | where(~(is.numeric(.x) && sum(.x,na.rm=T) >= min_total)))
       
       totals <- otu_table %>% 
         select(matches(sample_pattern)) %>%
         colSums()
       tax_data <- otu_table %>%
         select(-matches(sample_pattern),-numberOfUnq_BlastHits) %>%
-        pmap_dfr(~{
-          items <- list(...)
-          dropped <- which(items == "dropped" | is.na(items))
-          if (length(dropped) > 0) {
-            first_dropped <- min(dropped)
-            if (first_dropped > 1) {
-              dropped_name <- str_c("Unidentified ",items[first_dropped-1])
+        mutate(across(domain:species,~na_if(.x,"dropped")))
+      curated_file <- path(project_dir,str_glue("{.x}_curated.csv"))
+      if (file_exists(curated_file)) {
+        curated <- read_csv(curated_file)
+        # lineages <- ncbi %>%
+        #   filter(name %in% unique(curated$new_name))
+        c2 <- curated %>%
+          left_join(ncbi,by=c("new_name" = "name")) %>%
+          pmap_dfr(~{
+            row <- list(...)
+            row[[row$level]] <- row$new_name
+            if (is_blank(row$qualifier)) {
+              return(row)
             } else {
-              dropped_name <- "Unidentified"
+              if (row[[row$qualifier_level]] == row$qualifier) {
+                return(row)
+              } else {
+                return(NULL)
+              }
             }
-            items[dropped] <- dropped_name
-          }
-          items
-        }) %>%
-        mutate(
-          spp = str_detect(species,"Unidentified") & !str_detect(genus,"Unidentified"),
-          species = case_when(
-            spp ~ str_c(genus,"spp.",sep = " "),
-            TRUE ~ species
-          )  
-        ) %>%
-        select(-spp)
+          }) %>%
+          select(domain:species,OTU) %>%
+          mutate(id_method="curated")
+        tax_data <- tax_data %>%
+          rows_upsert(c2,by="OTU")
+      }
       otu_table <- otu_table %>%
         select(OTU,matches(sample_pattern))
+      
+      unknown_filtered <- 0
+      if (filter_unknown) {
+        unknown_filtered <- tax_data %>%
+          filter(if_all(domain:species,is.na)) %>%
+          nrow()
+        tax_data <- tax_data %>%
+          filter(if_any(domain:species,~!is.na(.x)))
+      }
       # convert read count to relative read abundance
       message("WE CHANGED THE RELATIVE THING TO ABSOLUTE, REMEMBER THAT","\n")
       otu_rel <- otu_table %>%
@@ -262,13 +375,10 @@ communities <- targets %>%
         #     ~ .x * totals[cur_column()]
         #   )
         # ) 
-      list('raw'=otu_table,'relative'=otu_rel,'tax_data'=tax_data, 'blanks'=filtered_blanks)
+      list('raw'=otu_table,'relative'=otu_rel,'tax_data'=tax_data, 'blanks'=filtered_blanks,'unfiltered'=unfiltered,'unknown_filtered'=unknown_filtered)
     } else {
       list('raw'=NULL,'relative'=NULL)
     }
-  }) %>%
-  set_names(str_c("m",targets))
+  }) 
 
-sample_data <- sample_data %>% 
-  filter(str_detect(id,sample_pattern))
 

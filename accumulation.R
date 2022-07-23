@@ -1,5 +1,4 @@
 library(vegan)
-library(sars)
 
 sup <- function(...) suppressWarnings(suppressMessages(...))
 
@@ -16,13 +15,14 @@ all_models <- map2(communities,names(communities),~{
         decostand("pa",margin=NULL)
       sup(curve <- specaccum(s,method="random",permutations=1000))
       # tibble(sites=curve$sites,richness=curve$richness,depth=.y$depth_f)
-      as_tibble(curve$perm) %>%
+      td <- as_tibble(curve$perm) %>%
         mutate(sites=row_number()) %>%
         select(sites,everything()) %>%
         pivot_longer(-sites,names_to = "permutation", values_to = "richness") %>%
         distinct(sites,richness) %>%
         mutate(depth=.y$depth_f) %>%
         select(sites,richness,depth)
+      return(td)
     }) %>% 
     set_names(levels(sample_data$depth_f)) %>%
     bind_rows()
@@ -185,6 +185,7 @@ relative_plotz
 all_models <- map2(communities,names(communities),~{
   raw_data <- .x$raw
   specs <- sample_data %>%
+    filter(!is.na(depth_f)) %>%
     group_by(depth_f) %>%
     group_map(~{
       s <- raw_data %>% 

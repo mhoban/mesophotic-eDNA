@@ -1,5 +1,5 @@
-gene,trim_f,trim_r,min_length,maxee_f,maxee_r,truncQ,preprocess,skip
-16S,0,NA,70,2,NA,11,N,N
-18S,210,160,0,2,2,11,N,N
-ITS2,0,0,0,2,2,11,N,Y
-COI,210,160,0,2,2,11,N,N
+gene,description,trim_f,trim_r,min_length,maxee_f,maxee_r,truncQ,preprocess,skip
+16S,fish,0,NA,70,2,NA,11,N,N
+18S,inverts,210,160,0,2,2,11,N,N
+ITS2,corals,0,0,0,2,2,11,N,Y
+COI,metazoans,210,160,0,2,2,11,N,N

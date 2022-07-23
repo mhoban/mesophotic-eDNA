@@ -1,4 +1,8 @@
 id,project,volume,method,substrate,date,station,station_grouping,depth_min,depth_max,depth_zone,island,country,protection_status,lat,lon
+B001,mesophotic,2,none,extraction blank,,extraction blank,none,,,,,,,,
+B002,mesophotic,2,none,extraction blank,,extraction blank,none,,,,,,,,
+B003,mesophotic,2,none,extraction blank,,extraction blank,none,,,,,,,,
+B004,mesophotic,2,none,extraction blank,,extraction blank,none,,,,,,,,
 BMSP001,mesophotic,1.5,sentino pump,water,8/6/19,Eel Cove Deep Ridge - 250ft,Eel Cove,75,76,75,Hawaii,United States,none,19.655911,-156.033937
 BMSP002,mesophotic,2,hatay niskin,water,8/6/19,Eel Cove Deep Ridge - 250ft,Eel Cove,75,76,75,Hawaii,United States,none,19.655911,-156.033937
 BMSP003,mesophotic,2,hatay niskin,water,8/6/19,Eel Cove Deep Ridge - 200ft,Eel Cove,60,61,60,Hawaii,United States,none,19.655911,-156.033937

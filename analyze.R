@@ -193,6 +193,9 @@ pairwise_adonis <- function(comm, factors, permutations = 1000, correction = "fd
     )
 }
 
+gnu_sed <- function() {
+	system("sed --version > /dev/null 2>&1",ignore.stderr = TRUE, ignore.stdout = TRUE, intern = FALSE) == 0  
+}
 
 get_ncbi_taxonomy <- function() {
   nlf <- here("data","lineage.txt")
@@ -204,7 +207,11 @@ get_ncbi_taxonomy <- function() {
     if (resp$status_code == 200) {
       unzip(taxdump,exdir=taxdir)       
       lf <- path(taxdir,"rankedlineage.dmp")
-      system(str_glue("sed -E $'s!\\t\\|\\t!\\t!g;s!\\t\\|$!!g' {lf} > {nlf}"))
+      sed_cmd <- "'s!\\t\\|\\t!\\t!g;s!\\t\\|$!!g'"
+      if (!gnu_sed()) {
+        sed_cmd <- str_c("$",sed_cmd)
+      }   
+      system2("sed",args=c("-E",sed_cmd,lf),stdout=nlf)
     } else {
       return(NULL)
     }

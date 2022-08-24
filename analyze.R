@@ -93,7 +93,7 @@ otu_tibble <- function(ps, rownames = 'sample') {
   as_tibble(as(otu_table(ps),'matrix'),rownames=rownames)
 }
 
-plot_betadisp <- function(ps, group, method="jaccard", list=FALSE) {
+plot_betadisp <- function(ps, group, method="jaccard", list=FALSE, expand=FALSE) {
   # dd <- vdist(otu_table(ps),method=method)
   dd <- distance(ps,method=method)
   sd <- sample_tibble(ps,sid="sample")
@@ -111,9 +111,43 @@ plot_betadisp <- function(ps, group, method="jaccard", list=FALSE) {
   # y_var <- bds$eig[2]/sum(bds$eig)
   varx <- map(bds$eig,~.x/sum(bds$eig))
   
-  hull <- sd %>%
-    group_by(across(all_of(group))) %>%
+  hull <- sd
+  if (expand) {
+    hull <- hull %>%
+      count(!!sym(group)) %>%
+      filter(n == 2) %>%
+      pull(all_of(group)) %>% 
+      map_dfr(~{
+        first <- hull %>%
+          filter(!!sym(group) == .x) %>%
+          # slice(1) %>%
+          mutate(
+            x = jitter(x,factor=0.02),
+            y = jitter(y,amount=0.02)
+          )
+      }) %>%
+      bind_rows(hull)
+    change <- hull %>%
+      group_by(sample) %>%
+      filter(n() > 1) %>%
+      summarise(x=mean(x),y=mean(y)) 
+    sd <- sd %>%
+      full_join(change,by="sample") %>%
+      mutate(
+        x = case_when(
+          !is.na(x.y) ~ x.y,
+          TRUE ~ x.x
+        ),
+        y = case_when(
+          !is.na(y.y) ~ y.y,
+          TRUE ~ y.x
+        )
+      ) %>% select(-x.x,-x.y,-y.x,-y.y)
+  }
+  hull <- hull %>%
+    group_by(!!sym(group)) %>%
     slice(chull(x,y))
+
   p <- ggplot(sd) + 
     geom_polygon(data=hull, aes_string(x=quote(x),y=quote(y),fill=group),alpha=0.7) + 
     geom_label_repel(data=centroids, aes_string(x=quote(x), y=quote(y), fill=group, label=group), show.legend = FALSE, segment.color=NA)

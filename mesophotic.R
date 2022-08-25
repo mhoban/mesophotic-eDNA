@@ -8,6 +8,7 @@ library(Polychrome)
 library(patchwork)
 library(dendextend)
 library(rfishbase)
+library(fs)
 
 
 # Community setup and initial analysis ------------------------------------
@@ -216,7 +217,10 @@ beta_diversity_animals <- map(animals,~{
 }) %>% set_names(names(to_plot))
 
 
-# manuscript figure plots -------------------------------------------------
+
+# manuscript figures ------------------------------------------------------
+figure_dir <- "~/projects/dissertation/manuscript/figures"
+
 #### Figure: cluster plots
 merge_factor <- "depth_f"
 cluster_plotz <- distance_methods %>%
@@ -249,7 +253,7 @@ cluster_plotz <- distance_methods %>%
 cluster_composite <- (cluster_plotz$sim$fish + cluster_plotz$sim$inverts + cluster_plotz$sim$metazoans) +
   plot_annotation(tag_levels="A")
 cluster_composite
-ggsave("~/projects/dissertation/manuscript/figures/mesophotic_cluster.pdf",cluster_composite,device=cairo_pdf,width=12,height=4,units="in")
+ggsave(path(figure_dir,"mesophotic_cluster.pdf"),cluster_composite,device=cairo_pdf,width=12,height=4,units="in")
 
 #### Figure: cluster plots (animals)
 merge_factor <- "depth_f"
@@ -283,7 +287,7 @@ aminal_cluster_plotz <- distance_methods %>%
 aminal_cluster_composite <- (aminal_cluster_plotz$sim$inverts + aminal_cluster_plotz$sim$metazoans) +
   plot_annotation(tag_levels="A")
 aminal_cluster_composite
-ggsave("~/projects/dissertation/manuscript/figures/mesophotic_cluster_animals.pdf",aminal_cluster_composite,device=cairo_pdf,width=8,height=4,units="in")
+ggsave(path(figure_dir,"mesophotic_cluster_animals.pdf"),aminal_cluster_composite,device=cairo_pdf,width=8,height=4,units="in")
 
 #### Figure: shallow vs deep ordinations
 zone_groupings <- c("fish" = "depth_zone", "inverts" = "depth_zone45", "metazoans" = "depth_zone45")
@@ -319,7 +323,7 @@ beta_zone_composite <-
   plot_layout(guides="collect") +
   plot_annotation(tag_levels = "A") & theme(plot.tag = element_text(face="bold"))
 beta_zone_composite
-ggsave("~/projects/dissertation/manuscript/figures/mesophotic_beta_shallowdeep.pdf",beta_zone_composite,device=cairo_pdf,width=12,height=4,units="in")
+ggsave(path(figure_dir,"mesophotic_beta_shallowdeep.pdf"),beta_zone_composite,device=cairo_pdf,width=12,height=4,units="in")
 
 # supplemental figure (shallow = 0-45m)
 beta_zone_composite <- 
@@ -327,7 +331,7 @@ beta_zone_composite <-
   plot_layout(guides="collect") +
   plot_annotation(tag_levels = "A") & theme(plot.tag = element_text(face="bold"))
 beta_zone_composite
-ggsave("~/projects/dissertation/manuscript/figures/mesophotic_beta_shallowdeep45.pdf",beta_zone_composite,device=cairo_pdf,width=12,height=4,units="in")
+ggsave(path(figure_dir,"mesophotic_beta_shallowdeep45.pdf"),beta_zone_composite,device=cairo_pdf,width=12,height=4,units="in")
 
 #### Figure: depth zone ordinations
 beta_plotz <- distance_methods %>%
@@ -363,9 +367,9 @@ beta_composite <-
   plot_annotation(tag_levels = "A") & theme(plot.tag = element_text(face="bold"))
 beta_composite
 
-ggsave("~/projects/dissertation/manuscript/figures/mesophotic_beta_samples.pdf",beta_composite,device=cairo_pdf,width=12,height=4,units="in")
+ggsave(path(figure_dir,"mesophotic_beta_samples.pdf"),beta_composite,device=cairo_pdf,width=12,height=4,units="in")
 
-#### Figure: fish depth distributions
+#### Figure: fish depth distributions vs eDNA detections
 fish <- communities$fish$raw %>%
   inner_join(communities$fish$tax_data,by="OTU") %>%
   select(domain:species,OTU,matches(sample_pattern)) %>%
@@ -393,10 +397,15 @@ detected_depth <- fish %>%
   ) %>%
   select(family,species,depth,reads,fb_shallow=DepthRangeShallow,fb_deep=DepthRangeDeep) %>%
   filter(fb_deep < 150)  %>%
+  ungroup() %>%
+  group_by(species) %>%
+  mutate(depth_diff = max(depth) - max(fb_deep)) %>%
+  ungroup() %>%
   mutate(
     depth_range = fb_deep-fb_shallow,
     species = fct_reorder(species,depth_range,.desc = TRUE)
-  )
+    # species = fct_reorder(species,depth_diff,.desc = TRUE)
+  ) 
 
 # what is the most number of observations for a species?
 most <- detected_depth %>%
@@ -418,7 +427,7 @@ detected_depth <- detected_depth %>%
         bind_rows(add)
     }
     return(grp)
-  })
+  }) 
 
 depth_plotz <- ggplot(detected_depth) + 
   # geom_errorbar(aes(y=species,xmin=fb_shallow,xmax=fb_deep),width=0.5,color="dodgerblue4") +
@@ -446,7 +455,7 @@ depth_plotz <- ggplot(detected_depth) +
   ylab("Detection depth (m)") + 
   xlab("Species") 
 depth_plotz
-ggsave("~/projects/dissertation/manuscript/figures/mesophotic_fish_depth.pdf",depth_plotz,device=cairo_pdf,width=12,height=10,units="in")
+ggsave(path(figure_dir,"mesophotic_fish_depth.pdf"),depth_plotz,device=cairo_pdf,width=12,height=10,units="in")
 
 #### Supplemental Figure: ordinations by site
 beta_sites <- distance_methods %>%
@@ -478,7 +487,7 @@ beta_site_composite <-
   plot_layout(guides="collect") +
   plot_annotation(tag_levels = "A") & theme(plot.tag = element_text(face="bold"))
 beta_site_composite
-ggsave("~/projects/dissertation/manuscript/figures/mesophotic_beta_sites.pdf",beta_site_composite,device=cairo_pdf,width=12,height=4,units="in")
+ggsave(path(figure_dir,"mesophotic_beta_sites.pdf"),beta_site_composite,device=cairo_pdf,width=12,height=4,units="in")
 
 
 #### Supplemental Figure: species   accumulations
@@ -577,5 +586,5 @@ accum_composite <-
   plot_layout(guides="collect") +
   plot_annotation(tag_levels = "A") & theme(plot.tag = element_text(face="bold"))
 accum_composite
-ggsave("~/projects/dissertation/manuscript/figures/mesophotic_accum.pdf",accum_composite,device=cairo_pdf,width=12,height=4,units="in")
+ggsave(path(figure_dir,"mesophotic_accum.pdf"),accum_composite,device=cairo_pdf,width=12,height=4,units="in")
 

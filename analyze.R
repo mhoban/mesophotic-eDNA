@@ -251,7 +251,8 @@ get_ncbi_taxonomy <- function() {
     }
   }
   read_delim(nlf,delim="\t",col_names = c("taxid","name","species","genus","family","order","class","phylum","kingdom","domain")) %>%
-    select(taxid,name,domain,kingdom,phylum,class,order,family,genus,species)
+    select(taxid,name,domain,kingdom,phylum,class,order,family,genus,species) %>%
+    return()
 }
 
 

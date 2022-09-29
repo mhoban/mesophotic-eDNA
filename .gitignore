@@ -3,6 +3,8 @@
 .Rapp.history
 .DS_Store
 
+snippets/
+
 cdata/*
 output/*
 pipeline_output/*

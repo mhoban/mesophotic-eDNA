@@ -81,9 +81,16 @@ rs <- reads_summary %>%
   ) %>%
   mutate(
     Site = factor(Site),
-    Site = fct_relevel(Site,"none",after=Inf)
+    Site = fct_relevel(Site,"none",after=Inf),
+    order = case_when(
+      str_detect(`Sample ID`,sample_pattern) ~ 0,
+      str_detect(`Sample ID`,blank_pattern) ~ 1,
+      TRUE ~ 999
+    )
   ) %>%
-  arrange(Site,Depth,`Sample ID`)
+  # arrange(Site,Depth,`Sample ID`)
+  arrange(order,`Sample ID`) %>%
+  select(-order)
 
 write_ms_table(rs,"output/reads_summary.csv","Sequencing results for mesophotic eDNA samples across assay types",na="")
 

@@ -251,42 +251,44 @@ beta_pairs_animals <- animals %>%
   })
 
 # overall beta diversity metrics
-beta_diversity <- map(comm_ps,~{
-  comm <- .x %>%
-    otu_table() %>%
-    as("matrix") %>%
-    decostand("pa")
-  comm_merged <- .x %>%
-    merge_samples("depth_f") %>%
-    otu_table() %>%
-    as("matrix") %>%
-    decostand("pa")
-  bp <- betapart.core(comm)
-  bp_merged <- betapart.core(comm_merged)
-  sorensen <- comm %>%
-    betapart.core() %>%
-    beta.multi("sorensen")
-  sorensen_merged <- comm %>%
-    betapart.core() %>%
-    beta.multi("sorensen")
-  return(list(unmerged=sorensen,merged=sorensen_merged))
-}) 
+beta_diversity <- comm_ps %>%
+  map(~{
+    comm <- .x %>%
+      otu_table() %>%
+      as("matrix") %>%
+      decostand("pa")
+    comm_merged <- .x %>%
+      merge_samples("depth_f") %>%
+      otu_table() %>%
+      as("matrix") %>%
+      decostand("pa")
+    bp <- betapart.core(comm)
+    bp_merged <- betapart.core(comm_merged)
+    sorensen <- comm %>%
+      betapart.core() %>%
+      beta.multi("sorensen")
+    sorensen_merged <- comm %>%
+      betapart.core() %>%
+      beta.multi("sorensen")
+    return(list(unmerged=sorensen,merged=sorensen_merged))
+  }) 
 
-beta_diversity_animals <- map(animals,~{
-  .x <- merge_samples(.x,"depth_f")
-  comm <- as(otu_table(.x),"matrix")
-  # do the abundance-based beta partitioning
-  # bc <- betapart.core.abund(comm)
-  comm <- decostand(comm,"pa")
-  # now the presence-absence one
-  bp <- betapart.core(comm)
-
-
-  sorensen <- beta.multi(bp,"sorensen")
-  jaccard <- beta.multi(bp,"jaccard")
-
-  list(sorensen=sorensen,jaccard=jaccard)
-}) 
+beta_diversity_animals <- animals %>%
+  map(~{
+    .x <- merge_samples(.x,"depth_f")
+    comm <- as(otu_table(.x),"matrix")
+    # do the abundance-based beta partitioning
+    # bc <- betapart.core.abund(comm)
+    comm <- decostand(comm,"pa")
+    # now the presence-absence one
+    bp <- betapart.core(comm)
+    
+    
+    sorensen <- beta.multi(bp,"sorensen")
+    jaccard <- beta.multi(bp,"jaccard")
+    
+    list(sorensen=sorensen,jaccard=jaccard)
+  }) 
 
 # start here --------------------------------------------------------------
 
@@ -314,31 +316,18 @@ anovas <- distance_methods %>%
   set_names() %>%
   map(~{
     dm <- .x
-    map2(comm_ps,names(comm_ps),~{
-      perm <- 8000
-      sd <- sample_tibble(.x)
-      dd <-distance(.x,method=dm)
-      list(
-        # all = adonis(dd~ depth_zone + depth_zone45 + depth_f + station_grouping, data=sd, permutations=perm),
-        depth_zone = adonis(dd ~ depth_zone, data=sd, permutations=perm),
-        # adonis_shallowdeep_st = adonis(dd ~ depth_zone + station_grouping, data=sd, permutations=perm),
-        depth_zone45 = adonis(dd ~ depth_zone45, data=sd, permutations=perm),
-        # adonis_shallowdeep45_st = adonis(dd ~ depth_zone45 + station_grouping, data=sd, permutations=perm),
-        # adonis_sites = adonis(dd ~ depth_f*station_grouping, data=sd, permutations = perm), 
-        # adonis_shallowdeep_sites = adonis(dd ~ depth_zone*station_grouping, data=sd, permutations=perm),
-        depth_f = adonis(dd ~ depth_f, data=sd, permutations = perm), 
-        # adonis_depth_st = adonis(dd ~ depth_f + station_grouping, data=sd, permutations = perm), 
-        station_grouping = adonis(dd ~ station_grouping, data=sd, permutations = perm)
-        # adonis_everything = adonis(dd ~ depth_f + station_grouping + depth_zone + depth_zone45, data=sd, permutations=perm),
-        # anosim_shallowdeep = anosim(dd,sd$depth_zone, permutations = perm), 
-        # anosim = anosim(dd, sd$depth_f, permutations = perm),
-        # indicators_shallowdeep = multipatt(community, sd$depth_zone, control = how(nperm=perm)),
-        # indicators = multipatt(community, sd$depth_f, control = how(nperm=perm)),
-        # simper = simper(community, sd$depth_f, permutations = perm),
-        # pairwise = adonis.pair(dd, sd$depth_f, nper = perm, corr.method = "bonferroni")
-        # pairwise = pairwise_adonis(dd, sd$depth_f, permutations = perm,correction = 'BH')
-      )
-    }) 
+    comm_ps %>%
+      map2(names(.),~{
+        perm <- 8000
+        sd <- sample_tibble(.x)
+        dd <- distance(.x,method=dm)
+        list(
+          depth_zone = adonis(dd ~ depth_zone, data=sd, permutations=perm),
+          depth_zone45 = adonis(dd ~ depth_zone45, data=sd, permutations=perm),
+          depth_f = adonis(dd ~ depth_f, data=sd, permutations = perm), 
+          station_grouping = adonis(dd ~ station_grouping, data=sd, permutations = perm)
+        )
+      }) 
   })
 
 
@@ -527,18 +516,19 @@ ord_zone_plotz <- distance_methods %>%
       set_names() %>%
       map(~{
         zone <- .x
-        map2(comm_ps,names(comm_ps),~{
-          title <- plot_text2[.y]
-          p <- plot_betadisp(.x, group=zone, method=dm, list=TRUE)
-          
-          p$plot <- p$plot +
-            scale_fill_manual(values=pal[c(1,length(pal))],name="Depth Zone") + #,labels=c("Shallow","Deep")) +
-            plotz_theme("light") +
-            xlab(str_glue("Principle Coordinate 1 ({scales::percent(p$x_var,accuracy=0.1)})")) +
-            ylab(str_glue("Principle Coordinate 2 ({scales::percent(p$y_var,accuracy=0.1)})")) +
-            theme(legend.position = "right")
-          p$plot
-        })
+        comm_ps %>%
+          map2(names(.),~{
+            title <- plot_text2[.y]
+            p <- plot_betadisp(.x, group=zone, method=dm, list=TRUE)
+            
+            p$plot <- p$plot +
+              scale_fill_manual(values=pal[c(1,length(pal))],name="Depth Zone") + #,labels=c("Shallow","Deep")) +
+              plotz_theme("light") +
+              xlab(str_glue("Principle Coordinate 1 ({scales::percent(p$x_var,accuracy=0.1)})")) +
+              ylab(str_glue("Principle Coordinate 2 ({scales::percent(p$y_var,accuracy=0.1)})")) +
+              theme(legend.position = "right")
+            p$plot
+          })
       })
   })
 
@@ -563,18 +553,19 @@ ord_plotz <- distance_methods %>%
   set_names() %>%
   map(~{
     dm <- .x
-    map2(comm_ps,names(comm_ps),~{
-      title <- plot_text2[.y]
-      p <- plot_betadisp(.x, group="depth_f", method=dm, list=TRUE, expand=TRUE)
-      p$plot <- p$plot +
-        scale_fill_manual(values=pal,name="Depth") +
-        plotz_theme("light") +
-        xlab(str_glue("Principle Coordinate 1 ({scales::percent(p$x_var,accuracy=0.1)})")) +
-        ylab(str_glue("Principle Coordinate 2 ({scales::percent(p$y_var,accuracy=0.1)})")) +
-        theme(legend.position = "right") +
-        guides(color="none")
-      p$plot
-    })
+    comm_ps %>%
+      map2(names(.),~{
+        title <- plot_text2[.y]
+        p <- plot_betadisp(.x, group="depth_f", method=dm, list=TRUE, expand=TRUE)
+        p$plot <- p$plot +
+          scale_fill_manual(values=pal,name="Depth") +
+          plotz_theme("light") +
+          xlab(str_glue("Principle Coordinate 1 ({scales::percent(p$x_var,accuracy=0.1)})")) +
+          ylab(str_glue("Principle Coordinate 2 ({scales::percent(p$y_var,accuracy=0.1)})")) +
+          theme(legend.position = "right") +
+          guides(color="none")
+        p$plot
+      })
   })
 ord_composite <- 
   (ord_plotz$sim$fish + ord_plotz$sim$inverts + ord_plotz$sim$metazoans) +#/  (ord_plotz$jaccard$fish + ord_plotz$jaccard$inverts + ord_plotz$jaccard$metazoans)  +
@@ -672,18 +663,19 @@ ord_sites <- distance_methods %>%
   set_names() %>%
   map(~{
     dm <- .x
-    map2(comm_ps,names(comm_ps),~{
-      title <- plot_text2[.y]
-      p <- plot_betadisp(.x, group="station_grouping", method=dm, list=TRUE)
-      p$plot <- p$plot +
-        # ggtitle(title) +
-        scale_fill_manual(values=pal[c(1,4,7)],name="Site") +
-        plotz_theme("light") + 
-        xlab(str_glue("Principle Coordinate 1 ({scales::percent(p$x_var,accuracy=0.1)})")) +
-        ylab(str_glue("Principle Coordinate 2 ({scales::percent(p$y_var,accuracy=0.1)})")) +
-        theme(legend.position = "right")
-      p$plot
-    }) %>% set_names(names(comm_ps))
+    comm_ps %>%
+      map2(names(.),~{
+        title <- plot_text2[.y]
+        p <- plot_betadisp(.x, group="station_grouping", method=dm, list=TRUE)
+        p$plot <- p$plot +
+          # ggtitle(title) +
+          scale_fill_manual(values=pal[c(1,4,7)],name="Site") +
+          plotz_theme("light") + 
+          xlab(str_glue("Principle Coordinate 1 ({scales::percent(p$x_var,accuracy=0.1)})")) +
+          ylab(str_glue("Principle Coordinate 2 ({scales::percent(p$y_var,accuracy=0.1)})")) +
+          theme(legend.position = "right")
+        p$plot
+      })
   })
 
 ord_site_composite <- 
@@ -696,70 +688,71 @@ ggsave(path(figure_dir,"mesophotic_ord_sites.pdf"),ord_site_composite,device=cai
 
 #### Supplemental Figure: species accumulations
 sup <- function(...) suppressWarnings(suppressMessages(...))
-all_models <- map2(comm_ps,names(comm_ps),~{
-  sd <- sample_tibble(.x)
-  specs <- otu_tibble(.x) %>%
-    inner_join(sd %>% select(sample,depth_f),by="sample") %>%
-    select(sample,depth_f,everything()) %>%
-    nest(otu_table=-depth_f) %>%
-    mutate(otu_table = map(otu_table,~{
-      sup(curve <- .x %>%
-            column_to_rownames("sample") %>% 
-            as("matrix") %>%
-            decostand("pa",margin=NULL) %>%
-            specaccum(method="random",permutations=1000))
-      as_tibble(curve$perm) %>%
-        mutate(sites=row_number()) %>%
-        select(sites,everything()) %>%
-        pivot_longer(-sites,names_to = "permutation", values_to = "richness") %>%
-        select(sites,richness)
-    })) %>%
-    unnest(otu_table)
-  
-  try_mod <- function(e) {
-    tryCatch(
-      e,
-      error = function(e) NULL
+all_models <- comm_ps %>%
+  map2(names(.),~{
+    sd <- sample_tibble(.x)
+    specs <- otu_tibble(.x) %>%
+      inner_join(sd %>% select(sample,depth_f),by="sample") %>%
+      select(sample,depth_f,everything()) %>%
+      nest(otu_table=-depth_f) %>%
+      mutate(otu_table = map(otu_table,~{
+        sup(curve <- .x %>%
+              column_to_rownames("sample") %>% 
+              as("matrix") %>%
+              decostand("pa",margin=NULL) %>%
+              specaccum(method="random",permutations=1000))
+        as_tibble(curve$perm) %>%
+          mutate(sites=row_number()) %>%
+          select(sites,everything()) %>%
+          pivot_longer(-sites,names_to = "permutation", values_to = "richness") %>%
+          select(sites,richness)
+      })) %>%
+      unnest(otu_table)
+    
+    try_mod <- function(e) {
+      tryCatch(
+        e,
+        error = function(e) NULL
+      )
+    }
+    
+    modls <- list(
+      asymp = nls(richness ~ SSasymp(sites, Asym, R0, lrc),  data=specs),
+      gompertz = nls(richness ~ SSgompertz(sites, Asym,  xmid, scal), data=specs),
+      `michaelis-menten` = nls(richness ~  SSmicmen(sites, Vm, K), data=specs),
+      logis = nls(richness ~ SSlogis(sites,  Asym, xmid, scal), data=specs) 
     )
-  }
-  
-  modls <- list(
-    asymp = nls(richness ~ SSasymp(sites, Asym, R0, lrc),  data=specs),
-    gompertz = nls(richness ~ SSgompertz(sites, Asym,  xmid, scal), data=specs),
-    `michaelis-menten` = nls(richness ~  SSmicmen(sites, Vm, K), data=specs),
-    logis = nls(richness ~ SSlogis(sites,  Asym, xmid, scal), data=specs) 
-  )
-  AICs <- sort(map_dbl(modls,~{
-    if (!is_null(.x))
-      AIC(.x)
-    else
-      Inf
-  }))
-  best_mod <- names(AICs)[1]
-  pred <- modls[[best_mod]]
-  predictions <- tibble(
-    x = seq(1:2000),
-    y = predict(pred,list(sites=seq(1:2000)))
-  )
-  
-  # slopes <- diff(predictions$y)/diff(predictions$x)
-  slopes <- diff(predictions$y)
-  slopes <- c(1,slopes)
-  asymp <- predictions$x[slopes < 1][1]
-  asymp_taxa <- predictions$y[slopes < 1][1]
-  taxa_6 <- predictions$y[6]
-  percent_taxa <- taxa_6/asymp_taxa
-  
-  
-  cat("Community:",.y,"\n")
-  cat("Best model:",best_mod,"\n")
-  cat("Asymptote at:",asymp,"replicates\n")
-  cat("Taxa at asymptote:",asymp_taxa,"\n")
-  cat("Taxa at 6 replicates:",taxa_6,"\n")
-  cat("Percent of taxa represented by 6 replicates:",scales::percent(percent_taxa),"\n")
-  cat("\n\n")
-  list(models = modls, best_model = best_mod, predictions = predictions, asymptote=asymp, asymptote_taxa=asymp_taxa, our_taxa = taxa_6, accum_data=specs)
-})
+    AICs <- sort(map_dbl(modls,~{
+      if (!is_null(.x))
+        AIC(.x)
+      else
+        Inf
+    }))
+    best_mod <- names(AICs)[1]
+    pred <- modls[[best_mod]]
+    predictions <- tibble(
+      x = seq(1:2000),
+      y = predict(pred,list(sites=seq(1:2000)))
+    )
+    
+    # slopes <- diff(predictions$y)/diff(predictions$x)
+    slopes <- diff(predictions$y)
+    slopes <- c(1,slopes)
+    asymp <- predictions$x[slopes < 1][1]
+    asymp_taxa <- predictions$y[slopes < 1][1]
+    taxa_6 <- predictions$y[6]
+    percent_taxa <- taxa_6/asymp_taxa
+    
+    
+    cat("Community:",.y,"\n")
+    cat("Best model:",best_mod,"\n")
+    cat("Asymptote at:",asymp,"replicates\n")
+    cat("Taxa at asymptote:",asymp_taxa,"\n")
+    cat("Taxa at 6 replicates:",taxa_6,"\n")
+    cat("Percent of taxa represented by 6 replicates:",scales::percent(percent_taxa),"\n")
+    cat("\n\n")
+    list(models = modls, best_model = best_mod, predictions = predictions, asymptote=asymp, asymptote_taxa=asymp_taxa, our_taxa = taxa_6, accum_data=specs)
+  })
 
 accum_plotz <- all_models %>%
   map2(names(.),~{

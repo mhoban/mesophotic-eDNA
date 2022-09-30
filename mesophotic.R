@@ -4,12 +4,12 @@ library(beyonce)
 library(plotly)
 library(indicspecies)
 library(betapart)
-library(Polychrome)
 library(patchwork)
 library(dendextend)
 library(rfishbase)
 library(fs)
 library(vegan)
+library(viridis)
 
 
 # Community setup and initial analysis ------------------------------------
@@ -112,6 +112,7 @@ negative_controls <- sample_data %>%
   filter(substrate %in% c("extraction blank","bleach solution control")) %>%
   pull(id)
 
+# construct our phyloseq object
 comm_ps <- communities %>% 
   map(~{
     rarefied <- .x$raw %>%
@@ -136,7 +137,9 @@ comm_ps <- communities %>%
   }) 
 
 # create the metazoan subset of our three communities
-minimals <- 1000                                      # minimum reads to retain a sample
+minimals <- 1000 # minimum reads to retain a sample
+# if we wisconsin'd the data, we have to reconstruct the animals from
+# the raw data and re-wisconsin it
 if (wisco) {
   animals <- communities %>%
     map(~{
@@ -158,14 +161,15 @@ if (wisco) {
       ps <- as_ps2(rarefied,new_tax,sample_data)
       prune_samples(sample_sums(ps) > 0, ps)
     })
-} else {
+} else { # otherwise just subset
   animals <- comm_ps %>%
     map(~{
       f <- subset_taxa(.x,kingdom == "Metazoa")         # filter by metazoans
       f <- prune_samples(sample_sums(f) >= minimals,f)  # filter by reads >= minimum
-      new_otu <- otu_table(f) %>%                       # re-rarefy new otu table to equal depth
+      new_otu <- otu_table(f) %>%                       
         as("matrix") 
       if (rarefy) {
+        # re-rarefy new otu table to equal depth
         new_otu <- new_otu %>%
           rrarefy.perm(n=rarefy_perm)
         otu_table(f) <- otu_table(new_otu,taxa_are_rows = FALSE) # reassign new rarefied otu table
@@ -173,19 +177,6 @@ if (wisco) {
       return(f)
     })
 }
-# animals <- comm_ps %>%
-#   map(~{
-#     f <- subset_taxa(.x,kingdom == "Metazoa")         # filter by metazoans
-#     f <- prune_samples(sample_sums(f) >= minimals,f)  # filter by reads >= minimum
-#     new_otu <- otu_table(f) %>%                       # re-rarefy new otu table to equal depth
-#       as("matrix") 
-#     if (rarefy) {
-#       new_otu <- new_otu %>%
-#         rrarefy.perm(n=rarefy_perm)
-#       otu_table(f) <- otu_table(new_otu,taxa_are_rows = FALSE) # reassign new rarefied otu table
-#     }
-#     return(f)
-#   })
 
 # text map for plots
 plot_text <- c(
@@ -393,30 +384,10 @@ beta_label_map <- list(
   metazoans = c("G","H","I")
 )
 
-# TODO: figure out how to make plot labels look right
-# (it's already been done for the figure in the MS folder so I did it at least once)
+# create composite figure of all beta diversity heatmaps
 beta_pairs_composite <- beta_pairs %>%
   map2(names(.),~{
-    # .x %>%
-    #   mutate(
-    #     measurement = factor(measurement,levels=c("beta.sor","beta.sim","beta.sne")),
-    #     depth1 = fct_rev(depth1)
-    #   ) %>%
-    #   group_by(measurement) %>%
-    #   group_map(~{
-    #     measurement <- as.character(.y$measurement)
-    #     ggplot(.x) + 
-    #       geom_tile(aes(x=depth2,y=depth1,fill=dist)) +
-    #       scale_fill_viridis(option="inferno",name=beta_title_map[measurement]) +
-    #       scale_x_discrete(position="top") + 
-    #       theme_bw() +
-    #       theme(
-    #         axis.text.x = element_text(angle=25,vjust=1,hjust=0),
-    #         panel.grid = element_blank()
-    #       ) +
-    #       labs(x="Depth zone",y="Depth zone")
-    #   }) %>%
-    #   reduce(`+`) 
+    marker <- .y
     wrap_elements(
       .x %>%
         mutate(
@@ -434,43 +405,46 @@ beta_pairs_composite <- beta_pairs %>%
             theme(
               axis.text.x = element_text(angle=25,vjust=1,hjust=0),
               panel.grid = element_blank()
-            ) #+
-            # labs(x="Depth zone",y="Depth zone")
+            ) +
+            labs(x="Depth zone",y="Depth zone")
         }) %>%
-        reduce(`+`) 
-    ) + plot_annotation(tag_levels = list(beta_label_map[[.y]]))
+        reduce(`+`) +
+        plot_annotation(tag_levels = list(beta_label_map[[marker]]))
+     ) 
   }) %>%
-  reduce(`/`) #+
-  # plot_annotation(tag_levels = "A")
+  reduce(`/`) 
 beta_pairs_composite
 ggsave(path(figure_dir,"mesophotic_beta_pairs.pdf"),beta_pairs_composite,device=cairo_pdf,width=12,height=9,units="in")
 
 #### Figure: beta diversity heatmaps (animals)
 beta_pairs_composite_animals <- beta_pairs_animals %>%
   map2(names(.),~{
-    .x %>%
-      mutate(
-        measurement = factor(measurement,levels=c("beta.sor","beta.sim","beta.sne")),
-        depth1 = fct_rev(depth1)
-      ) %>%
-      group_by(measurement) %>%
-      group_map(~{
-        measurement <- as.character(.y$measurement)
-        ggplot(.x) + 
-          geom_tile(aes(x=depth2,y=depth1,fill=dist)) +
-          scale_fill_viridis(option="inferno",name=beta_title_map[measurement]) +
-          scale_x_discrete(position="top") + 
-          theme_bw() +
-          theme(
-            axis.text.x = element_text(angle=25,vjust=1,hjust=0),
-            panel.grid = element_blank()
-          ) +
-          labs(x="Depth zone",y="Depth zone")
-      }) %>%
-      reduce(`+`) 
+    marker <- .y
+    wrap_elements(
+      .x %>%
+        mutate(
+          measurement = factor(measurement,levels=c("beta.sor","beta.sim","beta.sne")),
+          depth1 = fct_rev(depth1)
+        ) %>%
+        group_by(measurement) %>%
+        group_map(~{
+          measurement <- as.character(.y$measurement)
+          ggplot(.x) + 
+            geom_tile(aes(x=depth2,y=depth1,fill=dist)) +
+            scale_fill_viridis(option="inferno",name=beta_title_map[measurement]) +
+            scale_x_discrete(position="top") + 
+            theme_bw() +
+            theme(
+              axis.text.x = element_text(angle=25,vjust=1,hjust=0),
+              panel.grid = element_blank()
+            ) +
+            labs(x="Depth zone",y="Depth zone")
+        }) %>%
+        reduce(`+`) +
+        plot_annotation(tag_levels = list(beta_label_map[[marker]]))
+     ) 
   }) %>%
-  reduce(`/`) +
-  plot_annotation(tag_levels = "A")
+  reduce(`/`) 
 beta_pairs_composite_animals
 ggsave(path(figure_dir,"mesophotic_beta_pairs_animals.pdf"),beta_pairs_composite_animals,device=cairo_pdf,width=12,height=9,units="in")
 
@@ -722,7 +696,6 @@ ggsave(path(figure_dir,"mesophotic_ord_sites.pdf"),ord_site_composite,device=cai
 
 #### Supplemental Figure: species accumulations
 sup <- function(...) suppressWarnings(suppressMessages(...))
-# using normalized datasets
 all_models <- map2(comm_ps,names(comm_ps),~{
   sd <- sample_tibble(.x)
   specs <- otu_tibble(.x) %>%
@@ -739,8 +712,6 @@ all_models <- map2(comm_ps,names(comm_ps),~{
         mutate(sites=row_number()) %>%
         select(sites,everything()) %>%
         pivot_longer(-sites,names_to = "permutation", values_to = "richness") %>%
-        # # distinct(sites,richness) %>%
-        # mutate(depth=.y$depth_f) %>%
         select(sites,richness)
     })) %>%
     unnest(otu_table)
@@ -753,13 +724,11 @@ all_models <- map2(comm_ps,names(comm_ps),~{
   }
   
   modls <- list(
-    # lomolino = try_mod(nls(richness ~ SSlomolino(sites, Asym, xmid, slope),  data=specs)),
     asymp = nls(richness ~ SSasymp(sites, Asym, R0, lrc),  data=specs),
     gompertz = nls(richness ~ SSgompertz(sites, Asym,  xmid, scal), data=specs),
     `michaelis-menten` = nls(richness ~  SSmicmen(sites, Vm, K), data=specs),
     logis = nls(richness ~ SSlogis(sites,  Asym, xmid, scal), data=specs) 
   )
-  # AICs <- sort(map_dbl(modls,AIC))
   AICs <- sort(map_dbl(modls,~{
     if (!is_null(.x))
       AIC(.x)
@@ -818,7 +787,6 @@ accum_composite <-
   plot_annotation(tag_levels = "A") & theme(plot.tag = element_text(face="bold"))
 accum_composite
 ggsave(path(figure_dir,"mesophotic_accum.pdf"),accum_composite,device=cairo_pdf,width=12,height=4,units="in")
-
 
 
 # manuscript tables -------------------------------------------------------

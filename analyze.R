@@ -320,8 +320,16 @@ communities <- targets %>%
                 TRUE ~ domain
               ) 
             ) %>%
-            # replace_na(list(domain = "Unassigned")) %>%
             select(domain,kingdom:species,OTU=representative,id_method)
+          
+          # filter out entries where no taxonomy is assigned
+          if (drop_unknown) {
+            unid <- insect_taxa %>%
+              filter(across(domain:species,is.na)) %>% 
+              pull(OTU)
+            insect_taxa <- insect_taxa %>%
+              filter(!OTU %in% unid)
+          }
           unassigned <- unassigned %>%
             left_join(insect_taxa,by="OTU") %>%
             mutate(numberOfUnq_BlastHits=0) %>%

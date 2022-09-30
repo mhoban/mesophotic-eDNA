@@ -27,7 +27,10 @@ abundance_threshold <- 5     # minimum threshold for relative abundance
 
 # whether to rarefy samples to minimum read depth
 rarefy <- FALSE
+# whether to transform read counts to eDNA index (wisconsin double standardized)
 wisco <- FALSE
+# whether to drop zotus with no assigned taxonomy (NA's across the board)
+drop_unknown <- TRUE
 
 rarefy_perm <- 99
 
@@ -184,8 +187,6 @@ if (wisco) {
 #     return(f)
 #   })
 
-to_plot <- comm_ps
-
 # text map for plots
 plot_text <- c(
   'fish' = 'Fishes (16S rRNA)',
@@ -278,7 +279,7 @@ beta_diversity <- map(comm_ps,~{
     betapart.core() %>%
     beta.multi("sorensen")
   return(list(unmerged=sorensen,merged=sorensen_merged))
-}) %>% set_names(names(to_plot))
+}) 
 
 beta_diversity_animals <- map(animals,~{
   .x <- merge_samples(.x,"depth_f")
@@ -294,7 +295,7 @@ beta_diversity_animals <- map(animals,~{
   jaccard <- beta.multi(bp,"jaccard")
 
   list(sorensen=sorensen,jaccard=jaccard)
-}) %>% set_names(names(to_plot))
+}) 
 
 # start here --------------------------------------------------------------
 
@@ -322,7 +323,7 @@ anovas <- distance_methods %>%
   set_names() %>%
   map(~{
     dm <- .x
-    map2(to_plot,names(to_plot),~{
+    map2(comm_ps,names(comm_ps),~{
       perm <- 8000
       sd <- sample_tibble(.x)
       dd <-distance(.x,method=dm)
@@ -334,9 +335,9 @@ anovas <- distance_methods %>%
         # adonis_shallowdeep45_st = adonis(dd ~ depth_zone45 + station_grouping, data=sd, permutations=perm),
         # adonis_sites = adonis(dd ~ depth_f*station_grouping, data=sd, permutations = perm), 
         # adonis_shallowdeep_sites = adonis(dd ~ depth_zone*station_grouping, data=sd, permutations=perm),
-        adonis_depth = adonis(dd ~ depth_f, data=sd, permutations = perm), 
+        depth_f = adonis(dd ~ depth_f, data=sd, permutations = perm), 
         # adonis_depth_st = adonis(dd ~ depth_f + station_grouping, data=sd, permutations = perm), 
-        adonis_sites = adonis(dd ~ station_grouping, data=sd, permutations = perm)
+        station_grouping = adonis(dd ~ station_grouping, data=sd, permutations = perm)
         # adonis_everything = adonis(dd ~ depth_f + station_grouping + depth_zone + depth_zone45, data=sd, permutations=perm),
         # anosim_shallowdeep = anosim(dd,sd$depth_zone, permutations = perm), 
         # anosim = anosim(dd, sd$depth_f, permutations = perm),
@@ -346,9 +347,31 @@ anovas <- distance_methods %>%
         # pairwise = adonis.pair(dd, sd$depth_f, nper = perm, corr.method = "bonferroni")
         # pairwise = pairwise_adonis(dd, sd$depth_f, permutations = perm,correction = 'BH')
       )
-    }) %>% set_names(names(to_plot))
+    }) 
   })
 
+
+# make a nice little table of anova results
+# this assumes the name of the list entry is the same as the
+# name of the variable being examined
+anova_table <- anovas %>%
+  map2_dfr(names(.),~{
+    name_map <- c("sim" = "Simpson", "jaccard" = "Jaccard")
+    method <- name_map[.y]
+    .x %>%
+      map2_dfr(names(.),~{
+        marker_name <- plot_text2[.y]
+        .x %>%
+          map2_dfr(names(.),~{
+            as_tibble(.x$aov.tab,rownames="term") %>%
+              filter(term == .y) %>%
+              select(term,pseudo_f=`F.Model`,p_value=`Pr(>F)`)
+          }) %>%
+          mutate(marker=marker_name)
+      }) %>%
+      mutate(distance=method)
+  }) %>%
+  select(distance,marker,term,everything())
 
 
 
@@ -485,26 +508,6 @@ cluster_composite <- (cluster_plotz$fish + cluster_plotz$inverts + cluster_plotz
   plot_annotation(tag_levels="A")
 cluster_composite
 ggsave(path(figure_dir,"mesophotic_cluster.pdf"),cluster_composite,device=cairo_pdf,width=12,height=4,units="in")
-# this is the *old* way of doing cluster plots
-# merge_factor <- "depth_f"
-# cluster_plotz <- distance_methods %>%
-#   set_names() %>%
-#   map(~{
-#     dm <- .x
-#     to_plot %>%
-#       map2(names(.),~{
-#         title <- plot_text2[.y]
-#         merged <- merge_samples(.x,merge_factor)
-#         comm_merged <- distance(merged,method=dm)
-#         labels(comm_merged) <- str_c(labels(comm_merged)," ")
-#         ggplot(as.dendrogram(hclust(comm_merged),hang=0.5)) +
-#           theme(
-#             plot.caption = element_text(hjust=0.5,size=14)
-#           ) + 
-#           expand_limits(y=-0.25)
-#       }) 
-#   })
-
 
 #### Figure: cluster plots (animals)
 aminal_cluster_plotz <- beta_pairs_animals %>%
@@ -540,67 +543,28 @@ aminal_cluster_composite <- (aminal_cluster_plotz$inverts + aminal_cluster_plotz
 aminal_cluster_composite
 ggsave(path(figure_dir,"mesophotic_cluster_animals.pdf"),aminal_cluster_composite,device=cairo_pdf,width=8,height=4,units="in")
 
-# old way of doing clustering
-# merge_factor <- "depth_f"
-# aminal_cluster_plotz <- distance_methods %>%
-#   set_names() %>%
-#   map(~{
-#     dm <- .x
-#     animals %>%
-#       map2(names(.),~{
-#         title <- plot_text2[.y]
-#         merged <- merge_samples(.x,merge_factor)
-#         comm_merged <- distance(merged,method=dm)
-#         labels(comm_merged) <- str_c(labels(comm_merged)," ")
-#         ggplot(as.dendrogram(hclust(comm_merged),hang=0.5)) +
-#           theme(
-#             plot.caption = element_text(hjust=0.5,size=14)
-#           ) + 
-#           expand_limits(y=-0.25)
-#       }) 
-#   })
-
-
 #### Figure: shallow vs deep ordinations
-# TODO: put permanova results on ordination plots?
 zone_groupings <- c("fish" = "depth_zone", "inverts" = "depth_zone45", "metazoans" = "depth_zone45")
 ord_zone_plotz <- distance_methods %>%
   set_names() %>%
   map(~{
     dm <- .x
-    # models <- anovas[[.x]]
     c("depth_zone","depth_zone45") %>%
       set_names() %>%
       map(~{
         zone <- .x
-        map2(to_plot,names(to_plot),~{
+        map2(comm_ps,names(comm_ps),~{
           title <- plot_text2[.y]
-          # model <- models[[.y]][[zone]]
           p <- plot_betadisp(.x, group=zone, method=dm, list=TRUE)
-          
-          # get plot ranges
-          # xr <- layer_scales(p$plot)$x$range$range
-          # yr <- layer_scales(p$plot)$y$range$range
-          
-          # permanova <- as_tibble(model$aov.tab,rownames = "factor") %>%
-          #   rename(df=2,sum_sq=3,mean_sq=4,f_stat=5,r2=6,pval=7) %>%
-          #   filter(factor == zone) %>%
-          #   mutate(
-          #     across(is.numeric,~round(.x,2)),
-          #     str=str_glue("Pseudo-F = {f_stat}, {pval(pval)}\n\n"),
-          #     x = max(xr) - diff(xr) * 0.01,
-          #     y = max(yr)# - diff(yr) * 0.1
-          #   )
           
           p$plot <- p$plot +
             scale_fill_manual(values=pal[c(1,length(pal))],name="Depth Zone") + #,labels=c("Shallow","Deep")) +
             plotz_theme("light") +
             xlab(str_glue("Principle Coordinate 1 ({scales::percent(p$x_var,accuracy=0.1)})")) +
             ylab(str_glue("Principle Coordinate 2 ({scales::percent(p$y_var,accuracy=0.1)})")) +
-            # geom_text(data=permanova,mapping=aes(x=x,y=y,label=str),hjust="right",vjust="top") + 
             theme(legend.position = "right")
           p$plot
-        }) %>% set_names(names(to_plot))
+        })
       })
   })
 
@@ -625,7 +589,7 @@ ord_plotz <- distance_methods %>%
   set_names() %>%
   map(~{
     dm <- .x
-    map2(to_plot,names(to_plot),~{
+    map2(comm_ps,names(comm_ps),~{
       title <- plot_text2[.y]
       p <- plot_betadisp(.x, group="depth_f", method=dm, list=TRUE, expand=TRUE)
       p$plot <- p$plot +
@@ -636,7 +600,7 @@ ord_plotz <- distance_methods %>%
         theme(legend.position = "right") +
         guides(color="none")
       p$plot
-    }) %>% set_names(names(to_plot))
+    })
   })
 ord_composite <- 
   (ord_plotz$sim$fish + ord_plotz$sim$inverts + ord_plotz$sim$metazoans) +#/  (ord_plotz$jaccard$fish + ord_plotz$jaccard$inverts + ord_plotz$jaccard$metazoans)  +
@@ -734,7 +698,7 @@ ord_sites <- distance_methods %>%
   set_names() %>%
   map(~{
     dm <- .x
-    map2(to_plot,names(to_plot),~{
+    map2(comm_ps,names(comm_ps),~{
       title <- plot_text2[.y]
       p <- plot_betadisp(.x, group="station_grouping", method=dm, list=TRUE)
       p$plot <- p$plot +
@@ -745,7 +709,7 @@ ord_sites <- distance_methods %>%
         ylab(str_glue("Principle Coordinate 2 ({scales::percent(p$y_var,accuracy=0.1)})")) +
         theme(legend.position = "right")
       p$plot
-    }) %>% set_names(names(to_plot))
+    }) %>% set_names(names(comm_ps))
   })
 
 ord_site_composite <- 
@@ -756,7 +720,7 @@ ord_site_composite
 ggsave(path(figure_dir,"mesophotic_ord_sites.pdf"),ord_site_composite,device=cairo_pdf,width=12,height=4,units="in")
 
 
-#### Supplemental Figure: species   accumulations
+#### Supplemental Figure: species accumulations
 sup <- function(...) suppressWarnings(suppressMessages(...))
 # using normalized datasets
 all_models <- map2(comm_ps,names(comm_ps),~{

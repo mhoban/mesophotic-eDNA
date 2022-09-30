@@ -93,7 +93,6 @@ blank_summary <- communities %>%
         )
       )) %>%
       arrange(domain,kingdom,phylum,class,order,family,genus,species)
-    # table(b$domain,b$phylum)
   })
 
 # cut depths into discrete 'deep' and 'shallow' zones
@@ -214,7 +213,6 @@ beta_pairs <- comm_ps %>%
           left_join(sd %>% select(sample,depth_f),by=c("row" = "sample")) %>%
           left_join(sd %>% select(sample,depth_f),by=c("col" = "sample"),suffix = c("_s1","_s2")) %>%
           mutate(row=factor(row),col=factor(col)) %>%
-          # filter(as.numeric(row) > as.numeric(col)) %>%
           filter(as.numeric(depth_f_s1) > as.numeric(depth_f_s2)) %>%
           select(sample1=row,sample2=col,depth1=depth_f_s1,depth2=depth_f_s2,dist) %>%
           group_by(depth1,depth2) %>%
@@ -240,7 +238,6 @@ beta_pairs_animals <- animals %>%
           left_join(sample_data %>% select(id,depth_f),by=c("row" = "id")) %>%
           left_join(sample_data %>% select(id,depth_f),by=c("col" = "id"),suffix = c("_s1","_s2")) %>%
           mutate(row=factor(row),col=factor(col)) %>%
-          # filter(as.numeric(row) > as.numeric(col)) %>%
           filter(as.numeric(depth_f_s1) > as.numeric(depth_f_s2)) %>%
           select(sample1=row,sample2=col,depth1=depth_f_s1,depth2=depth_f_s2,dist) %>%
           group_by(depth1,depth2) %>%
@@ -277,8 +274,6 @@ beta_diversity_animals <- animals %>%
   map(~{
     .x <- merge_samples(.x,"depth_f")
     comm <- as(otu_table(.x),"matrix")
-    # do the abundance-based beta partitioning
-    # bc <- betapart.core.abund(comm)
     comm <- decostand(comm,"pa")
     # now the presence-absence one
     bp <- betapart.core(comm)
@@ -522,7 +517,7 @@ ord_zone_plotz <- distance_methods %>%
             p <- plot_betadisp(.x, group=zone, method=dm, list=TRUE)
             
             p$plot <- p$plot +
-              scale_fill_manual(values=pal[c(1,length(pal))],name="Depth Zone") + #,labels=c("Shallow","Deep")) +
+              scale_fill_manual(values=pal[c(1,length(pal))],name="Depth Zone") + 
               plotz_theme("light") +
               xlab(str_glue("Principle Coordinate 1 ({scales::percent(p$x_var,accuracy=0.1)})")) +
               ylab(str_glue("Principle Coordinate 2 ({scales::percent(p$y_var,accuracy=0.1)})")) +
@@ -534,7 +529,7 @@ ord_zone_plotz <- distance_methods %>%
 
 # main text figure (shallow = 0-30m)
 ord_zone_composite <- 
-  (ord_zone_plotz$sim$depth_zone$fish + ord_zone_plotz$sim$depth_zone$inverts + ord_zone_plotz$sim$depth_zone$metazoans) +#/  (ord_zone_plotz$sim$depth_zone45$fish + ord_zone_plotz$sim$depth_zone45$inverts + ord_zone_plotz$sim$depth_zone45$metazoans)  +
+  (ord_zone_plotz$sim$depth_zone$fish + ord_zone_plotz$sim$depth_zone$inverts + ord_zone_plotz$sim$depth_zone$metazoans) +
   plot_layout(guides="collect") +
   plot_annotation(tag_levels = "A") & theme(plot.tag = element_text(face="bold"))
 ord_zone_composite
@@ -542,7 +537,7 @@ ggsave(path(figure_dir,"mesophotic_ord_shallowdeep.pdf"),ord_zone_composite,devi
 
 # supplemental figure (shallow = 0-45m)
 ord_zone_composite <- 
-  (ord_zone_plotz$sim$depth_zone45$fish + ord_zone_plotz$sim$depth_zone45$inverts + ord_zone_plotz$sim$depth_zone45$metazoans) +#/  (ord_zone_plotz$sim$depth_zone4545$fish + ord_zone_plotz$sim$depth_zone4545$inverts + ord_zone_plotz$sim$depth_zone4545$metazoans)  +
+  (ord_zone_plotz$sim$depth_zone45$fish + ord_zone_plotz$sim$depth_zone45$inverts + ord_zone_plotz$sim$depth_zone45$metazoans) +
   plot_layout(guides="collect") +
   plot_annotation(tag_levels = "A") & theme(plot.tag = element_text(face="bold"))
 ord_zone_composite
@@ -568,7 +563,7 @@ ord_plotz <- distance_methods %>%
       })
   })
 ord_composite <- 
-  (ord_plotz$sim$fish + ord_plotz$sim$inverts + ord_plotz$sim$metazoans) +#/  (ord_plotz$jaccard$fish + ord_plotz$jaccard$inverts + ord_plotz$jaccard$metazoans)  +
+  (ord_plotz$sim$fish + ord_plotz$sim$inverts + ord_plotz$sim$metazoans) +
   plot_layout(guides="collect") +
   plot_annotation(tag_levels = "A") & theme(plot.tag = element_text(face="bold"))
 ord_composite
@@ -668,7 +663,6 @@ ord_sites <- distance_methods %>%
         title <- plot_text2[.y]
         p <- plot_betadisp(.x, group="station_grouping", method=dm, list=TRUE)
         p$plot <- p$plot +
-          # ggtitle(title) +
           scale_fill_manual(values=pal[c(1,4,7)],name="Site") +
           plotz_theme("light") + 
           xlab(str_glue("Principle Coordinate 1 ({scales::percent(p$x_var,accuracy=0.1)})")) +
@@ -679,7 +673,7 @@ ord_sites <- distance_methods %>%
   })
 
 ord_site_composite <- 
-  (ord_sites$sim$fish + ord_sites$sim$inverts + ord_sites$sim$metazoans) +#/  (ord_sites$jaccard$fish + ord_sites$jaccard$inverts + ord_sites$jaccard$metazoans)  +
+  (ord_sites$sim$fish + ord_sites$sim$inverts + ord_sites$sim$metazoans) +
   plot_layout(guides="collect") +
   plot_annotation(tag_levels = "A") & theme(plot.tag = element_text(face="bold"))
 ord_site_composite
@@ -735,7 +729,6 @@ all_models <- comm_ps %>%
       y = predict(pred,list(sites=seq(1:2000)))
     )
     
-    # slopes <- diff(predictions$y)/diff(predictions$x)
     slopes <- diff(predictions$y)
     slopes <- c(1,slopes)
     asymp <- predictions$x[slopes < 1][1]
@@ -768,11 +761,9 @@ accum_plotz <- all_models %>%
       geom_vline(xintercept=.x$asymptote,color="red") + 
       scale_color_manual(values=pal,name="Depth Zone") + 
       xlim(1,25) +
-      # ggtitle(tit) +
       xlab("Replicates") + 
       ylab("zOTUs") + 
-      theme_bw() #+
-      # theme(panel.grid = element_blank())
+      theme_bw() 
   })
 accum_composite <- 
   accum_plotz$fish + accum_plotz$inverts + accum_plotz$metazoans + 
@@ -822,8 +813,7 @@ reads_summary <-
         value = "Raw sequence reads"
       )
     s <- all_samples %>%
-      left_join(counts,by="Sample ID") #%>%
-      # bind_rows(counts %>% filter(str_detect(`Sample ID`,blank_pattern)))
+      left_join(counts,by="Sample ID")
 
     rs <- s %>% 
       mutate(
@@ -877,7 +867,6 @@ rs <- reads_summary %>%
       TRUE ~ 999
     )
   ) %>%
-  # arrange(Site,Depth,`Sample ID`)
   arrange(order,`Sample ID`) %>%
   select(-order)
 
@@ -888,7 +877,6 @@ write_ms_table(rs,path(table_dir,"mesophotic_reads_summary.csv"),"Sequencing res
 #### eDNA read counts for different categories squished together
 cat("sample:\n")
 walk2(comm_ps,names(comm_ps),~{
-  # f <- merge_samples(.x,"station")
   ss <- sample_sums(.x)
   cat(.y,": mean: ",scales::number(mean(ss),big.mark = ",")," sd: ",scales::number(sd(ss),big.mark = ","),"\n")
 })

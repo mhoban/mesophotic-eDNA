@@ -444,7 +444,7 @@ beta_pairs_composite %>%
   map(wrap_elements) %>%
   reduce(`/`) + plot_annotation(tag_levels=list(names(beta_pairs_composite)))
 
-# save the figure
+# save the simpson version of the figure
 ggsave(path(figure_dir,"mesophotic_beta_pairs.pdf"),beta_pairs_composite$sim,device=cairo_pdf,width=12,height=9,units="in")
 
 #### Figure: beta diversity heatmaps (animals)
@@ -490,7 +490,7 @@ beta_pairs_composite_animals %>%
   map(wrap_elements) %>%
   reduce(`/`) + plot_annotation(tag_levels=list(names(beta_pairs_composite_animals)))
 
-# save the figure
+# save the simpson version of the figure
 ggsave(path(figure_dir,"mesophotic_beta_pairs_animals.pdf"),beta_pairs_composite_animals$sim,device=cairo_pdf,width=12,height=6,units="in")
 
 #### Figure: cluster plots
@@ -533,7 +533,7 @@ cluster_composite %>%
   map(wrap_elements) %>%
   reduce(`/`) + 
   plot_annotation(tag_levels = list(names(cluster_composite)))
-# save the figure
+# save the simpson version of the figure
 ggsave(path(figure_dir,"mesophotic_cluster.pdf"),cluster_composite$sim,device=cairo_pdf,width=12,height=4,units="in")
 
 #### Figure: cluster plots (animals)
@@ -577,15 +577,16 @@ cluster_composite_animals %>%
   reduce(`/`) + 
   plot_annotation(tag_levels = list(names(cluster_composite)))
 
-# save the figure
+# save the simpson version of the figure
 ggsave(path(figure_dir,"mesophotic_cluster_animals.pdf"),cluster_composite_animals$sim,device=cairo_pdf,width=8,height=4,units="in")
 
 #### Figure: shallow vs deep ordinations
+depth_zones <- c("depth_zone","depth_zone45")
 ord_zone_plotz <- distance_methods %>%
   set_names() %>%
   map(~{
     dm <- .x
-    c("depth_zone","depth_zone45") %>%
+    depth_zones %>%
       set_names() %>%
       map(~{
         zone <- .x
@@ -606,27 +607,45 @@ ord_zone_plotz <- distance_methods %>%
   })
 
 # main text figure (shallow = 0-45m)
-ord_zone_composite <- 
-  (ord_zone_plotz$sim$depth_zone45$fish + ord_zone_plotz$sim$depth_zone45$inverts + ord_zone_plotz$sim$depth_zone45$metazoans) +
-  plot_layout(guides="collect") +
-  plot_annotation(tag_levels = "A") & theme(plot.tag = element_text(face="bold"))
-ord_zone_composite
-ggsave(path(figure_dir,"mesophotic_ord_shallowdeep45.pdf"),ord_zone_composite,device=cairo_pdf,width=12,height=4,units="in")
+ord_zone_composite <- ord_zone_plotz %>%
+  # distance methods
+  map(~{
+    # depth zones
+    .x %>%
+      map(~{
+        .x %>%
+          reduce(`+`) +
+          plot_layout(guides="collect") +
+          plot_annotation(tag_levels = "A") & theme(plot.tag = element_text(face="bold"))
+      })
+  })
+
+# just plot them all, you can scroll back
+ord_zone_composite %>%
+  map2(names(.),~{
+    dm <- .y
+    .x %>% map2(names(.),~{
+      zone <- .y
+      title <- str_glue("{dm}: {zone}")
+      .x %>% wrap_elements() +
+        ggtitle(title)
+    })
+  })
+
+# main text figure (shallow = 0-45m)
+# save the simpson version of the figure
+ggsave(path(figure_dir,"mesophotic_ord_shallowdeep45.pdf"),ord_zone_composite$sim$depth_zone45,device=cairo_pdf,width=12,height=4,units="in")
 
 # supplemental figure (shallow = 0-30m)
-ord_zone_composite <- 
-  (ord_zone_plotz$sim$depth_zone$fish + ord_zone_plotz$sim$depth_zone$inverts + ord_zone_plotz$sim$depth_zone$metazoans) +
-  plot_layout(guides="collect") +
-  plot_annotation(tag_levels = "A") & theme(plot.tag = element_text(face="bold"))
-ord_zone_composite
-ggsave(path(figure_dir,"mesophotic_ord_shallowdeep30.pdf"),ord_zone_composite,device=cairo_pdf,width=12,height=4,units="in")
+# save the simpson version of the figure
+ggsave(path(figure_dir,"mesophotic_ord_shallowdeep30.pdf"),ord_zone_composite$sim$depth_zone,device=cairo_pdf,width=12,height=4,units="in")
 
 #### supplemental figure: shallow vs deep ordinations for animals
 ord_zone_plotz_animals <- distance_methods %>%
   set_names() %>%
   map(~{
     dm <- .x
-    c("depth_zone","depth_zone45") %>%
+    depth_zones %>%
       set_names() %>%
       map(~{
         zone <- .x
@@ -646,17 +665,38 @@ ord_zone_plotz_animals <- distance_methods %>%
       })
   })
 
-# composite figure
-ord_zone_composite_animals <- 
-  (ord_zone_plotz_animals$sim$depth_zone45$inverts + ord_zone_plotz_animals$sim$depth_zone45$metazoans) +
-  plot_layout(guides="collect") +
-  plot_annotation(tag_levels = "A") & theme(plot.tag = element_text(face="bold"))
-ord_zone_composite_animals
-ggsave(path(figure_dir,"mesophotic_ord_shallowdeep45_animals.pdf"),ord_zone_composite_animals,device=cairo_pdf,width=8,height=4,units="in")
+# figure composite
+ord_zone_composite_animals <- ord_zone_plotz_animals %>%
+  # distance methods
+  map(~{
+    # depth zones
+    .x %>%
+      map(~{
+        .x %>%
+          reduce(`+`) +
+          plot_layout(guides="collect") +
+          plot_annotation(tag_levels = "A") & theme(plot.tag = element_text(face="bold"))
+      })
+  })
+
+# just plot them all, you can scroll back
+ord_zone_composite_animals %>%
+  map2(names(.),~{
+    dm <- .y
+    .x %>% map2(names(.),~{
+      zone <- .y
+      title <- str_glue("{dm}: {zone}")
+      .x %>% wrap_elements() +
+        ggtitle(title)
+    })
+  })
+
+# save the simpson version of the figure
+ggsave(path(figure_dir,"mesophotic_ord_shallowdeep45_animals.pdf"),ord_zone_composite_animals$sim$depth_zone45,device=cairo_pdf,width=8,height=4,units="in")
 
 
 #### Figure: depth zone ordinations
-ord_plotz <- distance_methods %>%
+ord_composite <- distance_methods %>%
   set_names() %>%
   map(~{
     dm <- .x
@@ -672,18 +712,24 @@ ord_plotz <- distance_methods %>%
           theme(legend.position = "right") +
           guides(color="none")
         p$plot
-      })
+      }) %>%
+      reduce(`+`) +
+      plot_layout(guides="collect") +
+      plot_annotation(tag_levels = "A") &
+      theme(plot.tag = element_text(face="bold"))
   })
-ord_composite <- 
-  (ord_plotz$sim$fish + ord_plotz$sim$inverts + ord_plotz$sim$metazoans) +
-  plot_layout(guides="collect") +
-  plot_annotation(tag_levels = "A") & theme(plot.tag = element_text(face="bold"))
-ord_composite
 
-ggsave(path(figure_dir,"mesophotic_ord_samples.pdf"),ord_composite,device=cairo_pdf,width=12,height=4,units="in")
+# show them in a big grid
+ord_composite %>%
+  map(wrap_elements) %>%
+  reduce(`/`) + 
+  plot_annotation(tag_levels=list(names(ord_composite)))
+
+# save the simpson version of the figure
+ggsave(path(figure_dir,"mesophotic_ord_samples.pdf"),ord_composite$sim,device=cairo_pdf,width=12,height=4,units="in")
 
 ### Supplemental figure: depth zone ordinations for animals
-ord_plotz_animals <- distance_methods %>%
+ord_composite_animals <- distance_methods %>%
   set_names() %>%
   map(~{
     dm <- .x
@@ -699,15 +745,21 @@ ord_plotz_animals <- distance_methods %>%
           theme(legend.position = "right") +
           guides(color="none")
         p$plot
-      })
+      }) %>%
+      reduce(`+`) +
+      plot_layout(guides="collect") +
+      plot_annotation(tag_levels = "A") &
+      theme(plot.tag = element_text(face="bold"))
   })
-ord_composite_animals <- 
-  (ord_plotz_animals$sim$inverts + ord_plotz_animals$sim$metazoans) +
-  plot_layout(guides="collect") +
-  plot_annotation(tag_levels = "A") & theme(plot.tag = element_text(face="bold"))
-ord_composite_animals
 
-ggsave(path(figure_dir,"mesophotic_ord_samples_animals.pdf"),ord_composite_animals,device=cairo_pdf,width=8,height=4,units="in")
+# show them in a big grid
+ord_composite_animals %>%
+  map(wrap_elements) %>%
+  reduce(`/`) + 
+  plot_annotation(tag_levels=list(names(ord_composite)))
+
+# save the simpson version of the figure
+ggsave(path(figure_dir,"mesophotic_ord_samples_animals.pdf"),ord_composite_animals$sim,device=cairo_pdf,width=8,height=4,units="in")
 
 #### Figure: fish depth distributions vs eDNA detections
 fish <- communities$fish$raw %>%

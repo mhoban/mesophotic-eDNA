@@ -322,14 +322,6 @@ communities <- targets %>%
             ) %>%
             select(domain,kingdom:species,OTU=representative,id_method)
           
-          # filter out entries where no taxonomy is assigned
-          if (drop_unknown) {
-            unid <- insect_taxa %>%
-              filter(across(domain:species,is.na)) %>% 
-              pull(OTU)
-            insect_taxa <- insect_taxa %>%
-              filter(!OTU %in% unid)
-          }
           unassigned <- unassigned %>%
             left_join(insect_taxa,by="OTU") %>%
             mutate(numberOfUnq_BlastHits=0) %>%
@@ -344,6 +336,16 @@ communities <- targets %>%
         
         otu_table <- bind_rows(otu_table,unassigned %>% select(all_of(names(otu_table)))) 
       }
+      # filter out entries where no taxonomy is assigned
+      if (drop_unknown) {
+        message("dropping unidentified taxa")
+        unid <- otu_table  %>%
+          filter(across(domain:species,is.na)) %>% 
+          pull(OTU)
+        otu_table <- otu_table %>%
+          filter(!OTU %in% unid)
+      }
+      
       otu_table <- otu_table %>%
           rowwise() %>%
           mutate(

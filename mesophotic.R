@@ -376,10 +376,17 @@ figure_dir <- "~/projects/dissertation/manuscript/figures"
 
 #### Figure: beta diversity heatmaps (everything)
 # map distance types to pretty names
-beta_title_map <- c(
-  beta.sim = "Turnover",
-  beta.sne = "Nestedness",
-  beta.sor = "Overall\n(Sørensen)"
+beta_title_map <- list(
+  "sim" = c(
+    beta.sim = "Turnover",
+    beta.sne = "Nestedness",
+    beta.sor = "Overall\n(Sørensen)"
+  ), 
+  "jaccard" = c(
+    beta.jtu = "Turnover",
+    beta.jne = "Nestedness",
+    beta.jac = "Overall\n(Jaccard)"
+  )
 )
 beta_label_map <- list(
   fish = c("A","B","C"),
@@ -387,37 +394,48 @@ beta_label_map <- list(
   metazoans = c("G","H","I")
 )
 
+beta_map <- list(
+  factor_levels = list(
+    "jaccard" = c("beta.jac","beta.jtu","beta.jne"),
+    "sim" = c("beta.sor","beta.sim","beta.sne")
+  )
+)
+
 # create composite figure of all beta diversity heatmaps
-beta_pairs_composite <- beta_pairs$sim %>%
+beta_pairs_composite <- beta_pairs %>%
   map2(names(.),~{
-    marker <- .y
-    wrap_elements(
-      .x %>%
-        mutate(
-          measurement = factor(measurement,levels=c("beta.sor","beta.sim","beta.sne")),
-          depth1 = fct_rev(depth1)
-        ) %>%
-        group_by(measurement) %>%
-        group_map(~{
-          measurement <- as.character(.y$measurement)
-          ggplot(.x) + 
-            geom_tile(aes(x=depth2,y=depth1,fill=dist)) +
-            scale_fill_viridis(option="inferno",name=beta_title_map[measurement]) +
-            scale_x_discrete(position="top") + 
-            theme_bw() +
-            theme(
-              axis.text.x = element_text(angle=25,vjust=1,hjust=0),
-              panel.grid = element_blank()
-            ) +
-            labs(x="Depth zone",y="Depth zone")
-        }) %>%
-        reduce(`+`) +
-        plot_annotation(tag_levels = list(beta_label_map[[marker]])) & theme(plot.tag = element_text(face="bold"))
-     ) 
-  }) %>%
-  reduce(`/`) 
-beta_pairs_composite
-ggsave(path(figure_dir,"mesophotic_beta_pairs.pdf"),beta_pairs_composite,device=cairo_pdf,width=12,height=9,units="in")
+    dm <- .y 
+    .x %>%
+      map2(names(.),~{
+        marker <- .y
+        wrap_elements(
+          .x %>%
+            mutate(
+              measurement = factor(measurement,levels=beta_map$factor_levels[[dm]]),
+              depth1 = fct_rev(depth1)
+            ) %>%
+            group_by(measurement) %>%
+            group_map(~{
+              measurement <- as.character(.y$measurement)
+              ggplot(.x) + 
+                geom_tile(aes(x=depth2,y=depth1,fill=dist)) +
+                scale_fill_viridis(option="inferno",name=beta_title_map[[dm]][measurement]) +
+                scale_x_discrete(position="top") + 
+                theme_bw() +
+                theme(
+                  axis.text.x = element_text(angle=25,vjust=1,hjust=0),
+                  panel.grid = element_blank()
+                ) +
+                labs(x="Depth zone",y="Depth zone")
+            }) %>%
+            reduce(`+`) +
+            plot_annotation(tag_levels = list(beta_label_map[[marker]])) & theme(plot.tag = element_text(face="bold"))
+        ) 
+      }) %>%
+      reduce(`/`) 
+  })
+
+ggsave(path(figure_dir,"mesophotic_beta_pairs.pdf"),beta_pairs_composite$sim,device=cairo_pdf,width=12,height=9,units="in")
 
 #### Figure: beta diversity heatmaps (animals)
 beta_label_map <- list(

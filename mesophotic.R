@@ -762,16 +762,20 @@ ord_composite_animals %>%
 ggsave(path(figure_dir,"mesophotic_ord_samples_animals.pdf"),ord_composite_animals$sim,device=cairo_pdf,width=8,height=4,units="in")
 
 #### Figure: fish depth distributions vs eDNA detections
+
+# get composite fish data / taxonomy grid
+# use the raw data so we don't miss anything
 fish <- communities$fish$raw %>%
   inner_join(communities$fish$tax_data,by="OTU") %>%
   select(domain:species,OTU,matches(sample_pattern)) %>%
   filter(species != "dropped" & !is.na(species))
 
+# pull species names
 fish_species <- fish %>%
   distinct(species) %>%
   pull(species)
 
-# make a depth detection summary
+# join fish detection depths with fishbase depth ranges
 detected_depth <- fish %>%
   filter(species %in% fish_species) %>%
   select(family,species,matches(sample_pattern)) %>%
@@ -787,6 +791,12 @@ detected_depth <- fish %>%
   filter(reads > 0) %>%
   mutate(deeper = depth > fb_deep)
 
+# let's do the little statistical tests that Muff et al 2022 did
+
+## t-test to compare number of reads inside and outside of published depth zone
+## this was to test for "abundant center" effect. we want the reads to be the same
+## inside and outside of their zone, so we're not just picking up a stray, is the idea
+
 # get the data for the t-test
 deeper <- detected_depth %>%
   filter(deeper == TRUE) %>%
@@ -795,10 +805,14 @@ shallower <- detected_depth %>%
   filter(deeper == FALSE) %>%
   pull(reads)
 
-# do the t-test
-# let's do the little statistical tests that Muff et al 2022 did
+# do the t-test as a welch two sample kind
 t.test(deeper,shallower,paired=FALSE,alternative="two.sided",var.equal = FALSE)
 
+## here we do a kendall rank correlation test
+## testing the relationship between read count and depth detection difference
+## according to Muff & pals, a significant difference might indicate a niche shift
+
+# assemble data for the correlation test
 dd <- detected_depth %>%
   filter(depth > fb_deep | depth < fb_shallow) %>%
   mutate(
@@ -808,9 +822,12 @@ dd <- detected_depth %>%
     )
   )
 
+# kendall rank correlation test
 cor.test(dd$depth_diff,dd$reads,method="kendall",exact = F)
 
 # finish making the depth detection summary
+# taking only detections with more than 10 reads
+# keeping only species with deepest depth <150m
 detected_depth <- detected_depth %>%
   filter(reads >= 10) %>%
   group_by(family,species,depth,fb_deep,fb_shallow) %>%
@@ -829,6 +846,10 @@ detected_depth <- detected_depth %>%
   # select(all_of(names(dd)))
   
 # what is the most number of observations for a species?
+# we need this to plot the depth ranges elegantly
+# since it'll plot the line range as many time as there
+# are observerations, we just duplicate the observations
+# for whoever doesn't have the max number
 most <- detected_depth %>%
   count(species) %>% 
   pull(n) %>% 
@@ -843,6 +864,7 @@ detected_depth <- detected_depth %>%
     grp <- .x
     to_add <- most-nrow(grp)
     if (to_add > 0) {
+      # here we duplicate the row *to_add* times but blank out the reads 
       add <- map_dfr(seq(to_add),~grp %>% slice(1) %>% mutate(reads=NA))
       grp <- grp %>%
         bind_rows(add)

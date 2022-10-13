@@ -398,6 +398,10 @@ beta_map <- list(
   factor_levels = list(
     "jaccard" = c("beta.jac","beta.jtu","beta.jne"),
     "sim" = c("beta.sor","beta.sim","beta.sne")
+  ),
+  measurement = c(
+    "sim" = "beta.sim",
+    "jaccard" = "beta.jac" 
   )
 )
 
@@ -435,6 +439,12 @@ beta_pairs_composite <- beta_pairs %>%
       reduce(`/`) 
   })
 
+# show all the plots in a giant grid
+beta_pairs_composite %>%
+  map(wrap_elements) %>%
+  reduce(`/`) + plot_annotation(tag_levels=list(names(beta_pairs_composite)))
+
+# save the figure
 ggsave(path(figure_dir,"mesophotic_beta_pairs.pdf"),beta_pairs_composite$sim,device=cairo_pdf,width=12,height=9,units="in")
 
 #### Figure: beta diversity heatmaps (animals)
@@ -474,77 +484,101 @@ beta_pairs_composite_animals <- beta_pairs_animals %>%
       }) %>%
       reduce(`/`) 
   })
-beta_pairs_composite_animals
+
+# show all the plots in a giant grid
+beta_pairs_composite_animals %>%
+  map(wrap_elements) %>%
+  reduce(`/`) + plot_annotation(tag_levels=list(names(beta_pairs_composite_animals)))
+
+# save the figure
 ggsave(path(figure_dir,"mesophotic_beta_pairs_animals.pdf"),beta_pairs_composite_animals$sim,device=cairo_pdf,width=12,height=6,units="in")
 
-
 #### Figure: cluster plots
-cluster_plotz <- beta_pairs$sim %>%
+cluster_composite <- beta_pairs %>%
   map2(names(.),~{
-    dd <- .x %>%
-      filter(measurement == "beta.sim") %>%
-      bind_rows(
-        tibble(
-          depth1=factor(levels(.$depth1),levels=levels(.$depth1)),
-          depth2=factor(levels(.$depth1),levels=levels(.$depth1)),
-          dist = 0,
-          sd = 0,
-          measurement = "beta.sim"
-        ) 
-      ) %>%
-      arrange(depth1,depth2) %>%
-      pivot_wider(-c(sd,measurement),names_from=depth2,values_from=dist) %>%
-      column_to_rownames("depth1") %>% 
-      as.matrix() %>% 
-      as.dist()
-    
-    title <- plot_text2[.y]
-    labels(dd) <- str_c(labels(dd)," ")
-    ggplot(as.dendrogram(hclust(dd),hang=0.5)) +
-      theme(
-        plot.caption = element_text(hjust=0.5,size=14)
-      ) + 
-      expand_limits(y=-0.25)
+    dm <- .y 
+    .x %>%
+      map2(names(.),~{
+        dd <- .x %>%
+          filter(measurement == beta_map$measurement[[dm]]) %>%
+          bind_rows(
+            tibble(
+              depth1=factor(levels(.$depth1),levels=levels(.$depth1)),
+              depth2=factor(levels(.$depth1),levels=levels(.$depth1)),
+              dist = 0,
+              sd = 0,
+              measurement = beta_map$measurement[[dm]]
+            ) 
+          ) %>%
+          arrange(depth1,depth2) %>%
+          pivot_wider(-c(sd,measurement),names_from=depth2,values_from=dist) %>%
+          column_to_rownames("depth1") %>% 
+          as.matrix() %>% 
+          as.dist()
+        title <- plot_text2[.y]
+        labels(dd) <- str_c(labels(dd)," ")
+        ggplot(as.dendrogram(hclust(dd),hang=0.5)) +
+          theme(
+            plot.caption = element_text(hjust=0.5,size=14)
+          ) + 
+          expand_limits(y=-0.25)
+      }) %>%
+      reduce(`+`) + 
+      plot_annotation(tag_levels="A") &
+      theme(plot.tag = element_text(face="bold"))
   })
-
-cluster_composite <- (cluster_plotz$fish + cluster_plotz$inverts + cluster_plotz$metazoans) +
-  plot_annotation(tag_levels="A") & theme(plot.tag = element_text(face="bold"))
-cluster_composite
-ggsave(path(figure_dir,"mesophotic_cluster.pdf"),cluster_composite,device=cairo_pdf,width=12,height=4,units="in")
+  
+# show all the plots in a giant grid
+cluster_composite %>%
+  map(wrap_elements) %>%
+  reduce(`/`) + 
+  plot_annotation(tag_levels = list(names(cluster_composite)))
+# save the figure
+ggsave(path(figure_dir,"mesophotic_cluster.pdf"),cluster_composite$sim,device=cairo_pdf,width=12,height=4,units="in")
 
 #### Figure: cluster plots (animals)
-aminal_cluster_plotz <- beta_pairs_animals$sim %>%
+cluster_composite_animals <- beta_pairs_animals %>%
   map2(names(.),~{
-    dd <- .x %>%
-      filter(measurement == "beta.sim") %>%
-      bind_rows(
-        tibble(
-          depth1=factor(levels(.$depth1),levels=levels(.$depth1)),
-          depth2=factor(levels(.$depth1),levels=levels(.$depth1)),
-          dist = 0,
-          sd = 0,
-          measurement = "beta.sim"
-        ) 
-      ) %>%
-      arrange(depth1,depth2) %>%
-      pivot_wider(-c(sd,measurement),names_from=depth2,values_from=dist) %>%
-      column_to_rownames("depth1") %>% 
-      as.matrix() %>% 
-      as.dist()
-    
-    title <- plot_text2[.y]
-    labels(dd) <- str_c(labels(dd)," ")
-    ggplot(as.dendrogram(hclust(dd),hang=0.5)) +
-      theme(
-        plot.caption = element_text(hjust=0.5,size=14)
-      ) + 
-      expand_limits(y=-0.25)
+    dm <- .y 
+    .x %>%
+      map2(names(.),~{
+        dd <- .x %>%
+          filter(measurement == beta_map$measurement[[dm]]) %>%
+          bind_rows(
+            tibble(
+              depth1=factor(levels(.$depth1),levels=levels(.$depth1)),
+              depth2=factor(levels(.$depth1),levels=levels(.$depth1)),
+              dist = 0,
+              sd = 0,
+              measurement = beta_map$measurement[[dm]]
+            ) 
+          ) %>%
+          arrange(depth1,depth2) %>%
+          pivot_wider(-c(sd,measurement),names_from=depth2,values_from=dist) %>%
+          column_to_rownames("depth1") %>% 
+          as.matrix() %>% 
+          as.dist()
+        title <- plot_text2[.y]
+        labels(dd) <- str_c(labels(dd)," ")
+        ggplot(as.dendrogram(hclust(dd),hang=0.5)) +
+          theme(
+            plot.caption = element_text(hjust=0.5,size=14)
+          ) + 
+          expand_limits(y=-0.25)
+      }) %>%
+      reduce(`+`) + 
+      plot_annotation(tag_levels="A") &
+      theme(plot.tag = element_text(face="bold"))
   })
+  
+# show all the plots in a giant grid
+cluster_composite_animals %>%
+  map(wrap_elements) %>%
+  reduce(`/`) + 
+  plot_annotation(tag_levels = list(names(cluster_composite)))
 
-aminal_cluster_composite <- (aminal_cluster_plotz$inverts + aminal_cluster_plotz$metazoans) +
-  plot_annotation(tag_levels="A") & theme(plot.tag = element_text(face="bold"))
-aminal_cluster_composite
-ggsave(path(figure_dir,"mesophotic_cluster_animals.pdf"),aminal_cluster_composite,device=cairo_pdf,width=8,height=4,units="in")
+# save the figure
+ggsave(path(figure_dir,"mesophotic_cluster_animals.pdf"),cluster_composite_animals$sim,device=cairo_pdf,width=8,height=4,units="in")
 
 #### Figure: shallow vs deep ordinations
 ord_zone_plotz <- distance_methods %>%

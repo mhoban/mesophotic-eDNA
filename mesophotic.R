@@ -442,36 +442,40 @@ beta_label_map <- list(
   inverts = c("A","B","C"),
   metazoans = c("D","E","F")
 )
-beta_pairs_composite_animals <- beta_pairs_animals$sim %>%
+beta_pairs_composite_animals <- beta_pairs_animals %>%
   map2(names(.),~{
-    marker <- .y
-    wrap_elements(
-      .x %>%
-        mutate(
-          measurement = factor(measurement,levels=c("beta.sor","beta.sim","beta.sne")),
-          depth1 = fct_rev(depth1)
-        ) %>%
-        group_by(measurement) %>%
-        group_map(~{
-          measurement <- as.character(.y$measurement)
-          ggplot(.x) + 
-            geom_tile(aes(x=depth2,y=depth1,fill=dist)) +
-            scale_fill_viridis(option="inferno",name=beta_title_map[measurement]) +
-            scale_x_discrete(position="top") + 
-            theme_bw() +
-            theme(
-              axis.text.x = element_text(angle=25,vjust=1,hjust=0),
-              panel.grid = element_blank()
-            ) +
-            labs(x="Depth zone",y="Depth zone")
-        }) %>%
-        reduce(`+`) +
-        plot_annotation(tag_levels = list(beta_label_map[[marker]])) & theme(plot.tag = element_text(face="bold"))
-     ) 
-  }) %>%
-  reduce(`/`) 
+    dm <- .y 
+    .x %>%
+      map2(names(.),~{
+        marker <- .y
+        wrap_elements(
+          .x %>%
+            mutate(
+              measurement = factor(measurement,levels=beta_map$factor_levels[[dm]]),
+              depth1 = fct_rev(depth1)
+            ) %>%
+            group_by(measurement) %>%
+            group_map(~{
+              measurement <- as.character(.y$measurement)
+              ggplot(.x) + 
+                geom_tile(aes(x=depth2,y=depth1,fill=dist)) +
+                scale_fill_viridis(option="inferno",name=beta_title_map[[dm]][measurement]) +
+                scale_x_discrete(position="top") + 
+                theme_bw() +
+                theme(
+                  axis.text.x = element_text(angle=25,vjust=1,hjust=0),
+                  panel.grid = element_blank()
+                ) +
+                labs(x="Depth zone",y="Depth zone")
+            }) %>%
+            reduce(`+`) +
+            plot_annotation(tag_levels = list(beta_label_map[[marker]])) & theme(plot.tag = element_text(face="bold"))
+        ) 
+      }) %>%
+      reduce(`/`) 
+  })
 beta_pairs_composite_animals
-ggsave(path(figure_dir,"mesophotic_beta_pairs_animals.pdf"),beta_pairs_composite_animals,device=cairo_pdf,width=12,height=6,units="in")
+ggsave(path(figure_dir,"mesophotic_beta_pairs_animals.pdf"),beta_pairs_composite_animals$sim,device=cairo_pdf,width=12,height=6,units="in")
 
 
 #### Figure: cluster plots

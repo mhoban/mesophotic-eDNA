@@ -896,7 +896,7 @@ depth_plotz
 ggsave(path(figure_dir,"mesophotic_fish_depth.pdf"),depth_plotz,device=cairo_pdf,width=12,height=10,units="in")
 
 #### Supplemental Figure: ordinations by site
-ord_sites <- distance_methods %>%
+ord_sites_composite <- distance_methods %>%
   set_names() %>%
   map(~{
     dm <- .x
@@ -911,25 +911,29 @@ ord_sites <- distance_methods %>%
           ylab(str_glue("Principle Coordinate 2 ({scales::percent(p$y_var,accuracy=0.1)})")) +
           theme(legend.position = "right")
         p$plot
-      })
+      }) %>%
+      reduce(`+`) +
+      plot_layout(guides="collect") +
+      plot_annotation(tag_levels = "A") &
+      theme(plot.tag = element_text(face="bold"))
   })
 
-ord_site_composite <- 
-  (ord_sites$sim$fish + ord_sites$sim$inverts + ord_sites$sim$metazoans) +
-  plot_layout(guides="collect") +
-  plot_annotation(tag_levels = "A") & theme(plot.tag = element_text(face="bold"))
-ord_site_composite
-ggsave(path(figure_dir,"mesophotic_ord_sites.pdf"),ord_site_composite,device=cairo_pdf,width=12,height=4,units="in")
+# show them in a big grid
+ord_sites_composite %>%
+  map(wrap_elements) %>%
+  reduce(`/`) + 
+  plot_annotation(tag_levels=list(names(ord_sites_composite)))
 
-ord_site_composite_jaccard <- 
-  (ord_sites$jaccard$fish + ord_sites$jaccard$inverts + ord_sites$jaccard$metazoans) +
-  plot_layout(guides="collect") +
-  plot_annotation(tag_levels = "A") & theme(plot.tag = element_text(face="bold"))
-ord_site_composite_jaccard
-ggsave(path(figure_dir,"mesophotic_ord_sites_jaccard.pdf"),ord_site_composite_jaccard,device=cairo_pdf,width=12,height=4,units="in")
+# save the simpson version
+ggsave(path(figure_dir,"mesophotic_ord_sites.pdf"),ord_sites_composite$sim,device=cairo_pdf,width=12,height=4,units="in")
+
+# save the jaccard version
+# ggsave(path(figure_dir,"mesophotic_ord_sites_jaccard.pdf"),ord_sites_composite$jaccard,device=cairo_pdf,width=12,height=4,units="in")
 
 #### Supplemental Figure: species accumulations
 sup <- function(...) suppressWarnings(suppressMessages(...))
+
+# test species accumulation against various models
 all_models <- comm_ps %>%
   map2(names(.),~{
     sd <- sample_tibble(.x)
@@ -938,11 +942,14 @@ all_models <- comm_ps %>%
       select(sample,depth_f,everything()) %>%
       nest(otu_table=-depth_f) %>%
       mutate(otu_table = map(otu_table,~{
+        # here we use specaccum to permute a bunch of species accuulations
+        # for this subset of the data (depth zone)
         sup(curve <- .x %>%
               column_to_rownames("sample") %>% 
               as("matrix") %>%
               decostand("pa",margin=NULL) %>%
               specaccum(method="random",permutations=1000))
+        # make the result into a data frame
         as_tibble(curve$perm) %>%
           mutate(sites=row_number()) %>%
           select(sites,everything()) %>%
@@ -951,40 +958,47 @@ all_models <- comm_ps %>%
       })) %>%
       unnest(otu_table)
     
-    try_mod <- function(e) {
-      tryCatch(
-        e,
-        error = function(e) NULL
-      )
-    }
-    
+    # test each model against the permuted accumulation data
     modls <- list(
       asymp = nls(richness ~ SSasymp(sites, Asym, R0, lrc),  data=specs),
       gompertz = nls(richness ~ SSgompertz(sites, Asym,  xmid, scal), data=specs),
       `michaelis-menten` = nls(richness ~  SSmicmen(sites, Vm, K), data=specs),
       logis = nls(richness ~ SSlogis(sites,  Asym, xmid, scal), data=specs) 
     )
-    AICs <- sort(map_dbl(modls,~{
-      if (!is_null(.x))
-        AIC(.x)
-      else
-        Inf
-    }))
+    # get the best AIC value
+    AICs <- modls %>%
+      map_dbl(~{
+        if (!is_null(.x))
+          AIC(.x)
+        else
+          Inf
+      }) %>%
+      sort()
+    
+    # best model's name
     best_mod <- names(AICs)[1]
+    # the best model itself
     pred <- modls[[best_mod]]
+    # generate some data with the model
     predictions <- tibble(
       x = seq(1:2000),
       y = predict(pred,list(sites=seq(1:2000)))
     )
     
+    # find where the slope goes below 1
     slopes <- diff(predictions$y)
     slopes <- c(1,slopes)
+    # this is our predicted "asymptote", but really it's just
+    # where les than one more species gets added per replicate
     asymp <- predictions$x[slopes < 1][1]
+    # predicated number of taxa at "asymptote"
     asymp_taxa <- predictions$y[slopes < 1][1]
+    # how many would we expect with 6 replicates?
     taxa_6 <- predictions$y[6]
+    # what's the proportion of total at "asymptote"?
     percent_taxa <- taxa_6/asymp_taxa
     
-    
+    # provide some output
     cat("Community:",.y,"\n")
     cat("Best model:",best_mod,"\n")
     cat("Asymptote at:",asymp,"replicates\n")
@@ -992,10 +1006,12 @@ all_models <- comm_ps %>%
     cat("Taxa at 6 replicates:",taxa_6,"\n")
     cat("Percent of taxa represented by 6 replicates:",scales::percent(percent_taxa),"\n")
     cat("\n\n")
+    # return all the data as a list
     list(models = modls, best_model = best_mod, predictions = predictions, asymptote=asymp, asymptote_taxa=asymp_taxa, our_taxa = taxa_6, accum_data=specs)
   })
 
-accum_plotz <- all_models %>%
+# make composite plot from the accumulation data
+accum_composite <- all_models %>%
   map2(names(.),~{
     d <- .x$accum_data %>%
       group_by(depth_f,sites) %>%
@@ -1003,20 +1019,26 @@ accum_plotz <- all_models %>%
     p <- .x$predictions
     tit <- plot_text2[.y]
     ggplot() + 
+      # plot lines with error bars rather than every permuted point
+      # these are the accumulation curves for each depth zone
       geom_line(data=d,aes(x=sites,y=richness,color=depth_f)) + 
       geom_errorbar(data=d,aes(x=sites,ymin=richness-sd,ymax=richness+sd),width=0.5) + 
+      # this is the best-fit model line
       geom_line(data=p,aes(x=x,y=y),color="blue",size=1.1) + 
+      # this marks the "ideal" replication level
       geom_vline(xintercept=.x$asymptote,color="red") + 
       scale_color_manual(values=pal,name="Depth Zone") + 
+      # keep us within a reasonable range
       xlim(1,25) +
       xlab("Replicates") + 
       ylab("zOTUs") + 
       theme_bw() 
-  })
-accum_composite <- 
-  accum_plotz$fish + accum_plotz$inverts + accum_plotz$metazoans + 
+  }) %>%
+  reduce(`+`) + 
   plot_layout(guides="collect") +
-  plot_annotation(tag_levels = "A") & theme(plot.tag = element_text(face="bold"))
+  plot_annotation(tag_levels = "A") &
+  theme(plot.tag = element_text(face="bold"))
+
 accum_composite
 ggsave(path(figure_dir,"mesophotic_accum.pdf"),accum_composite,device=cairo_pdf,width=12,height=4,units="in")
 
@@ -1067,8 +1089,7 @@ venn_composite
 ggsave(path(figure_dir,"mesophotic_venn.pdf"),venn_composite,device=cairo_pdf,width=12,height=3.5,units="in")
 
 ### supplemental figure: 16S zotu upset plot
-`
-# function to make an upset plot from a presence-absen`ce matrix
+# function to make an upset plot from a presence-absence matrix
 # of category occurrences 
 plot_upset <- function(dataset,
                        name_column,
@@ -1311,6 +1332,7 @@ anova_table %>%
 all_samples <- sample_data %>%
   select(`Sample ID` = id,substrate,station_grouping,depth_f)
 
+# normalized data
 normed <- comm_ps %>%
   map2_dfr(names(.),~{
     otu_tibble(.x) %>%
@@ -1320,6 +1342,7 @@ normed <- comm_ps %>%
       mutate(Assay=plot_text[.y])
   })
 
+# build summary table of eDNA reads across samples, etc.
 reads_summary <- 
   communities %>%
   map2_dfr(names(.),~{
@@ -1327,13 +1350,11 @@ reads_summary <-
       filter(description == .y) %>%
       pull(gene)
     
-    counts <- enframe(
-        .x$unfiltered %>%
-          select(where(is.numeric),-matches("Blast")) %>%
-          colSums(),
-        name = "Sample ID",
-        value = "Sequence reads"
-      )
+    counts <- .x$unfiltered %>%
+      select(where(is.numeric),-matches("Blast")) %>%
+      colSums() %>%
+      enframe(name = "Sample ID", value = "Sequence reads")
+    
     s <- all_samples %>%
       left_join(counts,by="Sample ID")
 
@@ -1392,6 +1413,7 @@ rs <- reads_summary %>%
   arrange(order,`Sample ID`) %>%
   select(-order,-starts_with("Normalized"))
 
+# write reads summary to manuscript tables directory
 write_ms_table(rs,path(table_dir,"mesophotic_reads_summary.csv"),"Sequencing results for mesophotic eDNA samples across assay types",na="",bold_header = TRUE)
 
 # numbers reported in the text --------------------------------------------
@@ -1500,15 +1522,3 @@ itable <- indicators %>%
   mutate(Species = str_c("*",Species,"*"))
 itable
 write_ms_table(itable,path(table_dir,"mesophotic_indicators.csv"),caption = "Significant indicator species (*IndVal*) analysis results",na="",bold_header = TRUE)
-# indval_shallowdeep <- comm_ps %>%
-#   map(get_indicators,variable="depth_zone45")
-# # do indicator analysis for individual depth zones
-# indval_depthzone <- comm_ps %>%
-#   map(get_indicators,variable="depth_f")
-# ## animals
-# # do indicator analysis for deep v shallow
-# indval_shallowdeep_animals <- animals %>%
-#   map(get_indicators,variable="depth_zone45")
-# # do indicator analysis for individual depth zones
-# indval_depthzone_animals <- animals %>%
-#   map(get_indicators,variable="depth_f")

@@ -316,7 +316,7 @@ anovas <- distance_methods %>%
       map2(names(.),~{
         perm <- 9999
         sd <- sample_tibble(.x)
-        dd <- distance(.x,method=dm)
+        dd <- distance(.x,method=dm,binary=TRUE)
         list(
           depth_zone = adonis(dd ~ depth_zone, data=sd, permutations=perm),
           depth_zone45 = adonis(dd ~ depth_zone45, data=sd, permutations=perm),
@@ -334,7 +334,7 @@ animal_anovas <- distance_methods %>%
       map2(names(.),~{
         perm <- 9999
         sd <- sample_tibble(.x)
-        dd <- distance(.x,method=dm)
+        dd <- distance(.x,method=dm,binary=TRUE)
         list(
           depth_zone = adonis(dd ~ depth_zone, data=sd, permutations=perm),
           depth_zone45 = adonis(dd ~ depth_zone45, data=sd, permutations=perm),

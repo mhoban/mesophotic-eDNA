@@ -93,9 +93,9 @@ otu_tibble <- function(ps, rownames = 'sample') {
   as_tibble(as(otu_table(ps),'matrix'),rownames=rownames)
 }
 
-plot_betadisp <- function(ps, group, method="jaccard", list=FALSE, expand=FALSE,...) {
+plot_betadisp <- function(ps, group, method="jaccard", list=FALSE, expand=FALSE,binary=TRUE,...) {
   # dd <- vdist(otu_table(ps),method=method)
-  dd <- distance(ps,method=method)
+  dd <- distance(ps,method=method,binary=binary)
   sd <- sample_tibble(ps,sid="sample")
   bds <- betadisper(dd,group = sd %>% pull(all_of(group)),...)
   sco <- scores(bds)

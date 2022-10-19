@@ -1274,6 +1274,7 @@ upset_data <- comm_ps %>%
       ungroup()
   })
 
+
 upset_plotz <- upset_data %>%
   map(~{
     .x %>%
@@ -1282,12 +1283,13 @@ upset_plotz <- upset_data %>%
                  bar_lab="Shared zOTUs",
                  sidebar_lab="zOTUs detected",
                  label_side_bars = TRUE,
-                 # label_top_bars = TRUE,
+                 label_top_bars = TRUE,
                  group_palette = pal,
                  intersects = 30,
                  dot_size = 6,
                  line_size=2)
   })
+
 
 
 upset_composite <- upset_plotz %>%
@@ -1296,6 +1298,8 @@ upset_composite <- upset_plotz %>%
   plot_annotation(tag_levels = "A") & theme(plot.tag = element_text(face="bold"))
 upset_composite 
 # upset_plotz$fish
+
+ggsave(path(figure_dir,"mesophotic_fish_upset.pdf"),upset_plotz$fish,device=cairo_pdf,width=12,height=9,units="in")
 
 ggsave(path(figure_dir,"mesophotic_upset.pdf"),upset_composite,device=cairo_pdf,width=9,height=14,units="in")
 
@@ -1522,3 +1526,61 @@ itable <- indicators %>%
   mutate(Species = str_c("*",Species,"*"))
 itable
 write_ms_table(itable,path(table_dir,"mesophotic_indicators.csv"),caption = "Significant indicator species (*IndVal*) analysis results",na="",bold_header = TRUE)
+
+
+#### CTD data processing, for mixed-layer depth calculations
+# calculate mixed-layer depth from a data frame using a threshold 
+# based on the method of de Boyer Montégut et al., 2004
+mld <- function(dataset,depth,variable,threshold,ref=10)
+{
+  # get a temperature delta relative to the minimum depth/pressure
+  data <- dataset %>% select({{depth}},{{variable}}) %>%
+    filter({{depth}} >= ref) %>%
+    mutate( delta = abs(unique({{variable}}[{{depth}}==min(abs({{depth}}))]) - {{variable}}) ) 
+  
+  threshold <- abs(threshold)
+  
+  # find MLD
+  # if(any(data$delta>=threshold)) {
+    data %>%
+      filter(delta >= threshold) %>%
+      slice(1) %>%
+      pull({{depth}})
+  # } else { 
+  #   return(NA)
+  # }
+}
+
+# convert pressure to depth (dbar), based on sampling latitude
+p2d <- function(p,lat) {
+  x <- sin(lat/57.29578)
+  x2 <- x^2
+  gr <- 9.780318*(1.0+(5.2788e-3+2.36e-5*x2)*x2) + 1.092e-6*p
+  d <- (((-1.82e-15*p+2.279e-10)*p-2.2512e-5)*p+9.72659)*p
+  return(d/gr)
+}
+
+cast_lat <- 22.75 # station ALOHA CTD cast latitude
+# get data from HOT cruise 314 (CTD averages for the week of 08-03-2019)
+url <- "https://hahana.soest.hawaii.edu/FTP/hot/ctd/aloha_mean/hot314.mn"
+# url <- "https://hahana.soest.hawaii.edu/FTP/hot/ctd/aloha_mean/hot315.mn"
+ctd <- read_table(url,skip = 1,col_names = c("pressure","temp","sal","o2","trans","chloro","casts","p_temp","p_density")) %>%
+  mutate(depth=p2d(pressure,cast_lat))  #%>%
+  # filter(pressure>10)
+
+(mld <- castr::mld(ctd$p_density,ctd$depth))
+
+d <- clined(ctd$temp)
+ctd$temp[d]
+
+(thermocline <- clined(ctd$temp,ctd$depth))
+(pycnocline <- clined(ctd$p_density,ctd$depth))
+
+(mean_cline <- mean(c(thermocline,pycnocline)))
+
+ggplot(ctd,aes(y=depth)) + 
+  geom_path(aes(x=temp),color="red") + 
+  geom_path(aes(x=p_density),color="black") + 
+  scale_y_reverse(limits=c(200,0))
+
+

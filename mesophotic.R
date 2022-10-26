@@ -232,7 +232,7 @@ beta_pairs <- distance_methods %>%
         sd <- sample_tibble(.x)
         .x %>%
           beta_wrapper(method=dm) %>%
-          map2_dfr(names(.),~{
+          imap_dfr(~{
             .x %>%
               as("matrix") %>%
               as_tibble(m,rownames="row") %>%
@@ -261,7 +261,7 @@ beta_pairs_animals <- distance_methods %>%
         sd <- sample_tibble(.x)
         .x %>%
           beta_wrapper(method=dm) %>%
-          map2_dfr(names(.),~{
+          imap_dfr(~{
             .x %>%
               as("matrix") %>%
               as_tibble(m,rownames="row") %>%
@@ -285,7 +285,7 @@ beta_diversity <- distance_methods %>%
   map(~{
     dm <- .x
     comm_ps %>%
-      map2(names(.),~{
+      imap(~{
         .x %>%
           otu_table() %>%
           as("matrix") %>%
@@ -341,7 +341,7 @@ anovas <- distance_methods %>%
   map(~{
     dm <- .x
     comm_ps %>%
-      map2(names(.),~{
+      imap(~{
         perm <- 9999
         sd <- sample_tibble(.x)
         dd <- distance(.x,method=dm,binary=dm != "bray")
@@ -359,7 +359,7 @@ animal_anovas <- distance_methods %>%
   map(~{
     dm <- .x
     animals %>%
-      map2(names(.),~{
+      imap(~{
         perm <- 9999
         sd <- sample_tibble(.x)
         dd <- distance(.x,method=dm,binary=dm != "bray")
@@ -378,14 +378,14 @@ animal_anovas <- distance_methods %>%
 anova_table <- list(anovas,animal_anovas) %>%
   map2_dfr(c("Complete dataset","Metazoans"),~{
     .x %>%
-      map2_dfr(names(.),~{
+      imap_dfr(~{
         name_map <- c("sim" = "Simpson ($\\sim$)", "jaccard" = "Jaccard ($\\jac$)")
         method <- name_map[.y]
         .x %>%
-          map2_dfr(names(.),~{
+          imap_dfr(~{
             marker_name <- plot_text2[.y]
             .x %>%
-              map2_dfr(names(.),~{
+              imap_dfr(~{
                 as_tibble(.x$aov.tab,rownames="term") %>%
                   filter(term == .y) %>%
                   select(term,pseudo_f=`F.Model`,p_value=`Pr(>F)`)
@@ -437,10 +437,10 @@ beta_map <- list(
 
 # create composite figure of all beta diversity heatmaps
 beta_pairs_composite <- beta_pairs %>%
-  map2(names(.),~{
+  imap(~{
     dm <- .y 
     .x %>%
-      map2(names(.),~{
+      imap(~{
         marker <- .y
         wrap_elements(
           .x %>%
@@ -483,10 +483,10 @@ beta_label_map <- list(
   metazoans = c("D","E","F")
 )
 beta_pairs_composite_animals <- beta_pairs_animals %>%
-  map2(names(.),~{
+  imap(~{
     dm <- .y 
     .x %>%
-      map2(names(.),~{
+      imap(~{
         marker <- .y
         wrap_elements(
           .x %>%
@@ -525,10 +525,10 @@ ggsave(path(figure_dir,"mesophotic_beta_pairs_animals.pdf"),beta_pairs_composite
 
 #### Figure: cluster plots
 cluster_composite <- beta_pairs %>%
-  map2(names(.),~{
+  imap(~{
     dm <- .y 
     .x %>%
-      map2(names(.),~{
+      imap(~{
         dd <- .x %>%
           filter(measurement == beta_map$measurement[[dm]]) %>%
           bind_rows(
@@ -568,10 +568,10 @@ ggsave(path(figure_dir,"mesophotic_cluster.pdf"),cluster_composite$sim,device=ca
 
 #### Figure: cluster plots (animals)
 cluster_composite_animals <- beta_pairs_animals %>%
-  map2(names(.),~{
+  imap(~{
     dm <- .y 
     .x %>%
-      map2(names(.),~{
+      imap(~{
         dd <- .x %>%
           filter(measurement == beta_map$measurement[[dm]]) %>%
           bind_rows(
@@ -621,7 +621,7 @@ ord_zone_plotz <- distance_methods %>%
       map(~{
         zone <- .x
         comm_ps %>%
-          map2(names(.),~{
+          imap(~{
             title <- plot_text2[.y]
             p <- plot_betadisp(.x, group=zone, method=dm, list=TRUE,binary=dm != "bray")
             
@@ -652,9 +652,9 @@ ord_zone_composite <- ord_zone_plotz %>%
 
 # just plot them all, you can scroll back
 ord_zone_composite %>%
-  map2(names(.),~{
+  imap(~{
     dm <- .y
-    .x %>% map2(names(.),~{
+    .x %>% imap(~{
       zone <- .y
       title <- str_glue("{dm}: {zone}")
       .x %>% wrap_elements() +
@@ -680,7 +680,7 @@ ord_zone_plotz_animals <- distance_methods %>%
       map(~{
         zone <- .x
         animals %>%
-          map2(names(.),~{
+          imap(~{
             title <- plot_text2[.y]
             p <- plot_betadisp(.x, group=zone, method=dm, list=TRUE,binary=dm != "bray")
             
@@ -711,9 +711,9 @@ ord_zone_composite_animals <- ord_zone_plotz_animals %>%
 
 # just plot them all, you can scroll back
 ord_zone_composite_animals %>%
-  map2(names(.),~{
+  imap(~{
     dm <- .y
-    .x %>% map2(names(.),~{
+    .x %>% imap(~{
       zone <- .y
       title <- str_glue("{dm}: {zone}")
       .x %>% wrap_elements() +
@@ -731,7 +731,7 @@ ord_composite <- distance_methods %>%
   map(~{
     dm <- .x
     comm_ps %>%
-      map2(names(.),~{
+      imap(~{
         title <- plot_text2[.y]
         p <- plot_betadisp(.x, group="depth_f", method=dm, list=TRUE, expand=TRUE,binary=dm != "bray")
         p$plot <- p$plot +
@@ -764,7 +764,7 @@ ord_composite_animals <- distance_methods %>%
   map(~{
     dm <- .x
     animals %>%
-      map2(names(.),~{
+      imap(~{
         title <- plot_text2[.y]
         p <- plot_betadisp(.x, group="depth_f", method=dm, list=TRUE, expand=TRUE,binary=dm != "bray")
         p$plot <- p$plot +
@@ -931,7 +931,7 @@ ord_sites_composite <- distance_methods %>%
   map(~{
     dm <- .x
     comm_ps %>%
-      map2(names(.),~{
+      imap(~{
         title <- plot_text2[.y]
         p <- plot_betadisp(.x, group="station_grouping", method=dm, list=TRUE,binary=dm != "bray")
         p$plot <- p$plot +
@@ -965,7 +965,7 @@ sup <- function(...) suppressWarnings(suppressMessages(...))
 
 # test species accumulation against various models
 all_models <- comm_ps %>%
-  map2(names(.),~{
+  imap(~{
     sd <- sample_tibble(.x)
     specs <- otu_tibble(.x) %>%
       inner_join(sd %>% select(sample,depth_f),by="sample") %>%
@@ -1042,7 +1042,7 @@ all_models <- comm_ps %>%
 
 # make composite plot from the accumulation data
 accum_composite <- all_models %>%
-  map2(names(.),~{
+  imap(~{
     d <- .x$accum_data %>%
       group_by(depth_f,sites) %>%
       summarise(sd=sd(richness),richness=mean(richness))
@@ -1380,7 +1380,7 @@ list(anovas,animal_anovas) %>%
           walk2(names(.),~{
             marker <- .y
             lines <- .x %>%
-              map2_dfr(names(.),~{
+              imap_dfr(~{
                 as_tibble(.x$aov.tab,rownames="term") %>%
                   filter(term == .y) %>%
                   select(term,pseudo_f=`F.Model`,p_value=`Pr(>F)`) %>%
@@ -1484,7 +1484,7 @@ all_samples <- sample_data %>%
 
 # normalized data
 normed <- comm_ps %>%
-  map2_dfr(names(.),~{
+  imap_dfr(~{
     otu_tibble(.x) %>%
       column_to_rownames("sample") %>%
       rowSums() %>%
@@ -1495,7 +1495,7 @@ normed <- comm_ps %>%
 # build summary table of eDNA reads across samples, etc.
 reads_summary <- 
   communities %>%
-  map2_dfr(names(.),~{
+  imap_dfr(~{
     gene <- markers %>%
       filter(description == .y) %>%
       pull(gene)

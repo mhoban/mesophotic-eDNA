@@ -11,6 +11,8 @@ library(fs)
 library(vegan)
 library(viridis)
 library(ggVennDiagram)
+library(castr)
+library(fdrtool)
 
 
 # set random seed for reproduceability
@@ -29,12 +31,15 @@ blank_pattern <- "^B[0-9]+$"      # pattern to match extraction blank IDs
 abundance_threshold <- 0.1     # minimum threshold for relative abundance
 abundance_threshold <- 5     # minimum threshold for relative abundance
 
+remove_families <- c("Hominidae","Bovidae","Felidae","Salmonidae")
+
 # whether to rarefy samples to minimum read depth
 rarefy <- FALSE
-# whether to transform read counts to eDNA index (wisconsin double standardized)
-wisco <- FALSE
+# read count transformation, can be "sqrt", "wisconsin", "relative", or anything else (like "none")
+read_transform <- "none"
 # whether to drop zotus with no assigned taxonomy (NA's across the board)
 drop_unknown <- TRUE
+
 
 rarefy_perm <- 99
 
@@ -47,7 +52,7 @@ insect_classify <- FALSE
 include_unassigned <- TRUE        # include zOTUs that didn't blast to anything
 filter_unknown <- FALSE
 
-distance_methods <- c("sim","jaccard")
+distance_methods <- c("sim","jaccard","bray")
 distance_method <- "sim"
 plot_theme <- "light"
 
@@ -126,60 +131,58 @@ comm_ps <- communities %>%
       rarefied <- rarefied %>%
         rrarefy.perm(n=rarefy_perm)
     }
-    if (wisco) {
-      rarefied <- wisconsin(rarefied)
-    }
+    rarefied <- switch(
+      read_transform,
+      wisconsin = wisconsin(rarefied),
+      relative = decostand(rarefied,"total"),
+      sqrt = sqrt(rarefied),
+      rarefied
+    )
     ps <- as_ps2(rarefied,.x$tax_data,sample_data)
     pruno <- filter_taxa(ps,function(x) {
       sum(x[negative_controls],na.rm=T) == 0 & sum(x) > 0
     })
     ps <- prune_taxa(pruno,ps)
-    ps <- subset_taxa(ps, !family %in% c("Hominidae","Bovidae","Felidae","Salmonidae"))
+    ps <- subset_taxa(ps, !family %in% remove_families)
     
     prune_samples(sample_sums(ps) > 0, ps)
   }) 
 
 # create the metazoan subset of our three communities
 minimals <- 1000 # minimum reads to retain a sample
-# if we wisconsin'd the data, we have to reconstruct the animals from
-# the raw data and re-wisconsin it
-if (wisco) {
-  animals <- communities %>%
-    map(~{
-      new_tax <- .x$tax_data %>%
-        filter(kingdom == "Metazoa")
-      keep_otus <- new_tax$OTU
-      rarefied <- .x$raw %>%
-        filter(OTU %in% keep_otus) %>%
-        pivot_longer(matches(sample_pattern),names_to="site",values_to="reads") %>%
-        pivot_wider(names_from="OTU",values_from="reads") %>%
-        column_to_rownames("site") 
-      if (rarefy) {
-        rarefied <- rarefied %>%
-          rrarefy.perm(n=rarefy_perm)
-      }
-      if (wisco) {
-        rarefied <- wisconsin(rarefied)
-      }
-      ps <- as_ps2(rarefied,new_tax,sample_data)
-      prune_samples(sample_sums(ps) > 0, ps)
+
+# make the animals subset
+animals <- communities %>%
+  map(~{
+    new_tax <- .x$tax_data %>%
+      filter(kingdom == "Metazoa")
+    keep_otus <- new_tax$OTU
+    rarefied <- .x$raw %>%
+      filter(OTU %in% keep_otus) %>%
+      pivot_longer(matches(sample_pattern),names_to="site",values_to="reads") %>%
+      pivot_wider(names_from="OTU",values_from="reads") %>%
+      column_to_rownames("site") 
+    if (rarefy) {
+      rarefied <- rarefied %>%
+        rrarefy.perm(n=rarefy_perm)
+    }
+    rarefied <- switch(
+      read_transform,
+      wisconsin = wisconsin(rarefied),
+      relative = decostand(rarefied,"total"),
+      sqrt = sqrt(rarefied),
+      rarefied
+    )
+    ps <- as_ps2(rarefied,new_tax,sample_data)
+    
+    pruno <- filter_taxa(ps,function(x) {
+      sum(x[negative_controls],na.rm=T) == 0 & sum(x) > 0
     })
-} else { # otherwise just subset
-  animals <- comm_ps %>%
-    map(~{
-      f <- subset_taxa(.x,kingdom == "Metazoa")         # filter by metazoans
-      f <- prune_samples(sample_sums(f) >= minimals,f)  # filter by reads >= minimum
-      new_otu <- otu_table(f) %>%                       
-        as("matrix") 
-      if (rarefy) {
-        # re-rarefy new otu table to equal depth
-        new_otu <- new_otu %>%
-          rrarefy.perm(n=rarefy_perm)
-        otu_table(f) <- otu_table(new_otu,taxa_are_rows = FALSE) # reassign new rarefied otu table
-      }
-      return(f)
-    })
-}
+    ps <- prune_taxa(pruno,ps)
+    ps <- subset_taxa(ps, !family %in% remove_families)
+    
+    prune_samples(sample_sums(ps) > 0, ps)
+  })
 
 animals <- animals[c("inverts","metazoans")]
 
@@ -202,6 +205,23 @@ pal[4] <- '#827222'
 
 # beta diversity calculations ---------------------------------------------
 
+beta_wrapper <- function(x,method) {
+  if (method %in% c("sim","sorensen","jaccard")) {
+    x %>%
+      otu_table() %>%
+      as("matrix") %>%
+      decostand("pa") %>%
+      beta.pair(if_else(method == "sim","sorensen","jaccard")) %>%
+      return()
+  } else if (method == "bray") {
+    dist <- x %>%
+      distance(method="bray")
+    list(beta.bray = dist) %>%
+      return()
+  } else {
+    return(NULL)
+  }
+}
 # pairwise (by depth zone) beta diversity metrics
 beta_pairs <- distance_methods %>%
   set_names() %>%
@@ -211,10 +231,7 @@ beta_pairs <- distance_methods %>%
       map(~{
         sd <- sample_tibble(.x)
         .x %>%
-          otu_table() %>%
-          as("matrix") %>%
-          decostand("pa") %>%
-          beta.pair(if_else(dm == "sim","sorensen","jaccard")) %>%
+          beta_wrapper(method=dm) %>%
           map2_dfr(names(.),~{
             .x %>%
               as("matrix") %>%
@@ -243,10 +260,7 @@ beta_pairs_animals <- distance_methods %>%
       map(~{
         sd <- sample_tibble(.x)
         .x %>%
-          otu_table() %>%
-          as("matrix") %>%
-          decostand("pa") %>%
-          beta.pair(if_else(dm == "sim","sorensen","jaccard")) %>%
+          beta_wrapper(method=dm) %>%
           map2_dfr(names(.),~{
             .x %>%
               as("matrix") %>%
@@ -266,6 +280,20 @@ beta_pairs_animals <- distance_methods %>%
   })
 
 # overall beta diversity metrics
+beta_diversity <- distance_methods %>%
+  set_names() %>%
+  map(~{
+    dm <- .x
+    comm_ps %>%
+      map2(names(.),~{
+        .x %>%
+          otu_table() %>%
+          as("matrix") %>%
+          decostand("pa") %>%
+          beta.multi(if_else(dm == "sim","sorensen","jaccard"))
+      })
+  })
+
 beta_diversity <- comm_ps %>%
   map(~{
     comm <- .x %>%
@@ -316,7 +344,7 @@ anovas <- distance_methods %>%
       map2(names(.),~{
         perm <- 9999
         sd <- sample_tibble(.x)
-        dd <- distance(.x,method=dm,binary=TRUE)
+        dd <- distance(.x,method=dm,binary=dm != "bray")
         list(
           depth_zone = adonis(dd ~ depth_zone, data=sd, permutations=perm),
           depth_zone45 = adonis(dd ~ depth_zone45, data=sd, permutations=perm),
@@ -334,7 +362,7 @@ animal_anovas <- distance_methods %>%
       map2(names(.),~{
         perm <- 9999
         sd <- sample_tibble(.x)
-        dd <- distance(.x,method=dm,binary=TRUE)
+        dd <- distance(.x,method=dm,binary=dm != "bray")
         list(
           depth_zone = adonis(dd ~ depth_zone, data=sd, permutations=perm),
           depth_zone45 = adonis(dd ~ depth_zone45, data=sd, permutations=perm),
@@ -401,9 +429,11 @@ beta_map <- list(
   ),
   measurement = c(
     "sim" = "beta.sim",
-    "jaccard" = "beta.jac" 
+    "jaccard" = "beta.jac",
+    "bray" = "beta.bray"
   )
 )
+
 
 # create composite figure of all beta diversity heatmaps
 beta_pairs_composite <- beta_pairs %>%
@@ -593,7 +623,7 @@ ord_zone_plotz <- distance_methods %>%
         comm_ps %>%
           map2(names(.),~{
             title <- plot_text2[.y]
-            p <- plot_betadisp(.x, group=zone, method=dm, list=TRUE)
+            p <- plot_betadisp(.x, group=zone, method=dm, list=TRUE,binary=dm != "bray")
             
             p$plot <- p$plot +
               scale_fill_manual(values=pal[c(1,length(pal))],name="Depth Zone") + 
@@ -652,7 +682,7 @@ ord_zone_plotz_animals <- distance_methods %>%
         animals %>%
           map2(names(.),~{
             title <- plot_text2[.y]
-            p <- plot_betadisp(.x, group=zone, method=dm, list=TRUE)
+            p <- plot_betadisp(.x, group=zone, method=dm, list=TRUE,binary=dm != "bray")
             
             p$plot <- p$plot +
               scale_fill_manual(values=pal[c(1,length(pal))],name="Depth Zone") + 
@@ -703,7 +733,7 @@ ord_composite <- distance_methods %>%
     comm_ps %>%
       map2(names(.),~{
         title <- plot_text2[.y]
-        p <- plot_betadisp(.x, group="depth_f", method=dm, list=TRUE, expand=TRUE)
+        p <- plot_betadisp(.x, group="depth_f", method=dm, list=TRUE, expand=TRUE,binary=dm != "bray")
         p$plot <- p$plot +
           scale_fill_manual(values=pal,name="Depth") +
           plotz_theme("light") +
@@ -736,7 +766,7 @@ ord_composite_animals <- distance_methods %>%
     animals %>%
       map2(names(.),~{
         title <- plot_text2[.y]
-        p <- plot_betadisp(.x, group="depth_f", method=dm, list=TRUE, expand=TRUE)
+        p <- plot_betadisp(.x, group="depth_f", method=dm, list=TRUE, expand=TRUE,binary=dm != "bray")
         p$plot <- p$plot +
           scale_fill_manual(values=pal,name="Depth") +
           plotz_theme("light") +
@@ -903,7 +933,7 @@ ord_sites_composite <- distance_methods %>%
     comm_ps %>%
       map2(names(.),~{
         title <- plot_text2[.y]
-        p <- plot_betadisp(.x, group="station_grouping", method=dm, list=TRUE)
+        p <- plot_betadisp(.x, group="station_grouping", method=dm, list=TRUE,binary=dm != "bray")
         p$plot <- p$plot +
           scale_fill_manual(values=pal[c(1,4,7)],name="Site") +
           plotz_theme("light") + 
@@ -1327,10 +1357,126 @@ term_map = c(
 )
 
 anova_table %>%
-  mutate(pseudo_f=round(pseudo_f,2), p_value=round(p_value,2)) %>%
+  mutate(pseudo_f=round(pseudo_f,3), p_value=round(p_value,4)) %>%
   mutate( term = term_map[term] ) %>%
   rename(Dataaset=dataset,`Dissimilarity Index`=index,`Assay`=marker,`Term`=term,`Pseudo-F`=pseudo_f,`p-value`=p_value) %>%
   write_ms_table(path(table_dir,"mesophotic_anovas.csv"),"Results of PERMANOVA analyses",bold_header = TRUE)
+
+# write PERMANOVA and beta diversity results to an include file for the manuscript so I don't have to keep changing the numbers when they change here
+resource_dir="~/projects/dissertation/manuscript/resources/"
+include_file <- path(resource_dir,"include.m4")
+
+
+file_delete(include_file)
+
+# write permanova results
+list(anovas,animal_anovas) %>%
+  walk2(c("all","animals"),~{
+    dataset <- .y
+    .x %>%
+      walk2(names(.),~{
+        method <- .y
+        .x %>%
+          walk2(names(.),~{
+            marker <- .y
+            lines <- .x %>%
+              map2_dfr(names(.),~{
+                as_tibble(.x$aov.tab,rownames="term") %>%
+                  filter(term == .y) %>%
+                  select(term,pseudo_f=`F.Model`,p_value=`Pr(>F)`) %>%
+                  mutate(
+                    pseudo_f = str_glue("pseudo-F = {round(pseudo_f,2)}"),
+                    p_value = case_when(
+                      p_value < 0.001 ~ "*p* < 0.001",
+                      p_value < 0.01 ~ "*p* < 0.01",
+                      TRUE ~ as.character(str_glue("*p* = {round(p_value,2)}"))
+                    )
+                  )
+              }) 
+            pseudo_f <- str_glue("define({{{{{dataset}_{method}_{marker}_{lines$term}_f}}}},{{{{{lines$pseudo_f}}}}})")
+            p_val <- str_glue("define({{{{{dataset}_{method}_{marker}_{lines$term}_p}}}},{{{{{lines$p_value}}}}})")
+            lines <- c(pseudo_f,p_val)
+            write_lines(lines,include_file,append=TRUE)
+          }) 
+      }) 
+  })
+
+stat_map <- c(
+  "beta.sor" = "overall",
+  "beta.sim" = "turnover",
+  "beta.sne" = "nestedness",
+  "beta.jac" = "overall",
+  "beta.jtu" = "turnover",
+  "beta.jne" = "nestedness"
+)
+
+# write overall beta diversity stats
+c("all","animals") %>%
+  walk(~{
+    dataset <- .x
+    beta_diversity %>%
+      walk2(names(.),~{
+        method <- .y
+        .x %>% walk2(names(.),~{
+          marker <- .y
+          .x %>% walk2(names(.),~{
+            stat <- stat_map[str_to_lower(.y)]
+            .x <- str_pad(round(.x,2),4,side="right",pad="0")
+            line <- str_glue("define({{{{{dataset}_{method}_{marker}_{stat}}}}},{{{{{.x}}}}})") 
+            write_lines(line,include_file,append=TRUE)
+          })
+        })
+      })
+  })
+
+# write mean/sd beta diversity stats for depth zone comparisons 
+with(
+  beta_pairs %>%
+    imap_dfr(~{
+      .x %>%
+        imap_dfr(~{
+          .x %>%
+            group_by(measurement) %>%
+            summarise(mean=round(mean(dist),2),sd=round(sd(dist),2)) %>%
+            ungroup() %>%
+            mutate(marker=.y)
+        }) %>%
+        mutate(method=.y)
+    }) %>%
+    mutate(dataset="all"),
+  write_lines(
+    c(
+      str_glue("define({{{{{dataset}_{method}_{marker}_{stat_map[measurement]}_mean}}}},{{{{{mean}}}}})"),
+      str_glue("define({{{{{dataset}_{method}_{marker}_{stat_map[measurement]}_sd}}}},{{{{{sd}}}}})")
+    ),
+    include_file,
+    append=TRUE
+  )
+)
+# do it again for animals
+with(
+  beta_pairs_animals %>%
+    imap_dfr(~{
+      .x %>%
+        imap_dfr(~{
+          .x %>%
+            group_by(measurement) %>%
+            summarise(mean=round(mean(dist),2),sd=round(sd(dist),2)) %>%
+            ungroup() %>%
+            mutate(marker=.y)
+        }) %>%
+        mutate(method=.y)
+    }) %>%
+    mutate(dataset="animals"),
+  write_lines(
+    c(
+      str_glue("define({{{{{dataset}_{method}_{marker}_{stat_map[measurement]}_mean}}}},{{{{{mean}}}}})"),
+      str_glue("define({{{{{dataset}_{method}_{marker}_{stat_map[measurement]}_sd}}}},{{{{{sd}}}}})")
+    ),
+    include_file,
+    append=TRUE
+  )
+)
 
 #### Supplemental table: eDNA reads summary
 all_samples <- sample_data %>%
@@ -1424,12 +1570,6 @@ write_ms_table(rs,path(table_dir,"mesophotic_reads_summary.csv"),"Sequencing res
 
 #### Beta diversity summaries
 # pairwise beta diversity summary
-beta_pairs$sim %>%
-  map(~{
-    .x %>%
-      group_by(measurement) %>%
-      summarise(mean=round(mean(dist),2),sd=round(sd(dist),2))
-  })
 
 # pairwise beta diversity summary (animals)
 beta_pairs_animals$sim %>%
@@ -1503,10 +1643,11 @@ get_indicators <- function(community,variable,fdr=0.10,permutations=999,list=TRU
 
 ## all taxa
 # do indicator analysis for deep v shallow
+# and just for animals
 indicators <- animals %>% 
-  map(~{
-    get_indicators(.x,variable="depth_zone45",list=FALSE)
-  })
+  # stick the fish back in the animals list
+  list_modify(fish = comm_ps$fish) %>%
+  map(~get_indicators(.x,variable="depth_zone45",list=FALSE))
 
 itable <- indicators %>%
   enframe(name = "assay", value="indval") %>%
@@ -1564,23 +1705,23 @@ cast_lat <- 22.75 # station ALOHA CTD cast latitude
 # get data from HOT cruise 314 (CTD averages for the week of 08-03-2019)
 url <- "https://hahana.soest.hawaii.edu/FTP/hot/ctd/aloha_mean/hot314.mn"
 # url <- "https://hahana.soest.hawaii.edu/FTP/hot/ctd/aloha_mean/hot315.mn"
+# HOT cruise hyperpro PAR data: 
+# https://hahana.soest.hawaii.edu/FTP/hot/light/hyperpro-processed/hot-314/H314_aloha_1_profile_subset.txt
 ctd <- read_table(url,skip = 1,col_names = c("pressure","temp","sal","o2","trans","chloro","casts","p_temp","p_density")) %>%
   mutate(depth=p2d(pressure,cast_lat))  #%>%
   # filter(pressure>10)
 
 (mld <- castr::mld(ctd$p_density,ctd$depth))
 
-d <- clined(ctd$temp)
-ctd$temp[d]
-
 (thermocline <- clined(ctd$temp,ctd$depth))
 (pycnocline <- clined(ctd$p_density,ctd$depth))
 
 (mean_cline <- mean(c(thermocline,pycnocline)))
 
-ggplot(ctd,aes(y=depth)) + 
+ctd_plotz <- ggplot(ctd,aes(y=depth)) + 
   geom_path(aes(x=temp),color="red") + 
   geom_path(aes(x=p_density),color="black") + 
-  scale_y_reverse(limits=c(200,0))
+  geom_path(aes(x=trans),color="blue") + 
+  scale_y_reverse(limits=c(1000,0))
 
 

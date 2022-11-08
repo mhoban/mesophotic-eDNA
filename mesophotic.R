@@ -186,6 +186,18 @@ animals <- communities %>%
 
 animals <- animals[c("inverts","metazoans")]
 
+# remove the following known planktonic taxa from animals dataset
+remove_classes <- c("Hexanauplia","Appendicularia","Thaliacea")
+benthic <- animals %>%
+  map(~{
+    .x <- .x %>% 
+      subset_taxa(!class %in% remove_classes) %>%
+      subset_taxa(!is.na(class))
+    prune_samples(sample_sums(.x) > 0,.x)
+  })
+
+datasets <- list(all=comm_ps,animals=animals,benthic=benthic)
+
 # text map for plots
 plot_text <- c(
   'fish' = 'Fishes (16S rRNA)',
@@ -223,162 +235,113 @@ beta_wrapper <- function(x,method) {
   }
 }
 # pairwise (by depth zone) beta diversity metrics
-beta_pairs <- distance_methods %>%
-  set_names() %>%
+beta_pairs <- datasets %>%
   map(~{
-    dm <- .x
-    comm_ps %>%
-      map(~{
-        sd <- sample_tibble(.x)
-        .x %>%
-          beta_wrapper(method=dm) %>%
-          imap_dfr(~{
-            .x %>%
-              as("matrix") %>%
-              as_tibble(m,rownames="row") %>%
-              pivot_longer(-row,names_to="col",values_to="dist") %>%
-              left_join(sd %>% select(sample,depth_f),by=c("row" = "sample")) %>%
-              left_join(sd %>% select(sample,depth_f),by=c("col" = "sample"),suffix = c("_s1","_s2")) %>%
-              mutate(row=factor(row),col=factor(col)) %>%
-              filter(as.numeric(depth_f_s1) > as.numeric(depth_f_s2)) %>%
-              select(sample1=row,sample2=col,depth1=depth_f_s1,depth2=depth_f_s2,dist) %>%
-              group_by(depth1,depth2) %>%
-              summarise(sd=sd(dist),dist=mean(dist)) %>%
-              mutate(measurement = .y) %>%
-              select(depth1,depth2,dist,sd,measurement)
-          })
-      })
+      dataset <- .x
+      distance_methods %>%
+        set_names() %>%
+        map(~{
+          dm <- .x
+          dataset %>%
+            map(~{
+              sd <- sample_tibble(.x)
+              .x %>%
+                beta_wrapper(method=dm) %>%
+                imap_dfr(~{
+                  .x %>%
+                    as("matrix") %>%
+                    as_tibble(m,rownames="row") %>%
+                    pivot_longer(-row,names_to="col",values_to="dist") %>%
+                    left_join(sd %>% select(sample,depth_f),by=c("row" = "sample")) %>%
+                    left_join(sd %>% select(sample,depth_f),by=c("col" = "sample"),suffix = c("_s1","_s2")) %>%
+                    mutate(row=factor(row),col=factor(col)) %>%
+                    filter(as.numeric(depth_f_s1) > as.numeric(depth_f_s2)) %>%
+                    select(sample1=row,sample2=col,depth1=depth_f_s1,depth2=depth_f_s2,dist) %>%
+                    group_by(depth1,depth2) %>%
+                    summarise(sd=sd(dist),dist=mean(dist)) %>%
+                    mutate(measurement = .y) %>%
+                    select(depth1,depth2,dist,sd,measurement)
+                })
+            })
+        })
   })
+  
 
-
-# pairwise (by depth zone) beta diversity metrics (animals only)
-beta_pairs_animals <- distance_methods %>%
-  set_names() %>%
-  map(~{
-    dm <- .x
-    animals %>%
-      map(~{
-        sd <- sample_tibble(.x)
-        .x %>%
-          beta_wrapper(method=dm) %>%
-          imap_dfr(~{
-            .x %>%
-              as("matrix") %>%
-              as_tibble(m,rownames="row") %>%
-              pivot_longer(-row,names_to="col",values_to="dist") %>%
-              left_join(sd %>% select(sample,depth_f),by=c("row" = "sample")) %>%
-              left_join(sd %>% select(sample,depth_f),by=c("col" = "sample"),suffix = c("_s1","_s2")) %>%
-              mutate(row=factor(row),col=factor(col)) %>%
-              filter(as.numeric(depth_f_s1) > as.numeric(depth_f_s2)) %>%
-              select(sample1=row,sample2=col,depth1=depth_f_s1,depth2=depth_f_s2,dist) %>%
-              group_by(depth1,depth2) %>%
-              summarise(sd=sd(dist),dist=mean(dist)) %>%
-              mutate(measurement = .y) %>%
-              select(depth1,depth2,dist,sd,measurement)
-          })
-      })
-  })
 
 # overall beta diversity metrics
-beta_diversity <- distance_methods %>%
-  set_names() %>%
+beta_diversity <- datasets %>%
   map(~{
-    dm <- .x
-    comm_ps %>%
-      imap(~{
-        .x %>%
-          otu_table() %>%
-          as("matrix") %>%
-          decostand("pa") %>%
-          beta.multi(if_else(dm == "sim","sorensen","jaccard"))
+    dataset <- .x
+    distance_methods %>%
+      set_names() %>%
+      map(~{
+        dm <- .x
+        dataset %>%
+          imap(~{
+            .x %>%
+              otu_table() %>%
+              as("matrix") %>%
+              decostand("pa") %>%
+              beta.multi(if_else(dm == "sim","sorensen","jaccard"))
+          })
       })
   })
-
-beta_diversity <- comm_ps %>%
-  map(~{
-    comm <- .x %>%
-      otu_table() %>%
-      as("matrix") %>%
-      decostand("pa")
-    comm_merged <- .x %>%
-      merge_samples("depth_f") %>%
-      otu_table() %>%
-      as("matrix") %>%
-      decostand("pa")
-    bp <- betapart.core(comm)
-    bp_merged <- betapart.core(comm_merged)
-    sorensen <- comm %>%
-      betapart.core() %>%
-      beta.multi("sorensen")
-    sorensen_merged <- comm %>%
-      betapart.core() %>%
-      beta.multi("sorensen")
-    return(list(unmerged=sorensen,merged=sorensen_merged))
-  }) 
-
-beta_diversity_animals <- animals %>%
-  map(~{
-    .x <- merge_samples(.x,"depth_f")
-    comm <- as(otu_table(.x),"matrix")
-    comm <- decostand(comm,"pa")
-    # now the presence-absence one
-    bp <- betapart.core(comm)
-    
-    
-    sorensen <- beta.multi(bp,"sorensen")
-    jaccard <- beta.multi(bp,"jaccard")
-    
-    list(sorensen=sorensen,jaccard=jaccard)
-  }) 
 
 # start here --------------------------------------------------------------
 
 
 
 # permanova analyses ------------------------------------------------------
-anovas <- distance_methods %>%
-  set_names() %>%
+anovas <- datasets %>%
   map(~{
-    dm <- .x
-    comm_ps %>%
-      imap(~{
-        perm <- 9999
-        sd <- sample_tibble(.x)
-        dd <- distance(.x,method=dm,binary=dm != "bray")
-        list(
-          depth_zone = adonis(dd ~ depth_zone, data=sd, permutations=perm),
-          depth_zone45 = adonis(dd ~ depth_zone45, data=sd, permutations=perm),
-          depth_f = adonis(dd ~ depth_f, data=sd, permutations = perm), 
-          station_grouping = adonis(dd ~ station_grouping, data=sd, permutations = perm)
-        )
-      }) 
+    dataset <- .x
+    distance_methods %>%
+      set_names() %>%
+      map(~{
+        dm <- .x
+        dataset %>%
+          imap(~{
+            perm <- 9999
+            sd <- sample_tibble(.x)
+            dd <- distance(.x,method=dm,binary=dm != "bray")
+            list(
+              depth_zone = adonis(dd ~ depth_zone, data=sd, permutations=perm),
+              depth_zone45 = adonis(dd ~ depth_zone45, data=sd, permutations=perm),
+              depth_f = adonis(dd ~ depth_f, data=sd, permutations = perm), 
+              station_grouping = adonis(dd ~ station_grouping, data=sd, permutations = perm)
+            )
+          }) 
+      })
   })
 
-animal_anovas <- distance_methods %>%
-  set_names() %>%
-  map(~{
-    dm <- .x
-    animals %>%
-      imap(~{
-        perm <- 9999
-        sd <- sample_tibble(.x)
-        dd <- distance(.x,method=dm,binary=dm != "bray")
-        list(
-          depth_zone = adonis(dd ~ depth_zone, data=sd, permutations=perm),
-          depth_zone45 = adonis(dd ~ depth_zone45, data=sd, permutations=perm),
-          depth_f = adonis(dd ~ depth_f, data=sd, permutations = perm), 
-          station_grouping = adonis(dd ~ station_grouping, data=sd, permutations = perm)
-        )
-      }) 
-  })
+keep_names <- function(.x,.names,...) {
+  if (is.character(.names)) {
+    idx <- intersect(names(.x),.names)
+  } else if (is.function(.names) || is_formula(.names)) {
+    .names <- rlang::as_function(.names)
+    idx <- .names(names(.x))
+    if (is.logical(idx)) {
+      idx[is.na(idx)] <- FALSE
+    } else if (is.character(idx)) {
+      idx <- intersect(names(.x),idx)
+    } else if (!is.integer(idx)) {
+      abort("If `.names` is a function, it must return an logical, integer, or character vector")
+    }
+  }
+  .x[idx]
+}
 
 # make a nice little table of anova results
 # this assumes the name of the list entry is the same as the
 # name of the variable being examined
-anova_table <- list(anovas,animal_anovas) %>%
+anova_table <- anovas %>%
+  keep_names(~.x != "benthic") %>%
+  # map2_dfr(c("Complete dataset","Metazoans","Benthic metazoans"),~{
   map2_dfr(c("Complete dataset","Metazoans"),~{
     .x %>%
+      keep_names(~.x != "bray") %>%
       imap_dfr(~{
+        # name_map <- c("sim" = "Simpson ($\\sim$)", "jaccard" = "Jaccard ($\\jac$)","bray" = "Bray-Curtis")
         name_map <- c("sim" = "Simpson ($\\sim$)", "jaccard" = "Jaccard ($\\jac$)")
         method <- name_map[.y]
         .x %>%
@@ -417,9 +380,19 @@ beta_title_map <- list(
   )
 )
 beta_label_map <- list(
-  fish = c("A","B","C"),
-  inverts = c("D","E","F"),
-  metazoans = c("G","H","I")
+  all = list(
+    fish = c("A","B","C"),
+    inverts = c("D","E","F"),
+    metazoans = c("G","H","I")
+  ),
+  animals = list(
+    inverts = c("A","B","C"),
+    metazoans = c("D","E","F")
+  ),
+  benthic = list(
+    inverts = c("A","B","C"),
+    metazoans = c("D","E","F")
+  )
 )
 
 beta_map <- list(
@@ -438,365 +411,223 @@ beta_map <- list(
 # create composite figure of all beta diversity heatmaps
 beta_pairs_composite <- beta_pairs %>%
   imap(~{
-    dm <- .y 
-    .x %>%
-      imap(~{
-        marker <- .y
-        wrap_elements(
-          .x %>%
-            mutate(
-              measurement = factor(measurement,levels=beta_map$factor_levels[[dm]]),
-              depth1 = fct_rev(depth1)
-            ) %>%
-            group_by(measurement) %>%
-            group_map(~{
-              measurement <- as.character(.y$measurement)
-              ggplot(.x) + 
-                geom_tile(aes(x=depth2,y=depth1,fill=dist)) +
-                scale_fill_viridis(option="inferno",name=beta_title_map[[dm]][measurement]) +
-                scale_x_discrete(position="top") + 
-                theme_bw() +
-                theme(
-                  axis.text.x = element_text(angle=25,vjust=1,hjust=0),
-                  panel.grid = element_blank()
-                ) +
-                labs(x="Depth zone",y="Depth zone")
-            }) %>%
-            reduce(`+`) +
-            plot_annotation(tag_levels = list(beta_label_map[[marker]])) & theme(plot.tag = element_text(face="bold"))
-        ) 
-      }) %>%
-      reduce(`/`) 
+    dataset_name <- .y 
+    label_map = beta_label_map[[dataset_name]]
+    .x %>% imap(~{
+      dm <- .y 
+      .x %>%
+        imap(~{
+          marker <- .y
+          wrap_elements(
+            .x %>%
+              mutate(
+                measurement = factor(measurement,levels=beta_map$factor_levels[[dm]]),
+                depth1 = fct_rev(depth1)
+              ) %>%
+              group_by(measurement) %>%
+              group_map(~{
+                measurement <- as.character(.y$measurement)
+                ggplot(.x) + 
+                  geom_tile(aes(x=depth2,y=depth1,fill=dist)) +
+                  scale_fill_viridis(option="inferno",name=beta_title_map[[dm]][measurement]) +
+                  scale_x_discrete(position="top") + 
+                  theme_bw() +
+                  theme(
+                    axis.text.x = element_text(angle=25,vjust=1,hjust=0),
+                    panel.grid = element_blank()
+                  ) +
+                  labs(x="Depth zone",y="Depth zone")
+              }) %>%
+              reduce(`+`) +
+              plot_annotation(tag_levels = list(label_map[[marker]])) & theme(plot.tag = element_text(face="bold"))
+          ) 
+        }) %>%
+        reduce(`/`) 
+    })
   })
 
 # show all the plots in a giant grid
-beta_pairs_composite %>%
-  map(wrap_elements) %>%
-  reduce(`/`) + plot_annotation(tag_levels=list(names(beta_pairs_composite)))
+# beta_pairs_composite %>%
+#   map(wrap_elements) %>%
+#   reduce(`/`) + plot_annotation(tag_levels=list(names(beta_pairs_composite)))
 
 # save the simpson version of the figure
-ggsave(path(figure_dir,"mesophotic_beta_pairs.pdf"),beta_pairs_composite$sim,device=cairo_pdf,width=12,height=9,units="in")
-ggsave(path(figure_dir,"mesophotic_beta_pairs_jaccard.pdf"),beta_pairs_composite$jaccard,device=cairo_pdf,width=12,height=9,units="in")
-
-#### Figure: beta diversity heatmaps (animals)
-beta_label_map <- list(
-  inverts = c("A","B","C"),
-  metazoans = c("D","E","F")
-)
-beta_pairs_composite_animals <- beta_pairs_animals %>%
-  imap(~{
-    dm <- .y 
-    .x %>%
-      imap(~{
-        marker <- .y
-        wrap_elements(
-          .x %>%
-            mutate(
-              measurement = factor(measurement,levels=beta_map$factor_levels[[dm]]),
-              depth1 = fct_rev(depth1)
-            ) %>%
-            group_by(measurement) %>%
-            group_map(~{
-              measurement <- as.character(.y$measurement)
-              ggplot(.x) + 
-                geom_tile(aes(x=depth2,y=depth1,fill=dist)) +
-                scale_fill_viridis(option="inferno",name=beta_title_map[[dm]][measurement]) +
-                scale_x_discrete(position="top") + 
-                theme_bw() +
-                theme(
-                  axis.text.x = element_text(angle=25,vjust=1,hjust=0),
-                  panel.grid = element_blank()
-                ) +
-                labs(x="Depth zone",y="Depth zone")
-            }) %>%
-            reduce(`+`) +
-            plot_annotation(tag_levels = list(beta_label_map[[marker]])) & theme(plot.tag = element_text(face="bold"))
-        ) 
-      }) %>%
-      reduce(`/`) 
-  })
+ggsave(path(figure_dir,"mesophotic_beta_pairs.pdf"),beta_pairs_composite$all$sim,device=cairo_pdf,width=12,height=9,units="in")
+ggsave(path(figure_dir,"mesophotic_beta_pairs_jaccard.pdf"),beta_pairs_composite$all$jaccard,device=cairo_pdf,width=12,height=9,units="in")
 
 # show all the plots in a giant grid
-beta_pairs_composite_animals %>%
-  map(wrap_elements) %>%
-  reduce(`/`) + plot_annotation(tag_levels=list(names(beta_pairs_composite_animals)))
+# beta_pairs_composite_animals %>%
+#   map(wrap_elements) %>%
+#   reduce(`/`) + plot_annotation(tag_levels=list(names(beta_pairs_composite_animals)))
 
 # save the simpson version of the figure
-ggsave(path(figure_dir,"mesophotic_beta_pairs_animals.pdf"),beta_pairs_composite_animals$sim,device=cairo_pdf,width=12,height=6,units="in")
-ggsave(path(figure_dir,"mesophotic_beta_pairs_animals_jaccard.pdf"),beta_pairs_composite_animals$jaccard,device=cairo_pdf,width=12,height=6,units="in")
+ggsave(path(figure_dir,"mesophotic_beta_pairs_animals.pdf"),beta_pairs_composite$animals$sim,device=cairo_pdf,width=12,height=6,units="in")
+ggsave(path(figure_dir,"mesophotic_beta_pairs_animals_jaccard.pdf"),beta_pairs_composite$animals$jaccard,device=cairo_pdf,width=12,height=6,units="in")
 
 #### Figure: cluster plots
 cluster_composite <- beta_pairs %>%
   imap(~{
-    dm <- .y 
     .x %>%
       imap(~{
-        dd <- .x %>%
-          filter(measurement == beta_map$measurement[[dm]]) %>%
-          bind_rows(
-            tibble(
-              depth1=factor(levels(.$depth1),levels=levels(.$depth1)),
-              depth2=factor(levels(.$depth1),levels=levels(.$depth1)),
-              dist = 0,
-              sd = 0,
-              measurement = beta_map$measurement[[dm]]
-            ) 
-          ) %>%
-          arrange(depth1,depth2) %>%
-          pivot_wider(-c(sd,measurement),names_from=depth2,values_from=dist) %>%
-          column_to_rownames("depth1") %>% 
-          as.matrix() %>% 
-          as.dist()
-        title <- plot_text2[.y]
-        labels(dd) <- str_c(labels(dd)," ")
-        ggplot(as.dendrogram(hclust(dd),hang=0.5)) +
-          theme(
-            plot.caption = element_text(hjust=0.5,size=14)
-          ) + 
-          expand_limits(y=-0.25)
-      }) %>%
-      reduce(`+`) + 
-      plot_annotation(tag_levels="A") &
-      theme(plot.tag = element_text(face="bold"))
+        dm <- .y 
+        .x %>%
+          imap(~{
+            dd <- .x %>%
+              filter(measurement == beta_map$measurement[[dm]]) %>%
+              bind_rows(
+                tibble(
+                  depth1=factor(levels(.$depth1),levels=levels(.$depth1)),
+                  depth2=factor(levels(.$depth1),levels=levels(.$depth1)),
+                  dist = 0,
+                  sd = 0,
+                  measurement = beta_map$measurement[[dm]]
+                ) 
+              ) %>%
+              arrange(depth1,depth2) %>%
+              pivot_wider(-c(sd,measurement),names_from=depth2,values_from=dist) %>%
+              column_to_rownames("depth1") %>% 
+              as.matrix() %>% 
+              as.dist()
+            title <- plot_text2[.y]
+            labels(dd) <- str_c(labels(dd)," ")
+            ggplot(as.dendrogram(hclust(dd),hang=0.5)) +
+              theme(
+                plot.caption = element_text(hjust=0.5,size=14)
+              ) + 
+              expand_limits(y=-0.25)
+          }) %>%
+          reduce(`+`) + 
+          plot_annotation(tag_levels="A") &
+          theme(plot.tag = element_text(face="bold"))
+      })
   })
   
 # show all the plots in a giant grid
-cluster_composite %>%
-  map(wrap_elements) %>%
-  reduce(`/`) + 
-  plot_annotation(tag_levels = list(names(cluster_composite)))
-# save the simpson version of the figure
-ggsave(path(figure_dir,"mesophotic_cluster.pdf"),cluster_composite$sim,device=cairo_pdf,width=12,height=4,units="in")
-ggsave(path(figure_dir,"mesophotic_cluster_jaccard.pdf"),cluster_composite$jaccard,device=cairo_pdf,width=12,height=4,units="in")
-
-#### Figure: cluster plots (animals)
-cluster_composite_animals <- beta_pairs_animals %>%
-  imap(~{
-    dm <- .y 
-    .x %>%
-      imap(~{
-        dd <- .x %>%
-          filter(measurement == beta_map$measurement[[dm]]) %>%
-          bind_rows(
-            tibble(
-              depth1=factor(levels(.$depth1),levels=levels(.$depth1)),
-              depth2=factor(levels(.$depth1),levels=levels(.$depth1)),
-              dist = 0,
-              sd = 0,
-              measurement = beta_map$measurement[[dm]]
-            ) 
-          ) %>%
-          arrange(depth1,depth2) %>%
-          pivot_wider(-c(sd,measurement),names_from=depth2,values_from=dist) %>%
-          column_to_rownames("depth1") %>% 
-          as.matrix() %>% 
-          as.dist()
-        title <- plot_text2[.y]
-        labels(dd) <- str_c(labels(dd)," ")
-        ggplot(as.dendrogram(hclust(dd),hang=0.5)) +
-          theme(
-            plot.caption = element_text(hjust=0.5,size=14)
-          ) + 
-          expand_limits(y=-0.25)
-      }) %>%
-      reduce(`+`) + 
-      plot_annotation(tag_levels="A") &
-      theme(plot.tag = element_text(face="bold"))
-  })
-  
-# show all the plots in a giant grid
-cluster_composite_animals %>%
-  map(wrap_elements) %>%
-  reduce(`/`) + 
-  plot_annotation(tag_levels = list(names(cluster_composite)))
+# cluster_composite %>%
+#   map(wrap_elements) %>%
+#   reduce(`/`) + 
+#   plot_annotation(tag_levels = list(names(cluster_composite)))
 
 # save the simpson version of the figure
-ggsave(path(figure_dir,"mesophotic_cluster_animals.pdf"),cluster_composite_animals$sim,device=cairo_pdf,width=8,height=4,units="in")
-ggsave(path(figure_dir,"mesophotic_cluster_animals_jaccard.pdf"),cluster_composite_animals$jaccard,device=cairo_pdf,width=8,height=4,units="in")
+ggsave(path(figure_dir,"mesophotic_cluster.pdf"),cluster_composite$all$sim,device=cairo_pdf,width=12,height=4,units="in")
+ggsave(path(figure_dir,"mesophotic_cluster_jaccard.pdf"),cluster_composite$all$jaccard,device=cairo_pdf,width=12,height=4,units="in")
+
+# # show all the plots in a giant grid
+# cluster_composite_animals %>%
+#   map(wrap_elements) %>%
+#   reduce(`/`) + 
+#   plot_annotation(tag_levels = list(names(cluster_composite)))
+
+# save the simpson version of the figure
+ggsave(path(figure_dir,"mesophotic_cluster_animals.pdf"),cluster_composite$animals$sim,device=cairo_pdf,width=8,height=4,units="in")
+ggsave(path(figure_dir,"mesophotic_cluster_animals_jaccard.pdf"),cluster_composite$animals$jaccard,device=cairo_pdf,width=8,height=4,units="in")
 
 #### Figure: shallow vs deep ordinations
 depth_zones <- c("depth_zone","depth_zone45")
-ord_zone_plotz <- distance_methods %>%
-  set_names() %>%
-  map(~{
-    dm <- .x
-    depth_zones %>%
+ord_zone_composite <- datasets %>%
+  imap(~{ # datasets
+    dataset <- .x
+    distance_methods %>%
       set_names() %>%
-      map(~{
-        zone <- .x
-        comm_ps %>%
-          imap(~{
-            title <- plot_text2[.y]
-            p <- plot_betadisp(.x, group=zone, method=dm, list=TRUE,binary=dm != "bray")
-            
-            p$plot <- p$plot +
-              scale_fill_manual(values=pal[c(1,length(pal))],name="Depth Zone") + 
-              plotz_theme("light") +
-              xlab(str_glue("Principle Coordinate 1 ({scales::percent(p$x_var,accuracy=0.1)})")) +
-              ylab(str_glue("Principle Coordinate 2 ({scales::percent(p$y_var,accuracy=0.1)})")) +
-              theme(legend.position = "right")
-            p$plot
+      map(~{ # distance methods
+        dm <- .x
+        depth_zones %>%
+          set_names() %>%
+          map(~{ # depth zones
+            zone <- .x
+            dataset %>%
+              imap(~{ # marker
+                title <- plot_text2[.y]
+                p <- plot_betadisp(.x, group=zone, method=dm, list=TRUE,binary=dm != "bray")
+                
+                p$plot <- p$plot +
+                  scale_fill_manual(values=pal[c(1,length(pal))],name="Depth Zone") + 
+                  plotz_theme("light") +
+                  xlab(str_glue("Principle Coordinate 1 ({scales::percent(p$x_var,accuracy=0.1)})")) +
+                  ylab(str_glue("Principle Coordinate 2 ({scales::percent(p$y_var,accuracy=0.1)})")) +
+                  theme(legend.position = "right")
+                p$plot
+              }) %>%
+              reduce(`+`) +
+              plot_layout(guides="collect") +
+              plot_annotation(tag_levels = "A") & theme(plot.tag = element_text(face="bold"))
           })
       })
   })
 
-# main text figure (shallow = 0-45m)
-ord_zone_composite <- ord_zone_plotz %>%
-  # distance methods
-  map(~{
-    # depth zones
-    .x %>%
-      map(~{
-        .x %>%
-          reduce(`+`) +
-          plot_layout(guides="collect") +
-          plot_annotation(tag_levels = "A") & theme(plot.tag = element_text(face="bold"))
-      })
-  })
-
 # just plot them all, you can scroll back
-ord_zone_composite %>%
-  imap(~{
-    dm <- .y
-    .x %>% imap(~{
-      zone <- .y
-      title <- str_glue("{dm}: {zone}")
-      .x %>% wrap_elements() +
-        ggtitle(title)
-    })
-  })
+# ord_zone_composite %>%
+#   imap(~{
+#     dm <- .y
+#     .x %>% imap(~{
+#       zone <- .y
+#       title <- str_glue("{dm}: {zone}")
+#       .x %>% wrap_elements() +
+#         ggtitle(title)
+#     })
+#   })
 
 # main text figure (shallow = 0-45m)
 # save the simpson version of the figure
-ggsave(path(figure_dir,"mesophotic_ord_shallowdeep45.pdf"),ord_zone_composite$sim$depth_zone45,device=cairo_pdf,width=12,height=4,units="in")
-ggsave(path(figure_dir,"mesophotic_ord_shallowdeep45_jaccard.pdf"),ord_zone_composite$jaccard$depth_zone45,device=cairo_pdf,width=12,height=4,units="in")
+ggsave(path(figure_dir,"mesophotic_ord_shallowdeep45.pdf"),ord_zone_composite$all$sim$depth_zone45,device=cairo_pdf,width=12,height=4,units="in")
+ggsave(path(figure_dir,"mesophotic_ord_shallowdeep45_jaccard.pdf"),ord_zone_composite$all$jaccard$depth_zone45,device=cairo_pdf,width=12,height=4,units="in")
 
 # supplemental figure (shallow = 0-30m)
 # save the simpson version of the figure
-ggsave(path(figure_dir,"mesophotic_ord_shallowdeep30.pdf"),ord_zone_composite$sim$depth_zone,device=cairo_pdf,width=12,height=4,units="in")
-ggsave(path(figure_dir,"mesophotic_ord_shallowdeep30_jaccard.pdf"),ord_zone_composite$jaccard$depth_zone,device=cairo_pdf,width=12,height=4,units="in")
+ggsave(path(figure_dir,"mesophotic_ord_shallowdeep30.pdf"),ord_zone_composite$all$sim$depth_zone,device=cairo_pdf,width=12,height=4,units="in")
+ggsave(path(figure_dir,"mesophotic_ord_shallowdeep30_jaccard.pdf"),ord_zone_composite$all$jaccard$depth_zone,device=cairo_pdf,width=12,height=4,units="in")
 
 #### supplemental figure: shallow vs deep ordinations for animals
-ord_zone_plotz_animals <- distance_methods %>%
-  set_names() %>%
+# save the simpson version of the figure
+ggsave(path(figure_dir,"mesophotic_ord_shallowdeep45_animals.pdf"),ord_zone_composite$animals$sim$depth_zone45,device=cairo_pdf,width=8,height=4,units="in")
+
+#### Figure: depth zone ordinations
+ord_composite <- datasets %>%
   map(~{
-    dm <- .x
-    depth_zones %>%
+    dataset <- .x
+    distance_methods %>%
       set_names() %>%
       map(~{
-        zone <- .x
-        animals %>%
+        dm <- .x
+        dataset %>%
           imap(~{
             title <- plot_text2[.y]
-            p <- plot_betadisp(.x, group=zone, method=dm, list=TRUE,binary=dm != "bray")
-            
+            p <- plot_betadisp(.x, group="depth_f", method=dm, list=TRUE, expand=TRUE,binary=dm != "bray")
             p$plot <- p$plot +
-              scale_fill_manual(values=pal[c(1,length(pal))],name="Depth Zone") + 
+              scale_fill_manual(values=pal,name="Depth") +
               plotz_theme("light") +
               xlab(str_glue("Principle Coordinate 1 ({scales::percent(p$x_var,accuracy=0.1)})")) +
               ylab(str_glue("Principle Coordinate 2 ({scales::percent(p$y_var,accuracy=0.1)})")) +
-              theme(legend.position = "right")
+              theme(legend.position = "right") +
+              guides(color="none")
             p$plot
-          })
-      })
-  })
-
-# figure composite
-ord_zone_composite_animals <- ord_zone_plotz_animals %>%
-  # distance methods
-  map(~{
-    # depth zones
-    .x %>%
-      map(~{
-        .x %>%
+          }) %>%
           reduce(`+`) +
           plot_layout(guides="collect") +
-          plot_annotation(tag_levels = "A") & theme(plot.tag = element_text(face="bold"))
+          plot_annotation(tag_levels = "A") &
+          theme(plot.tag = element_text(face="bold"))
       })
   })
 
-# just plot them all, you can scroll back
-ord_zone_composite_animals %>%
-  imap(~{
-    dm <- .y
-    .x %>% imap(~{
-      zone <- .y
-      title <- str_glue("{dm}: {zone}")
-      .x %>% wrap_elements() +
-        ggtitle(title)
-    })
-  })
-
-# save the simpson version of the figure
-ggsave(path(figure_dir,"mesophotic_ord_shallowdeep45_animals.pdf"),ord_zone_composite_animals$sim$depth_zone45,device=cairo_pdf,width=8,height=4,units="in")
-
-
-#### Figure: depth zone ordinations
-ord_composite <- distance_methods %>%
-  set_names() %>%
-  map(~{
-    dm <- .x
-    comm_ps %>%
-      imap(~{
-        title <- plot_text2[.y]
-        p <- plot_betadisp(.x, group="depth_f", method=dm, list=TRUE, expand=TRUE,binary=dm != "bray")
-        p$plot <- p$plot +
-          scale_fill_manual(values=pal,name="Depth") +
-          plotz_theme("light") +
-          xlab(str_glue("Principle Coordinate 1 ({scales::percent(p$x_var,accuracy=0.1)})")) +
-          ylab(str_glue("Principle Coordinate 2 ({scales::percent(p$y_var,accuracy=0.1)})")) +
-          theme(legend.position = "right") +
-          guides(color="none")
-        p$plot
-      }) %>%
-      reduce(`+`) +
-      plot_layout(guides="collect") +
-      plot_annotation(tag_levels = "A") &
-      theme(plot.tag = element_text(face="bold"))
-  })
-
 # show them in a big grid
-ord_composite %>%
-  map(wrap_elements) %>%
-  reduce(`/`) + 
-  plot_annotation(tag_levels=list(names(ord_composite)))
+# ord_composite %>%
+#   map(wrap_elements) %>%
+#   reduce(`/`) + 
+#   plot_annotation(tag_levels=list(names(ord_composite)))
 
 # save the simpson version of the figure
-ggsave(path(figure_dir,"mesophotic_ord_samples.pdf"),ord_composite$sim,device=cairo_pdf,width=12,height=4,units="in")
-ggsave(path(figure_dir,"mesophotic_ord_samples_jaccard.pdf"),ord_composite$jaccard,device=cairo_pdf,width=12,height=4,units="in")
+ggsave(path(figure_dir,"mesophotic_ord_samples.pdf"),ord_composite$all$sim,device=cairo_pdf,width=12,height=4,units="in")
+ggsave(path(figure_dir,"mesophotic_ord_samples_jaccard.pdf"),ord_composite$all$jaccard,device=cairo_pdf,width=12,height=4,units="in")
 
 ### Supplemental figure: depth zone ordinations for animals
-ord_composite_animals <- distance_methods %>%
-  set_names() %>%
-  map(~{
-    dm <- .x
-    animals %>%
-      imap(~{
-        title <- plot_text2[.y]
-        p <- plot_betadisp(.x, group="depth_f", method=dm, list=TRUE, expand=TRUE,binary=dm != "bray")
-        p$plot <- p$plot +
-          scale_fill_manual(values=pal,name="Depth") +
-          plotz_theme("light") +
-          xlab(str_glue("Principle Coordinate 1 ({scales::percent(p$x_var,accuracy=0.1)})")) +
-          ylab(str_glue("Principle Coordinate 2 ({scales::percent(p$y_var,accuracy=0.1)})")) +
-          theme(legend.position = "right") +
-          guides(color="none")
-        p$plot
-      }) %>%
-      reduce(`+`) +
-      plot_layout(guides="collect") +
-      plot_annotation(tag_levels = "A") &
-      theme(plot.tag = element_text(face="bold"))
-  })
-
 # show them in a big grid
-ord_composite_animals %>%
-  map(wrap_elements) %>%
-  reduce(`/`) + 
-  plot_annotation(tag_levels=list(names(ord_composite)))
+# ord_composite_animals %>%
+#   map(wrap_elements) %>%
+#   reduce(`/`) + 
+#   plot_annotation(tag_levels=list(names(ord_composite)))
 
 # save the simpson version of the figure
-ggsave(path(figure_dir,"mesophotic_ord_samples_animals.pdf"),ord_composite_animals$sim,device=cairo_pdf,width=8,height=4,units="in")
+ggsave(path(figure_dir,"mesophotic_ord_samples_animals.pdf"),ord_composite$animals$sim,device=cairo_pdf,width=8,height=4,units="in")
 
 #### Figure: fish depth distributions vs eDNA detections
 
@@ -933,40 +764,43 @@ depth_plotz
 ggsave(path(figure_dir,"mesophotic_fish_depth.pdf"),depth_plotz,device=cairo_pdf,width=12,height=10,units="in")
 
 #### Supplemental Figure: ordinations by site
-ord_sites_composite <- distance_methods %>%
-  set_names() %>%
+ord_sites_composite <- datasets %>%
   map(~{
-    dm <- .x
-    comm_ps %>%
-      imap(~{
-        title <- plot_text2[.y]
-        p <- plot_betadisp(.x, group="station_grouping", method=dm, list=TRUE,binary=dm != "bray")
-        p$plot <- p$plot +
-          scale_fill_manual(values=pal[c(1,4,7)],name="Site") +
-          plotz_theme("light") + 
-          xlab(str_glue("Principle Coordinate 1 ({scales::percent(p$x_var,accuracy=0.1)})")) +
-          ylab(str_glue("Principle Coordinate 2 ({scales::percent(p$y_var,accuracy=0.1)})")) +
-          theme(legend.position = "right")
-        p$plot
-      }) %>%
-      reduce(`+`) +
-      plot_layout(guides="collect") +
-      plot_annotation(tag_levels = "A") &
-      theme(plot.tag = element_text(face="bold"))
+    dataset <- .x
+    distance_methods %>%
+      set_names() %>%
+      map(~{
+        dm <- .x
+        dataset %>%
+          imap(~{
+            title <- plot_text2[.y]
+            p <- plot_betadisp(.x, group="station_grouping", method=dm, list=TRUE,binary=dm != "bray")
+            p$plot <- p$plot +
+              scale_fill_manual(values=pal[c(1,4,7)],name="Site") +
+              plotz_theme("light") + 
+              xlab(str_glue("Principle Coordinate 1 ({scales::percent(p$x_var,accuracy=0.1)})")) +
+              ylab(str_glue("Principle Coordinate 2 ({scales::percent(p$y_var,accuracy=0.1)})")) +
+              theme(legend.position = "right")
+            p$plot
+          }) %>%
+          reduce(`+`) +
+          plot_layout(guides="collect") +
+          plot_annotation(tag_levels = "A") &
+          theme(plot.tag = element_text(face="bold"))
+      })
   })
 
 # show them in a big grid
-ord_sites_composite %>%
-  map(wrap_elements) %>%
-  reduce(`/`) + 
-  plot_annotation(tag_levels=list(names(ord_sites_composite)))
+# ord_sites_composite %>%
+#   map(wrap_elements) %>%
+#   reduce(`/`) + 
+#   plot_annotation(tag_levels=list(names(ord_sites_composite)))
 
 # save the simpson version
-ggsave(path(figure_dir,"mesophotic_ord_sites.pdf"),ord_sites_composite$sim,device=cairo_pdf,width=12,height=4,units="in")
-ggsave(path(figure_dir,"mesophotic_ord_sites_jaccard.pdf"),ord_sites_composite$jaccard,device=cairo_pdf,width=12,height=4,units="in")
-
+ggsave(path(figure_dir,"mesophotic_ord_sites.pdf"),ord_sites_composite$all$sim,device=cairo_pdf,width=12,height=4,units="in")
 # save the jaccard version
-# ggsave(path(figure_dir,"mesophotic_ord_sites_jaccard.pdf"),ord_sites_composite$jaccard,device=cairo_pdf,width=12,height=4,units="in")
+ggsave(path(figure_dir,"mesophotic_ord_sites_jaccard.pdf"),ord_sites_composite$all$jaccard,device=cairo_pdf,width=12,height=4,units="in")
+
 
 #### Supplemental Figure: species accumulations
 sup <- function(...) suppressWarnings(suppressMessages(...))
@@ -1359,7 +1193,7 @@ anova_table %>%
   mutate(pseudo_f=round(pseudo_f,3), p_value=round(p_value,4)) %>%
   mutate( term = term_map[term] ) %>%
   rename(Dataaset=dataset,`Dissimilarity Index`=index,`Assay`=marker,`Term`=term,`Pseudo-F`=pseudo_f,`p-value`=p_value) %>%
-  write_ms_table(path(table_dir,"mesophotic_anovas.csv"),"Results of PERMANOVA analyses",bold_header = TRUE)
+  write_ms_table(path(table_dir,"mesophotic_anovas.csv"),"Results of West Hawai&#x02BB;i eDNA PERMANOVA analyses",bold_header = TRUE)
 
 # write PERMANOVA and beta diversity results to an include file for the manuscript so I don't have to keep changing the numbers when they change here
 resource_dir="~/projects/dissertation/manuscript/resources/"
@@ -1369,14 +1203,16 @@ include_file <- path(resource_dir,"include.m4")
 file_delete(include_file)
 
 # write permanova results
-list(anovas,animal_anovas) %>%
-  walk2(c("all","animals"),~{
+anovas %>%
+  keep_names(~.x != "benthic") %>%
+  iwalk(~{
     dataset <- .y
     .x %>%
-      walk2(names(.),~{
+      keep_names(~.x != "bray") %>%
+      iwalk(~{
         method <- .y
         .x %>%
-          walk2(names(.),~{
+          iwalk(~{
             marker <- .y
             lines <- .x %>%
               imap_dfr(~{
@@ -1406,22 +1242,25 @@ stat_map <- c(
   "beta.sne" = "nestedness",
   "beta.jac" = "overall",
   "beta.jtu" = "turnover",
-  "beta.jne" = "nestedness"
+  "beta.jne" = "nestedness",
+  "beta.bray" = "overall"
 )
 
-# write overall beta diversity stats
-c("all","animals") %>%
-  walk(~{
-    dataset <- .x
-    beta_diversity %>%
-      walk2(names(.),~{
+# write beta diversity stats
+beta_diversity %>%
+  keep_names(~.x != "benthic") %>%
+  iwalk(~{
+    dataset_name <- .y
+    .x %>%
+      keep_names(~.x != "bray") %>%
+      iwalk(~{
         method <- .y
-        .x %>% walk2(names(.),~{
+        .x %>% iwalk(~{
           marker <- .y
-          .x %>% walk2(names(.),~{
+          .x %>% iwalk(~{
             stat <- stat_map[str_to_lower(.y)]
             .x <- str_pad(round(.x,2),4,side="right",pad="0")
-            line <- str_glue("define({{{{{dataset}_{method}_{marker}_{stat}}}}},{{{{{.x}}}}})") 
+            line <- str_glue("define({{{{{dataset_name}_{method}_{marker}_{stat}}}}},{{{{{.x}}}}})") 
             write_lines(line,include_file,append=TRUE)
           })
         })
@@ -1431,18 +1270,23 @@ c("all","animals") %>%
 # write mean/sd beta diversity stats for depth zone comparisons 
 with(
   beta_pairs %>%
+    keep_names(~.x != "benthic") %>%
     imap_dfr(~{
-      .x %>%
+      .x %>% 
+        keep_names(~.x != "bray") %>%
         imap_dfr(~{
           .x %>%
-            group_by(measurement) %>%
-            summarise(mean=round(mean(dist),2),sd=round(sd(dist),2)) %>%
-            ungroup() %>%
-            mutate(marker=.y)
+            imap_dfr(~{
+              .x %>%
+                group_by(measurement) %>%
+                summarise(mean=round(mean(dist),2),sd=round(sd(dist),2)) %>%
+                ungroup() %>%
+                mutate(marker=.y)
+            }) %>%
+            mutate(method=.y)
         }) %>%
-        mutate(method=.y)
-    }) %>%
-    mutate(dataset="all"),
+        mutate(dataset=.y)
+    }),
   write_lines(
     c(
       str_glue("define({{{{{dataset}_{method}_{marker}_{stat_map[measurement]}_mean}}}},{{{{{mean}}}}})"),
@@ -1452,30 +1296,7 @@ with(
     append=TRUE
   )
 )
-# do it again for animals
-with(
-  beta_pairs_animals %>%
-    imap_dfr(~{
-      .x %>%
-        imap_dfr(~{
-          .x %>%
-            group_by(measurement) %>%
-            summarise(mean=round(mean(dist),2),sd=round(sd(dist),2)) %>%
-            ungroup() %>%
-            mutate(marker=.y)
-        }) %>%
-        mutate(method=.y)
-    }) %>%
-    mutate(dataset="animals"),
-  write_lines(
-    c(
-      str_glue("define({{{{{dataset}_{method}_{marker}_{stat_map[measurement]}_mean}}}},{{{{{mean}}}}})"),
-      str_glue("define({{{{{dataset}_{method}_{marker}_{stat_map[measurement]}_sd}}}},{{{{{sd}}}}})")
-    ),
-    include_file,
-    append=TRUE
-  )
-)
+
 
 #### Supplemental table: eDNA reads summary
 all_samples <- sample_data %>%

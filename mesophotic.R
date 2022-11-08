@@ -476,6 +476,7 @@ beta_pairs_composite %>%
 
 # save the simpson version of the figure
 ggsave(path(figure_dir,"mesophotic_beta_pairs.pdf"),beta_pairs_composite$sim,device=cairo_pdf,width=12,height=9,units="in")
+ggsave(path(figure_dir,"mesophotic_beta_pairs_jaccard.pdf"),beta_pairs_composite$jaccard,device=cairo_pdf,width=12,height=9,units="in")
 
 #### Figure: beta diversity heatmaps (animals)
 beta_label_map <- list(
@@ -522,6 +523,7 @@ beta_pairs_composite_animals %>%
 
 # save the simpson version of the figure
 ggsave(path(figure_dir,"mesophotic_beta_pairs_animals.pdf"),beta_pairs_composite_animals$sim,device=cairo_pdf,width=12,height=6,units="in")
+ggsave(path(figure_dir,"mesophotic_beta_pairs_animals_jaccard.pdf"),beta_pairs_composite_animals$jaccard,device=cairo_pdf,width=12,height=6,units="in")
 
 #### Figure: cluster plots
 cluster_composite <- beta_pairs %>%
@@ -565,6 +567,7 @@ cluster_composite %>%
   plot_annotation(tag_levels = list(names(cluster_composite)))
 # save the simpson version of the figure
 ggsave(path(figure_dir,"mesophotic_cluster.pdf"),cluster_composite$sim,device=cairo_pdf,width=12,height=4,units="in")
+ggsave(path(figure_dir,"mesophotic_cluster_jaccard.pdf"),cluster_composite$jaccard,device=cairo_pdf,width=12,height=4,units="in")
 
 #### Figure: cluster plots (animals)
 cluster_composite_animals <- beta_pairs_animals %>%
@@ -609,6 +612,7 @@ cluster_composite_animals %>%
 
 # save the simpson version of the figure
 ggsave(path(figure_dir,"mesophotic_cluster_animals.pdf"),cluster_composite_animals$sim,device=cairo_pdf,width=8,height=4,units="in")
+ggsave(path(figure_dir,"mesophotic_cluster_animals_jaccard.pdf"),cluster_composite_animals$jaccard,device=cairo_pdf,width=8,height=4,units="in")
 
 #### Figure: shallow vs deep ordinations
 depth_zones <- c("depth_zone","depth_zone45")
@@ -665,10 +669,12 @@ ord_zone_composite %>%
 # main text figure (shallow = 0-45m)
 # save the simpson version of the figure
 ggsave(path(figure_dir,"mesophotic_ord_shallowdeep45.pdf"),ord_zone_composite$sim$depth_zone45,device=cairo_pdf,width=12,height=4,units="in")
+ggsave(path(figure_dir,"mesophotic_ord_shallowdeep45_jaccard.pdf"),ord_zone_composite$jaccard$depth_zone45,device=cairo_pdf,width=12,height=4,units="in")
 
 # supplemental figure (shallow = 0-30m)
 # save the simpson version of the figure
 ggsave(path(figure_dir,"mesophotic_ord_shallowdeep30.pdf"),ord_zone_composite$sim$depth_zone,device=cairo_pdf,width=12,height=4,units="in")
+ggsave(path(figure_dir,"mesophotic_ord_shallowdeep30_jaccard.pdf"),ord_zone_composite$jaccard$depth_zone,device=cairo_pdf,width=12,height=4,units="in")
 
 #### supplemental figure: shallow vs deep ordinations for animals
 ord_zone_plotz_animals <- distance_methods %>%
@@ -757,6 +763,7 @@ ord_composite %>%
 
 # save the simpson version of the figure
 ggsave(path(figure_dir,"mesophotic_ord_samples.pdf"),ord_composite$sim,device=cairo_pdf,width=12,height=4,units="in")
+ggsave(path(figure_dir,"mesophotic_ord_samples_jaccard.pdf"),ord_composite$jaccard,device=cairo_pdf,width=12,height=4,units="in")
 
 ### Supplemental figure: depth zone ordinations for animals
 ord_composite_animals <- distance_methods %>%
@@ -956,6 +963,7 @@ ord_sites_composite %>%
 
 # save the simpson version
 ggsave(path(figure_dir,"mesophotic_ord_sites.pdf"),ord_sites_composite$sim,device=cairo_pdf,width=12,height=4,units="in")
+ggsave(path(figure_dir,"mesophotic_ord_sites_jaccard.pdf"),ord_sites_composite$jaccard,device=cairo_pdf,width=12,height=4,units="in")
 
 # save the jaccard version
 # ggsave(path(figure_dir,"mesophotic_ord_sites_jaccard.pdf"),ord_sites_composite$jaccard,device=cairo_pdf,width=12,height=4,units="in")
@@ -1121,18 +1129,9 @@ ggsave(path(figure_dir,"mesophotic_venn.pdf"),venn_composite,device=cairo_pdf,wi
 ### supplemental figure: 16S zotu upset plot
 # function to make an upset plot from a presence-absence matrix
 # of category occurrences 
-plot_upset <- function(dataset,
-                       name_column,
-                       data_columns,
-                       dot_size = 6,
-                       line_size=2,
-                       prefilter=F,
-                       intersects=NA,
-                       min_intersects=0,
-                       bar_lab = "intersections",
-                       sidebar_lab = "number in category",
-                       label_top_bars = FALSE,
-                       label_side_bars = FALSE,
+plot_upset <- function(dataset, name_column, data_columns, dot_size = 6, line_size=2,
+                       prefilter=F, intersects=NA, min_intersects=0, bar_lab = "intersections",
+                       sidebar_lab = "number in category", label_top_bars = FALSE, label_side_bars = FALSE,
                        group_palette = NULL) {
   if (prefilter) {
     dataset <- dataset %>%
@@ -1564,7 +1563,7 @@ rs <- reads_summary %>%
   select(-order,-starts_with("Normalized"))
 
 # write reads summary to manuscript tables directory
-write_ms_table(rs,path(table_dir,"mesophotic_reads_summary.csv"),"Sequencing results for mesophotic eDNA samples across assay types",na="",bold_header = TRUE)
+write_ms_table(rs,path(table_dir,"mesophotic_reads_summary.csv"),"Sequencing results for mesophotic eDNA samples from West Hawai&#x02BB;i across assay types",na="",bold_header = TRUE)
 
 # numbers reported in the text --------------------------------------------
 

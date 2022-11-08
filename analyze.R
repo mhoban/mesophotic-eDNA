@@ -255,6 +255,62 @@ get_ncbi_taxonomy <- function() {
     return()
 }
 
+# helper function to do purrr-style keep call with list element names
+keep_names <- function(.x,.names,...) {
+  if (is.character(.names)) {
+    idx <- intersect(names(.x),.names)
+  } else if (is.function(.names) || is_formula(.names)) {
+    .names <- rlang::as_function(.names)
+    idx <- .names(names(.x))
+    if (is.logical(idx)) {
+      idx[is.na(idx)] <- FALSE
+    } else if (is.character(idx)) {
+      idx <- intersect(names(.x),idx)
+    } else if (!is.integer(idx)) {
+      abort("If `.names` is a function, it must return an logical, integer, or character vector")
+    }
+  }
+  .x[idx]
+}
+
+
+# standardize phyloseq object
+ps_standardize <- function(ps, method="total", ...) {
+  vegan_methods <- c("total", "max", "frequency", "normalize", "range", "rank", "standardize", "pa", "chi.square", "hellinger", "log")
+  other_methods <- c("wisconsin")
+  
+  trows <- phyloseq::taxa_are_rows(ps)
+  if(trows == TRUE) { 
+    marg <- 2 
+  } else {
+    marg <- 1 
+  }
+  
+  otus <- ps %>%
+    otu_table() %>%
+    as("matrix")
+  
+  if (method %in% vegan_methods) {
+    otus_std <- decostand(otus,method=method,MARGIN=marg,...)
+    if (method == "chi.square") {
+      otus_std <- t(otus_std)
+    }
+  } else if (method == "wisconsin") {
+    if (trows) {
+      otus_std <- wisconsin(t(otus))
+      otus_std <- t(otus_std)
+    } else {
+      otus_std <- wisconsin(otus)
+    }
+  } else {
+    otus_std <- NULL
+  }
+  
+  if (!is.null(otus_std)) {
+    otu_table(ps) <- otu_table(otus_std,taxa_are_rows = trows)
+  }
+  return(ps) 
+}
 
 # shorten calls to suppressMessages (readr outputs all sorts of nonsense)
 sm <- suppressMessages            

@@ -220,9 +220,8 @@ pal[4] <- '#827222'
 beta_wrapper <- function(x,method) {
   if (method %in% c("sim","sorensen","jaccard")) {
     x %>%
+      ps_standardize("pa") %>%
       otu_table() %>%
-      as("matrix") %>%
-      decostand("pa") %>%
       beta.pair(if_else(method == "sim","sorensen","jaccard")) %>%
       return()
   } else if (method == "bray") {
@@ -279,9 +278,8 @@ beta_diversity <- datasets %>%
         dataset %>%
           imap(~{
             .x %>%
+              ps_standardize("pa") %>%
               otu_table() %>%
-              as("matrix") %>%
-              decostand("pa") %>%
               beta.multi(if_else(dm == "sim","sorensen","jaccard"))
           })
       })
@@ -314,22 +312,6 @@ anovas <- datasets %>%
       })
   })
 
-keep_names <- function(.x,.names,...) {
-  if (is.character(.names)) {
-    idx <- intersect(names(.x),.names)
-  } else if (is.function(.names) || is_formula(.names)) {
-    .names <- rlang::as_function(.names)
-    idx <- .names(names(.x))
-    if (is.logical(idx)) {
-      idx[is.na(idx)] <- FALSE
-    } else if (is.character(idx)) {
-      idx <- intersect(names(.x),idx)
-    } else if (!is.integer(idx)) {
-      abort("If `.names` is a function, it must return an logical, integer, or character vector")
-    }
-  }
-  .x[idx]
-}
 
 # make a nice little table of anova results
 # this assumes the name of the list entry is the same as the
@@ -1127,44 +1109,48 @@ plot_upset <- function(dataset, name_column, data_columns, dot_size = 6, line_si
   return(top_bars + side_bars + dots + plot_layout(design=layout))
 }
 
-upset_data <- comm_ps %>%
+upset_data <- datasets %>%
   map(~{
     .x %>%
-      psmelt() %>%
-      group_by(OTU,depth_f) %>%
-      summarise(present = as.integer(sum(Abundance) > 0)) %>%
-      pivot_wider(names_from="depth_f",values_from="present") %>%
-      ungroup()
+      map(~{
+        .x %>%
+          psmelt() %>%
+          group_by(OTU,depth_f) %>%
+          summarise(present = as.integer(sum(Abundance) > 0)) %>%
+          pivot_wider(names_from="depth_f",values_from="present") %>%
+          ungroup()
+      })
   })
-
 
 upset_plotz <- upset_data %>%
   map(~{
     .x %>%
-      plot_upset("OTU",
-                 Surface:`90m`,
-                 bar_lab="Shared zOTUs",
-                 sidebar_lab="zOTUs detected",
-                 label_side_bars = TRUE,
-                 label_top_bars = TRUE,
-                 group_palette = pal,
-                 intersects = 30,
-                 dot_size = 6,
-                 line_size=2)
+      map(~{
+        .x %>%
+          plot_upset("OTU",
+                     Surface:`90m`,
+                     bar_lab="Shared zOTUs",
+                     sidebar_lab="zOTUs detected",
+                     label_side_bars = TRUE,
+                     label_top_bars = TRUE,
+                     group_palette = pal,
+                     intersects = 30,
+                     dot_size = 6,
+                     line_size=2)
+      })
   })
 
 
 
-upset_composite <- upset_plotz %>%
-  map(wrap_elements) %>%
-  reduce(`/`) + 
-  plot_annotation(tag_levels = "A") & theme(plot.tag = element_text(face="bold"))
-upset_composite 
+# upset_composite <- upset_plotz %>%
+#   map(wrap_elements) %>%
+#   reduce(`/`) + 
+#   plot_annotation(tag_levels = "A") & theme(plot.tag = element_text(face="bold"))
+# upset_composite 
 # upset_plotz$fish
 
-ggsave(path(figure_dir,"mesophotic_fish_upset.pdf"),upset_plotz$fish,device=cairo_pdf,width=12,height=9,units="in")
-
-ggsave(path(figure_dir,"mesophotic_upset.pdf"),upset_composite,device=cairo_pdf,width=9,height=14,units="in")
+# ggsave(path(figure_dir,"mesophotic_fish_upset.pdf"),upset_plotz$fish,device=cairo_pdf,width=12,height=9,units="in")
+# ggsave(path(figure_dir,"mesophotic_upset.pdf"),upset_composite,device=cairo_pdf,width=9,height=14,units="in")
 
 # manuscript tables -------------------------------------------------------
 table_dir <- "~/projects/dissertation/manuscript/tables"
@@ -1428,9 +1414,8 @@ get_indicators <- function(community,variable,fdr=0.10,permutations=999,list=TRU
   sd <- sample_tibble(community)
   # get presence/absence-transformed community matrix
   mat <- community %>%
-    otu_table() %>%
-    as("matrix") %>%
-    decostand("pa")
+    ps_standardize("pa") %>%
+    otu_table() 
   
   # yank analysis factor
   categories <- sd %>% pull(variable)
@@ -1464,27 +1449,34 @@ get_indicators <- function(community,variable,fdr=0.10,permutations=999,list=TRU
 ## all taxa
 # do indicator analysis for deep v shallow
 # and just for animals
-indicators <- animals %>% 
-  # stick the fish back in the animals list
-  list_modify(fish = comm_ps$fish) %>%
-  map(~get_indicators(.x,variable="depth_zone45",list=FALSE))
+indicators <- datasets %>% 
+  keep_names(c("animals","benthic")) %>%
+  map(~{
+    # stick the fish back in the list
+    .x %>%
+      list_modify(fish = comm_ps$fish) %>%
+      map(~get_indicators(.x,variable="depth_zone45",list=FALSE))
+  })
 
 itable <- indicators %>%
-  enframe(name = "assay", value="indval") %>%
-  unnest(indval) %>%
-  filter(p_value < 0.05) %>%
-  select(assay,group,stat,p_value,domain:species) %>%
-  mutate(assay = plot_text2[assay]) %>%
-  rename(Assay=assay,Depth=group,IndVal=stat,`p-value`=p_value) %>%
-  rename_with(str_to_title,domain:species) %>%
-  arrange(Assay,desc(Depth),Domain,Kingdom,Phylum,Class,Order,Family,Genus,Species) %>%
-  mutate(
-    Depth = case_when(
-      Depth == "Shallow" ~ "Shallow\n(0--45m)",
-      Depth == "Deep" ~ "Deep\n(60--90m)"
-    )
-  ) %>%
-  mutate(Species = str_c("*",Species,"*"))
+  map(~{
+    .x %>%
+      enframe(name = "assay", value="indval") %>%
+      unnest(indval) %>%
+      filter(p_value < 0.05) %>%
+      select(assay,group,stat,p_value,domain:species) %>%
+      mutate(assay = plot_text2[assay]) %>%
+      rename(Assay=assay,Depth=group,IndVal=stat,`p-value`=p_value) %>%
+      rename_with(str_to_title,domain:species) %>%
+      arrange(Assay,desc(Depth),Domain,Kingdom,Phylum,Class,Order,Family,Genus,Species) %>%
+      mutate(
+        Depth = case_when(
+          Depth == "Shallow" ~ "Shallow\n(0--45m)",
+          Depth == "Deep" ~ "Deep\n(60--90m)"
+        )
+      ) %>%
+      mutate(Species = str_c("*",Species,"*"))
+  })
 itable
 write_ms_table(itable,path(table_dir,"mesophotic_indicators.csv"),caption = "Significant indicator species (*IndVal*) analysis results",na="",bold_header = TRUE)
 

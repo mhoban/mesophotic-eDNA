@@ -149,7 +149,7 @@ comm_ps <- communities %>%
   }) 
 
 # create the metazoan subset of our three communities
-minimals <- 1000 # minimum reads to retain a sample
+minimals <- 500 # minimum reads to retain a sample
 
 # make the animals subset
 animals <- communities %>%
@@ -161,7 +161,7 @@ animals <- communities %>%
       filter(OTU %in% keep_otus) %>%
       pivot_longer(matches(sample_pattern),names_to="site",values_to="reads") %>%
       pivot_wider(names_from="OTU",values_from="reads") %>%
-      column_to_rownames("site") 
+      column_to_rownames("site")
     if (rarefy) {
       rarefied <- rarefied %>%
         rrarefy.perm(n=rarefy_perm)
@@ -174,14 +174,14 @@ animals <- communities %>%
       rarefied
     )
     ps <- as_ps2(rarefied,new_tax,sample_data)
-    
+
     pruno <- filter_taxa(ps,function(x) {
       sum(x[negative_controls],na.rm=T) == 0 & sum(x) > 0
     })
     ps <- prune_taxa(pruno,ps)
     ps <- subset_taxa(ps, !family %in% remove_families)
-    
-    prune_samples(sample_sums(ps) > 0, ps)
+
+    prune_samples(sample_sums(ps) >= minimals,ps)
   })
 
 animals <- animals[c("inverts","metazoans")]
@@ -205,9 +205,9 @@ plot_text <- c(
   'metazoans' = '"Metazoans" (COI)'
 )
 plot_text2 <- c(
-  'fish' = '16S-Fish',
-  'inverts' = '18S-Eukaryote',
-  'metazoans' = 'COI-Leray'
+  'fish' = '16S-fishes',
+  'inverts' = '18S-eukaryotes',
+  'metazoans' = 'COI-metazoans'
 )
 
 # set up depth zone color palette
@@ -317,9 +317,7 @@ anovas <- datasets %>%
 # this assumes the name of the list entry is the same as the
 # name of the variable being examined
 anova_table <- anovas %>%
-  keep_names(~.x != "benthic") %>%
-  # map2_dfr(c("Complete dataset","Metazoans","Benthic metazoans"),~{
-  map2_dfr(c("Complete dataset","Metazoans"),~{
+  map2_dfr(c("Complete dataset","Metazoans","Benthic metazoans"),~{
     .x %>%
       keep_names(~.x != "bray") %>%
       imap_dfr(~{
@@ -389,6 +387,18 @@ beta_map <- list(
   )
 )
 
+method_map <- c(
+  'sim' = 'Simpson',
+  'jaccard' = 'Jaccard',
+  'bray' = 'Bray-Curtis'
+)
+
+dataset_map <- c(
+  'all' = 'Complete dataset',
+  'animals' = 'Metazoans',
+  'benthic' = 'Benthic metazoans'
+)
+
 
 # create composite figure of all beta diversity heatmaps
 beta_pairs_composite <- beta_pairs %>%
@@ -433,18 +443,18 @@ beta_pairs_composite <- beta_pairs %>%
 #   map(wrap_elements) %>%
 #   reduce(`/`) + plot_annotation(tag_levels=list(names(beta_pairs_composite)))
 
-# save the simpson version of the figure
-ggsave(path(figure_dir,"mesophotic_beta_pairs.pdf"),beta_pairs_composite$all$sim,device=cairo_pdf,width=12,height=9,units="in")
-ggsave(path(figure_dir,"mesophotic_beta_pairs_jaccard.pdf"),beta_pairs_composite$all$jaccard,device=cairo_pdf,width=12,height=9,units="in")
-
-# show all the plots in a giant grid
-# beta_pairs_composite_animals %>%
-#   map(wrap_elements) %>%
-#   reduce(`/`) + plot_annotation(tag_levels=list(names(beta_pairs_composite_animals)))
-
-# save the simpson version of the figure
-ggsave(path(figure_dir,"mesophotic_beta_pairs_animals.pdf"),beta_pairs_composite$animals$sim,device=cairo_pdf,width=12,height=6,units="in")
-ggsave(path(figure_dir,"mesophotic_beta_pairs_animals_jaccard.pdf"),beta_pairs_composite$animals$jaccard,device=cairo_pdf,width=12,height=6,units="in")
+# save all the different versions to PDF
+beta_pairs_composite %>%
+  iwalk(~{
+    dataset <- .y
+    .x %>% 
+      keep_names(~.x != "bray") %>%
+      iwalk(~{
+        dm <- .y
+        fn <- str_glue("mesophotic_beta_pairs_{dataset}_{dm}.pdf")
+        ggsave(path(figure_dir,fn),.x,device=cairo_pdf,width=12,height=9,units="in")
+      })
+  })
 
 #### Figure: cluster plots
 cluster_composite <- beta_pairs %>%
@@ -484,25 +494,22 @@ cluster_composite <- beta_pairs %>%
       })
   })
   
-# show all the plots in a giant grid
-# cluster_composite %>%
-#   map(wrap_elements) %>%
-#   reduce(`/`) + 
-#   plot_annotation(tag_levels = list(names(cluster_composite)))
-
+# put all the cluster diagrams in one big figure
+# simpson version
+big_cluster <- cluster_composite %>%
+  map(~.x$sim) %>%
+  reduce(`/`) + 
+  plot_annotation(tag_levels="A")
 # save the simpson version of the figure
-ggsave(path(figure_dir,"mesophotic_cluster.pdf"),cluster_composite$all$sim,device=cairo_pdf,width=12,height=4,units="in")
-ggsave(path(figure_dir,"mesophotic_cluster_jaccard.pdf"),cluster_composite$all$jaccard,device=cairo_pdf,width=12,height=4,units="in")
+ggsave(path(figure_dir,"mesophotic_cluster_all_sim.pdf"),big_cluster,device=cairo_pdf,width=12,height=9,units="in")
 
-# # show all the plots in a giant grid
-# cluster_composite_animals %>%
-#   map(wrap_elements) %>%
-#   reduce(`/`) + 
-#   plot_annotation(tag_levels = list(names(cluster_composite)))
-
-# save the simpson version of the figure
-ggsave(path(figure_dir,"mesophotic_cluster_animals.pdf"),cluster_composite$animals$sim,device=cairo_pdf,width=8,height=4,units="in")
-ggsave(path(figure_dir,"mesophotic_cluster_animals_jaccard.pdf"),cluster_composite$animals$jaccard,device=cairo_pdf,width=8,height=4,units="in")
+# jaccard version
+big_cluster_jac <- cluster_composite %>%
+  map(~.x$jaccard) %>%
+  reduce(`/`) + 
+  plot_annotation(tag_levels="A")
+# save the jaccard version of the figure
+ggsave(path(figure_dir,"mesophotic_cluster_all_jaccard.pdf"),big_cluster_jac,device=cairo_pdf,width=12,height=9,units="in")
 
 #### Figure: shallow vs deep ordinations
 depth_zones <- c("depth_zone","depth_zone45")
@@ -678,12 +685,12 @@ cor.test(dd$depth_diff,dd$reads,method="kendall",exact = F)
 # finish making the depth detection summary
 # taking only detections with more than 10 reads
 # keeping only species with deepest depth <150m
-detected_depth <- detected_depth %>%
+depth_data <- detected_depth %>%
   filter(reads >= 10) %>%
   group_by(family,species,depth,fb_deep,fb_shallow) %>%
   summarise(n=n(),reads=sum(reads)) %>%
   ungroup() %>%
-  filter(fb_deep < 150)  %>%
+  filter(fb_deep < 150 | fb_shallow > 90)  %>%
   ungroup() %>%
   group_by(species) %>%
   mutate(depth_diff = depth - max(fb_deep)) %>%
@@ -700,7 +707,7 @@ detected_depth <- detected_depth %>%
 # since it'll plot the line range as many time as there
 # are observerations, we just duplicate the observations
 # for whoever doesn't have the max number
-most <- detected_depth %>%
+most <- depth_data %>%
   count(species) %>% 
   pull(n) %>% 
   max()
@@ -708,7 +715,7 @@ most <- detected_depth %>%
 # this is a little hack to make the depth ranges look good
 # we basically make them be drawn an equal number of times per
 # species, so the lines are all equally thick.
-detected_depth <- detected_depth %>%
+depth_data <- depth_data %>%
   group_by(species) %>%
   group_modify(~{
     grp <- .x
@@ -722,7 +729,7 @@ detected_depth <- detected_depth %>%
     return(grp)
   }) 
 
-depth_plotz <- ggplot(detected_depth) + 
+depth_plotz <- ggplot(depth_data) + 
   geom_errorbar(aes(x=species,ymin=fb_shallow,ymax=fb_deep),width=0.5,color="dodgerblue4") +
   geom_point(aes(x=species,y=depth,size=reads,color=recode_factor(factor(str_c(depth,'m')), "0m" = "Surface")),alpha=0.7) +
   stat_summary(aes(x=species,y=depth),geom="point",fun="mean",col="black",size=10,shape="-") + 
@@ -784,9 +791,8 @@ ggsave(path(figure_dir,"mesophotic_ord_sites.pdf"),ord_sites_composite$all$sim,d
 ggsave(path(figure_dir,"mesophotic_ord_sites_jaccard.pdf"),ord_sites_composite$all$jaccard,device=cairo_pdf,width=12,height=4,units="in")
 
 
-#### Supplemental Figure: species accumulations
+#### Figure: species accumulations
 sup <- function(...) suppressWarnings(suppressMessages(...))
-
 # test species accumulation against various models
 all_models <- comm_ps %>%
   imap(~{
@@ -942,7 +948,8 @@ venn_composite <- venn_plotz %>%
 venn_composite
 ggsave(path(figure_dir,"mesophotic_venn.pdf"),venn_composite,device=cairo_pdf,width=12,height=3.5,units="in")
 
-### supplemental figure: 16S zotu upset plot
+#### Figure: UpSet plots
+
 # function to make an upset plot from a presence-absence matrix
 # of category occurrences 
 plot_upset <- function(dataset, name_column, data_columns, dot_size = 6, line_size=2,
@@ -1178,111 +1185,14 @@ term_map = c(
 anova_table %>%
   mutate(pseudo_f=round(pseudo_f,3), p_value=round(p_value,4)) %>%
   mutate( term = term_map[term] ) %>%
-  rename(Dataaset=dataset,`Dissimilarity Index`=index,`Assay`=marker,`Term`=term,`Pseudo-F`=pseudo_f,`p-value`=p_value) %>%
+  mutate(
+    p_value = case_when(
+      p_value < 0.05 ~ str_glue("**{p_value}**"),
+      TRUE ~ as.character(p_value)
+    )
+  ) %>%
+  rename(Dataset=dataset,`Dissimilarity Index`=index,`Assay`=marker,`Term`=term,`Pseudo-F`=pseudo_f,`p-value`=p_value) %>%
   write_ms_table(path(table_dir,"mesophotic_anovas.csv"),"Results of West Hawai&#x02BB;i eDNA PERMANOVA analyses",bold_header = TRUE)
-
-# write PERMANOVA and beta diversity results to an include file for the manuscript so I don't have to keep changing the numbers when they change here
-resource_dir="~/projects/dissertation/manuscript/resources/"
-include_file <- path(resource_dir,"include.m4")
-
-
-file_delete(include_file)
-
-# write permanova results
-anovas %>%
-  keep_names(~.x != "benthic") %>%
-  iwalk(~{
-    dataset <- .y
-    .x %>%
-      keep_names(~.x != "bray") %>%
-      iwalk(~{
-        method <- .y
-        .x %>%
-          iwalk(~{
-            marker <- .y
-            lines <- .x %>%
-              imap_dfr(~{
-                as_tibble(.x$aov.tab,rownames="term") %>%
-                  filter(term == .y) %>%
-                  select(term,pseudo_f=`F.Model`,p_value=`Pr(>F)`) %>%
-                  mutate(
-                    pseudo_f = str_glue("pseudo-F = {round(pseudo_f,2)}"),
-                    p_value = case_when(
-                      p_value < 0.001 ~ "*p* < 0.001",
-                      p_value < 0.01 ~ "*p* < 0.01",
-                      TRUE ~ as.character(str_glue("*p* = {round(p_value,2)}"))
-                    )
-                  )
-              }) 
-            pseudo_f <- str_glue("define({{{{{dataset}_{method}_{marker}_{lines$term}_f}}}},{{{{{lines$pseudo_f}}}}})")
-            p_val <- str_glue("define({{{{{dataset}_{method}_{marker}_{lines$term}_p}}}},{{{{{lines$p_value}}}}})")
-            lines <- c(pseudo_f,p_val)
-            write_lines(lines,include_file,append=TRUE)
-          }) 
-      }) 
-  })
-
-stat_map <- c(
-  "beta.sor" = "overall",
-  "beta.sim" = "turnover",
-  "beta.sne" = "nestedness",
-  "beta.jac" = "overall",
-  "beta.jtu" = "turnover",
-  "beta.jne" = "nestedness",
-  "beta.bray" = "overall"
-)
-
-# write beta diversity stats
-beta_diversity %>%
-  keep_names(~.x != "benthic") %>%
-  iwalk(~{
-    dataset_name <- .y
-    .x %>%
-      keep_names(~.x != "bray") %>%
-      iwalk(~{
-        method <- .y
-        .x %>% iwalk(~{
-          marker <- .y
-          .x %>% iwalk(~{
-            stat <- stat_map[str_to_lower(.y)]
-            .x <- str_pad(round(.x,2),4,side="right",pad="0")
-            line <- str_glue("define({{{{{dataset_name}_{method}_{marker}_{stat}}}}},{{{{{.x}}}}})") 
-            write_lines(line,include_file,append=TRUE)
-          })
-        })
-      })
-  })
-
-# write mean/sd beta diversity stats for depth zone comparisons 
-with(
-  beta_pairs %>%
-    keep_names(~.x != "benthic") %>%
-    imap_dfr(~{
-      .x %>% 
-        keep_names(~.x != "bray") %>%
-        imap_dfr(~{
-          .x %>%
-            imap_dfr(~{
-              .x %>%
-                group_by(measurement) %>%
-                summarise(mean=round(mean(dist),2),sd=round(sd(dist),2)) %>%
-                ungroup() %>%
-                mutate(marker=.y)
-            }) %>%
-            mutate(method=.y)
-        }) %>%
-        mutate(dataset=.y)
-    }),
-  write_lines(
-    c(
-      str_glue("define({{{{{dataset}_{method}_{marker}_{stat_map[measurement]}_mean}}}},{{{{{mean}}}}})"),
-      str_glue("define({{{{{dataset}_{method}_{marker}_{stat_map[measurement]}_sd}}}},{{{{{sd}}}}})")
-    ),
-    include_file,
-    append=TRUE
-  )
-)
-
 
 #### Supplemental table: eDNA reads summary
 all_samples <- sample_data %>%
@@ -1372,41 +1282,176 @@ rs <- reads_summary %>%
 # write reads summary to manuscript tables directory
 write_ms_table(rs,path(table_dir,"mesophotic_reads_summary.csv"),"Sequencing results for mesophotic eDNA samples from West Hawai&#x02BB;i across assay types",na="",bold_header = TRUE)
 
-# numbers reported in the text --------------------------------------------
+#### Supplemental table: mean pairwise beta diversity data
+bd <- beta_pairs %>%
+  imap_dfr(~{
+    .x %>% 
+      keep_names(~.x != "bray") %>%
+      imap_dfr(~{
+        .x %>%
+          imap_dfr(~{
+            .x %>%
+              group_by(measurement) %>%
+              summarise(mean=round(mean(dist),2),sd=round(sd(dist),2)) %>%
+              ungroup() %>%
+              mutate(marker=.y)
+          }) %>%
+          mutate(method=.y)
+      }) %>%
+      mutate(dataset=.y)
+  }) %>%
+  mutate(
+    measurement = case_when(
+      method == "sim" ~ beta_title_map$sim[measurement],
+      method == "jaccard" ~ beta_title_map$jaccard[measurement]
+    ),
+    method = method_map[method],
+    marker = plot_text2[marker]
+  ) %>%
+  arrange(dataset,desc(method),marker,match(measurement,c("Overall (Jaccard)","Overall (Sørensen)","Turnover","Nestedness"))) %>%
+  mutate(dataset = dataset_map[dataset]) %>%
+  select(Dataset=dataset, `Dissimilarity Index`=method, Assay=marker,  
+         Measurement=measurement, Mean=mean, `Std. Dev.`=sd) 
+write_ms_table(bd,path(table_dir,"mesophotic_beta_diversity.csv"),
+               caption="Among depth zone summary pairwise beta diversity statistics",
+               bold_header = TRUE)
 
-#### Beta diversity summaries
-# pairwise beta diversity summary
+# manuscript include file -------------------------------------------------
 
-# pairwise beta diversity summary (animals)
-beta_pairs_animals$sim %>%
-  map(~{
+# write PERMANOVA and beta diversity results to an include file for the
+# manuscript so I don't have to keep changing the numbers when they change here
+resource_dir="~/projects/dissertation/manuscript/resources/"
+include_file <- path(resource_dir,"include.m4")
+
+
+file_delete(include_file)
+
+# write permanova results
+anovas %>%
+  iwalk(~{
+    dataset <- .y
     .x %>%
-      group_by(measurement) %>%
-      summarise(mean=round(mean(dist),2),sd=round(sd(dist),2))
+      keep_names(~.x != "bray") %>%
+      iwalk(~{
+        method <- .y
+        .x %>%
+          iwalk(~{
+            marker <- .y
+            lines <- .x %>%
+              imap_dfr(~{
+                as_tibble(.x$aov.tab,rownames="term") %>%
+                  filter(term == .y) %>%
+                  select(term,pseudo_f=`F.Model`,p_value=`Pr(>F)`) %>%
+                  mutate(
+                    pseudo_f = str_glue("pseudo-F = {round(pseudo_f,2)}"),
+                    p_value = case_when(
+                      p_value < 0.001 ~ "*p* < 0.001",
+                      p_value < 0.01 ~ "*p* < 0.01",
+                      TRUE ~ as.character(str_glue("*p* = {round(p_value,2)}"))
+                    )
+                  )
+              }) 
+            pseudo_f <- str_glue("define({{{{{dataset}_{method}_{marker}_{lines$term}_f}}}},{{{{{lines$pseudo_f}}}}})")
+            p_val <- str_glue("define({{{{{dataset}_{method}_{marker}_{lines$term}_p}}}},{{{{{lines$p_value}}}}})")
+            lines <- c(pseudo_f,p_val)
+            write_lines(lines,include_file,append=TRUE)
+          }) 
+      }) 
   })
 
+stat_map <- c(
+  "beta.sor" = "overall",
+  "beta.sim" = "turnover",
+  "beta.sne" = "nestedness",
+  "beta.jac" = "overall",
+  "beta.jtu" = "turnover",
+  "beta.jne" = "nestedness",
+  "beta.bray" = "overall"
+)
+
+# write beta diversity stats
+beta_diversity %>%
+  iwalk(~{
+    dataset_name <- .y
+    .x %>%
+      keep_names(~.x != "bray") %>%
+      iwalk(~{
+        method <- .y
+        .x %>% iwalk(~{
+          marker <- .y
+          .x %>% iwalk(~{
+            stat <- stat_map[str_to_lower(.y)]
+            .x <- str_pad(round(.x,2),4,side="right",pad="0")
+            line <- str_glue("define({{{{{dataset_name}_{method}_{marker}_{stat}}}}},{{{{{.x}}}}})") 
+            write_lines(line,include_file,append=TRUE)
+          })
+        })
+      })
+  })
+
+# write mean/sd beta diversity stats for depth zone comparisons 
+with(
+  beta_pairs %>%
+    imap_dfr(~{
+      .x %>% 
+        keep_names(~.x != "bray") %>%
+        imap_dfr(~{
+          .x %>%
+            imap_dfr(~{
+              .x %>%
+                group_by(measurement) %>%
+                summarise(mean=round(mean(dist),2),sd=round(sd(dist),2)) %>%
+                ungroup() %>%
+                mutate(marker=.y)
+            }) %>%
+            mutate(method=.y)
+        }) %>%
+        mutate(dataset=.y)
+    }),
+  write_lines(
+    c(
+      str_glue("define({{{{{dataset}_{method}_{marker}_{stat_map[measurement]}_mean}}}},{{{{{mean}}}}})"),
+      str_glue("define({{{{{dataset}_{method}_{marker}_{stat_map[measurement]}_sd}}}},{{{{{sd}}}}})")
+    ),
+    include_file,
+    append=TRUE
+  )
+)
+
+category_map = c(
+  "sample" = "sample",
+  "station" = "site",
+  "depth_f" = "depth"
+)
+
 #### eDNA read counts for different categories squished together
-cat("sample:\n")
-walk2(comm_ps,names(comm_ps),~{
-  ss <- sample_sums(.x)
-  cat(.y,": mean: ",scales::number(mean(ss),big.mark = ",")," sd: ",scales::number(sd(ss),big.mark = ","),"\n")
-})
-cat("site:\n")
-walk2(comm_ps,names(comm_ps),~{
-  f <- merge_samples(.x,"station")
-  ss <- sample_sums(f)
-  cat(.y,": mean: ",scales::number(mean(ss),big.mark = ",")," sd: ",scales::number(sd(ss),big.mark = ","),"\n")
-})
+datasets %>%
+  imap(~{
+    dataset <- .y
+    .x %>% imap(~{
+      ps <- .x
+      marker <- .y 
+      c("sample","station","depth_f") %>%
+        map(~{
+          if (.x != "sample") {
+            ps <- merge_samples(ps,.x)
+          } 
+          
+          cat <- category_map[.x]
+          ss <- sample_sums(ps)
+          m <- scales::number(mean(ss),big.mark = ",")
+          s <- scales::number(sd(ss),big.mark = ",")
+          ms <- str_glue("define({{{{{dataset}_{marker}_reads_{cat}_mean}}}},{{{{{m}}}}})")
+          ss <- str_glue("define({{{{{dataset}_{marker}_reads_{cat}_sd}}}},{{{{{s}}}}})")
+          c(ms,ss)
+        })
+    })
+  }) %>% 
+  unlist() %>%
+  write_lines(include_file,append=TRUE)
 
-cat("depth zone:\n")
-walk2(comm_ps,names(comm_ps),~{
-  f <- merge_samples(.x,"depth_f")
-  ss <- sample_sums(f)
-  cat(.y,": mean: ",scales::number(mean(ss),big.mark = ",")," sd: ",scales::number(sd(ss),big.mark = ","),"\n")
-})
 
-
-#### Indicator species analyses
+# indicator species analysis ----------------------------------------------
 
 # helper function: does IndVal analysis for a phyloseq object across some factor
 get_indicators <- function(community,variable,fdr=0.10,permutations=999,list=TRUE) {

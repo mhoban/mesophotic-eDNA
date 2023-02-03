@@ -1,3 +1,5 @@
+# TODO: investigate just using Sørensen? This is the same as bray-curtis with binary=TRUE
+# preliminary exploration shows that clusters are the same but ordinations are different
 library(here)
 library(EcolUtils)
 library(beyonce)
@@ -34,7 +36,7 @@ abundance_threshold <- 5     # minimum threshold for relative abundance
 remove_families <- c("Hominidae","Bovidae","Felidae","Salmonidae")
 
 # whether to rarefy samples to minimum read depth
-rarefy <- FALSE
+rarefy <- TRUE
 # read count transformation, can be "sqrt", "wisconsin", "relative", or anything else (like "none")
 read_transform <- "none"
 # whether to drop zotus with no assigned taxonomy (NA's across the board)
@@ -56,8 +58,10 @@ distance_methods <- c("sim","jaccard","bray")
 distance_method <- "sim"
 plot_theme <- "light"
 
+
+
 plotz_theme <- function(which="dark") {
-  which <- ifelse(which %in% c("dark","light"),which,"dark")
+  which <- ifelse(which %in% c("dark","light","transparent"),which,"dark")
   thm <- switch(
     which,
     dark = theme_bw() + 
@@ -75,6 +79,14 @@ plotz_theme <- function(which="dark") {
       panel.background = element_rect(fill="white"),
       legend.background = element_rect(fill="grey95"),
       legend.key = element_rect(fill="grey95", color = "black"),
+    ),
+    transparent = ggfun::theme_transparent() + 
+    theme(
+      text = element_text(color="grey80"),
+      axis.title = element_text(color="grey80"),
+      axis.line = element_line(color="grey80"),
+      axis.ticks = element_line(color="grey80"),
+      axis.text = element_text(color="grey80")
     )
   )
   thm + 
@@ -85,6 +97,8 @@ plotz_theme <- function(which="dark") {
     )
     
 }
+
+
 
 
 
@@ -120,81 +134,172 @@ negative_controls <- sample_data %>%
   filter(substrate %in% c("extraction blank","bleach solution control")) %>%
   pull(id)
 
-# construct our phyloseq object
-comm_ps <- communities %>% 
-  map(~{
-    rarefied <- .x$raw %>%
-      pivot_longer(matches(sample_pattern),names_to="site",values_to="reads") %>%
-      pivot_wider(names_from="OTU",values_from="reads") %>%
-      column_to_rownames("site") 
-    if (rarefy) {
-      rarefied <- rarefied %>%
-        rrarefy.perm(n=rarefy_perm)
-    }
-    rarefied <- switch(
-      read_transform,
-      wisconsin = wisconsin(rarefied),
-      relative = decostand(rarefied,"total"),
-      sqrt = sqrt(rarefied),
-      rarefied
-    )
-    ps <- as_ps2(rarefied,.x$tax_data,sample_data)
-    pruno <- filter_taxa(ps,function(x) {
-      sum(x[negative_controls],na.rm=T) == 0 & sum(x) > 0
-    })
-    ps <- prune_taxa(pruno,ps)
-    ps <- subset_taxa(ps, !family %in% remove_families)
-    
-    prune_samples(sample_sums(ps) > 0, ps)
-  }) 
+
+# function to construct a phyloseq object from raw data
+# including possible taxa filtration
+make_ps <- function(dataset,minimals=0,negative_controls=character(0),...) {
+  new_tax <- dataset$tax_data %>%
+    filter(...) 
+  keep_otus <- new_tax %>% pull(OTU)
+  
+  rarefied <- dataset$raw %>%
+    filter(OTU %in% keep_otus) %>%
+    pivot_longer(matches(sample_pattern),names_to="site",values_to="reads") %>%
+    pivot_wider(names_from="OTU",values_from="reads") %>%
+    column_to_rownames("site")
+  rarefied <- rarefied[rowSums(rarefied) > minimals,]
+  
+  if (rarefy) {
+    rarefied <- rarefied %>%
+      rrarefy.perm(n=rarefy_perm)
+  }
+  rarefied <- switch(
+    read_transform,
+    wisconsin = wisconsin(rarefied),
+    relative = decostand(rarefied,"total"),
+    sqrt = sqrt(rarefied),
+    rarefied
+  )
+  ps <- as_ps2(rarefied,new_tax,sample_data)
+  
+  pruno <- filter_taxa(ps,function(x) {
+    sum(x[negative_controls],na.rm=T) == 0 & sum(x) > 0
+  })
+  ps <- prune_taxa(pruno,ps)
+  ps <- subset_taxa(ps, !family %in% remove_families)
+  
+  # if (read_transform != "relative") {
+  #   ps <- prune_samples(sample_sums(ps) >= minimals,ps)
+  # }
+  return(ps)
+}
+
+# construct our phyloseq objects
+cps <- communities %>%
+  map(make_ps,negative_controls=negative_controls)
+# comm_ps <- communities %>% 
+#   map(~{
+#     rarefied <- .x$raw %>%
+#       pivot_longer(matches(sample_pattern),names_to="site",values_to="reads") %>%
+#       pivot_wider(names_from="OTU",values_from="reads") %>%
+#       column_to_rownames("site") 
+#     if (rarefy) {
+#       rarefied <- rarefied %>%
+#         rrarefy.perm(n=rarefy_perm)
+#     }
+#     rarefied <- switch(
+#       read_transform,
+#       wisconsin = wisconsin(rarefied),
+#       relative = decostand(rarefied,"total"),
+#       sqrt = sqrt(rarefied),
+#       rarefied
+#     )
+#     ps <- as_ps2(rarefied,.x$tax_data,sample_data)
+#     pruno <- filter_taxa(ps,function(x) {
+#       sum(x[negative_controls],na.rm=T) == 0 & sum(x) > 0
+#     })
+#     ps <- prune_taxa(pruno,ps)
+#     ps <- subset_taxa(ps, !family %in% remove_families)
+#     
+#     prune_samples(sample_sums(ps) > 0, ps)
+#   }) 
 
 # create the metazoan subset of our three communities
-minimals <- 500 # minimum reads to retain a sample
+# minimals <- 500 # minimum reads to retain a sample
 
-# make the animals subset
-animals <- communities %>%
-  map(~{
-    new_tax <- .x$tax_data %>%
-      filter(kingdom == "Metazoa")
-    keep_otus <- new_tax$OTU
-    rarefied <- .x$raw %>%
-      filter(OTU %in% keep_otus) %>%
-      pivot_longer(matches(sample_pattern),names_to="site",values_to="reads") %>%
-      pivot_wider(names_from="OTU",values_from="reads") %>%
-      column_to_rownames("site")
-    if (rarefy) {
-      rarefied <- rarefied %>%
-        rrarefy.perm(n=rarefy_perm)
-    }
-    rarefied <- switch(
-      read_transform,
-      wisconsin = wisconsin(rarefied),
-      relative = decostand(rarefied,"total"),
-      sqrt = sqrt(rarefied),
-      rarefied
-    )
-    ps <- as_ps2(rarefied,new_tax,sample_data)
-
-    pruno <- filter_taxa(ps,function(x) {
-      sum(x[negative_controls],na.rm=T) == 0 & sum(x) > 0
-    })
-    ps <- prune_taxa(pruno,ps)
-    ps <- subset_taxa(ps, !family %in% remove_families)
-
-    prune_samples(sample_sums(ps) >= minimals,ps)
-  })
-
+aminals <- communities %>%
+  map(~make_ps(.x,minimals=500,negative_controls=negative_controls,kingdom == "Metazoa"))
 animals <- animals[c("inverts","metazoans")]
+# make the animals subset
+# animals <- communities %>%
+#   map(~{
+#     new_tax <- .x$tax_data %>%
+#       filter(kingdom == "Metazoa")
+#     keep_otus <- new_tax$OTU
+#     rarefied <- .x$raw %>%
+#       filter(OTU %in% keep_otus) %>%
+#       pivot_longer(matches(sample_pattern),names_to="site",values_to="reads") %>%
+#       pivot_wider(names_from="OTU",values_from="reads") %>%
+#       column_to_rownames("site")
+#     rarefied <- rarefied[rowSums(rarefied) > minimals,]
+#     
+#     if (rarefy) {
+#       rarefied <- rarefied %>%
+#         rrarefy.perm(n=rarefy_perm)
+#     }
+#     rarefied <- switch(
+#       read_transform,
+#       wisconsin = wisconsin(rarefied),
+#       relative = decostand(rarefied,"total"),
+#       sqrt = sqrt(rarefied),
+#       rarefied
+#     )
+#     ps <- as_ps2(rarefied,new_tax,sample_data)
+# 
+#     pruno <- filter_taxa(ps,function(x) {
+#       sum(x[negative_controls],na.rm=T) == 0 & sum(x) > 0
+#     })
+#     ps <- prune_taxa(pruno,ps)
+#     ps <- subset_taxa(ps, !family %in% remove_families)
+# 
+#     # if (read_transform != "relative") {
+#     #   ps <- prune_samples(sample_sums(ps) >= minimals,ps)
+#     # }
+#     ps
+#   })
+
 
 # remove the following known planktonic taxa from animals dataset
 remove_classes <- c("Hexanauplia","Appendicularia","Thaliacea")
-benthic <- animals %>%
-  map(~{
-    .x <- .x %>% 
-      subset_taxa(!class %in% remove_classes) %>%
-      subset_taxa(!is.na(class))
-    prune_samples(sample_sums(.x) > 0,.x)
-  })
+benthic <- communities %>%
+  map(~make_ps(.x,minimals=500,negative_controls=negative_controls,kingdom == "Metazoa" & !class %in% remove_classes))
+benthic <- benthic[c("inverts","metazoans")]
+
+# benthic <- communities %>%
+#   map(~{
+#     new_tax <- .x$tax_data %>%
+#       filter(kingdom == "Metazoa") %>%
+#       filter(!class %in% remove_classes)
+#     keep_otus <- new_tax$OTU
+#     rarefied <- .x$raw %>%
+#       filter(OTU %in% keep_otus) %>%
+#       pivot_longer(matches(sample_pattern),names_to="site",values_to="reads") %>%
+#       pivot_wider(names_from="OTU",values_from="reads") %>%
+#       column_to_rownames("site")
+#     rarefied <- rarefied[rowSums(rarefied) > minimals,]
+#     
+#     if (rarefy) {
+#       rarefied <- rarefied %>%
+#         rrarefy.perm(n=rarefy_perm)
+#     }
+#     rarefied <- switch(
+#       read_transform,
+#       wisconsin = wisconsin(rarefied),
+#       relative = decostand(rarefied,"total"),
+#       sqrt = sqrt(rarefied),
+#       rarefied
+#     )
+#     ps <- as_ps2(rarefied,new_tax,sample_data)
+# 
+#     pruno <- filter_taxa(ps,function(x) {
+#       sum(x[negative_controls],na.rm=T) == 0 & sum(x) > 0
+#     })
+#     ps <- prune_taxa(pruno,ps)
+#     ps <- subset_taxa(ps, !family %in% remove_families)
+# 
+#     # if (read_transform != "relative") {
+#     #   ps <- prune_samples(sample_sums(ps) >= minimals,ps)
+#     # }
+#     ps
+#   })
+
+# benthic <- animals %>%
+#   map(~{
+#     .x <- .x %>% 
+#       subset_taxa(!class %in% remove_classes) %>%
+#       subset_taxa(!is.na(class))
+#     prune_samples(sample_sums(.x) > 0,.x)
+#   })
 
 datasets <- list(all=comm_ps,animals=animals,benthic=benthic)
 
@@ -667,7 +772,7 @@ t.test(deeper,shallower,paired=FALSE,alternative="two.sided",var.equal = FALSE)
 
 ## here we do a kendall rank correlation test
 ## testing the relationship between read count and depth detection difference
-## according to Muff & pals, a significant difference might indicate a niche shift
+## according to Muff & pals, a significant relationship might indicate a niche shift
 
 # assemble data for the correlation test
 dd <- detected_depth %>%
@@ -1316,6 +1421,20 @@ write_ms_table(bd,path(table_dir,"mesophotic_beta_diversity.csv"),
                caption="Among depth zone summary pairwise beta diversity statistics",
                bold_header = TRUE)
 
+# replicate summary table
+reps <- comm_ps %>%
+  imap_dfr(~{
+    .x %>%
+      sample_tibble() %>%
+      count(station_grouping,depth_f,name = "passed") %>%
+      mutate(dataset=plot_text2[.y])
+  }) %>%
+  pivot_wider(names_from="dataset",values_from = "passed") %>%
+  mutate(across(all_of(unname(plot_text2)),~replace_na(.x,0))) %>%
+  arrange(station_grouping,depth_f) %>%
+  rename(Site=station_grouping,`Depth Zone`=depth_f)
+write_ms_table(reps,path(table_dir,"mesophotic_sample_reps.csv"),caption="Sample replicates passing QA/QC by site and depth zone",bold_header=T)
+
 # manuscript include file -------------------------------------------------
 
 # write PERMANOVA and beta diversity results to an include file for the
@@ -1331,7 +1450,7 @@ anovas %>%
   iwalk(~{
     dataset <- .y
     .x %>%
-      keep_names(~.x != "bray") %>%
+      # keep_names(~.x != "bray") %>%
       iwalk(~{
         method <- .y
         .x %>%
@@ -1345,8 +1464,8 @@ anovas %>%
                   mutate(
                     pseudo_f = str_glue("pseudo-F = {round(pseudo_f,2)}"),
                     p_value = case_when(
-                      p_value < 0.001 ~ "*p* < 0.001",
-                      p_value < 0.01 ~ "*p* < 0.01",
+                      p_value < 0.001 ~ "*p* \\< 0.001",
+                      p_value < 0.01 ~ "*p* \\< 0.01",
                       TRUE ~ as.character(str_glue("*p* = {round(p_value,2)}"))
                     )
                   )

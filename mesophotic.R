@@ -38,7 +38,7 @@ remove_families <- c("Hominidae","Bovidae","Felidae","Salmonidae")
 # whether to rarefy samples to minimum read depth
 rarefy <- TRUE
 # read count transformation, can be "sqrt", "wisconsin", "relative", or anything else (like "none")
-read_transform <- "none"
+read_transform <- "relative"
 # whether to drop zotus with no assigned taxonomy (NA's across the board)
 drop_unknown <- TRUE
 
@@ -137,7 +137,7 @@ negative_controls <- sample_data %>%
 
 # function to construct a phyloseq object from raw data
 # including possible taxa filtration
-make_ps <- function(dataset,minimals=0,negative_controls=character(0),...) {
+make_ps <- function(dataset,minimals=0,negative_controls=character(0),remove_families=character(0),read_transform="",...) {
   new_tax <- dataset$tax_data %>%
     filter(...) 
   keep_otus <- new_tax %>% pull(OTU)
@@ -153,20 +153,23 @@ make_ps <- function(dataset,minimals=0,negative_controls=character(0),...) {
     rarefied <- rarefied %>%
       rrarefy.perm(n=rarefy_perm)
   }
-  rarefied <- switch(
-    read_transform,
-    wisconsin = wisconsin(rarefied),
-    relative = decostand(rarefied,"total"),
-    sqrt = sqrt(rarefied),
-    rarefied
-  )
   ps <- as_ps2(rarefied,new_tax,sample_data)
-  
   pruno <- filter_taxa(ps,function(x) {
     sum(x[negative_controls],na.rm=T) == 0 & sum(x) > 0
   })
   ps <- prune_taxa(pruno,ps)
   ps <- subset_taxa(ps, !family %in% remove_families)
+  
+  # finally, do transformation if one has been requested
+  ps <- ps_standardize(ps,read_transform)
+  
+  # otus <- switch(
+  #   read_transform,
+  #   wisconsin = wisconsin(rarefied),
+  #   relative = decostand(rarefied,"total"),
+  #   sqrt = sqrt(rarefied),
+  #   rarefied
+  # )
   
   # if (read_transform != "relative") {
   #   ps <- prune_samples(sample_sums(ps) >= minimals,ps)
@@ -175,132 +178,24 @@ make_ps <- function(dataset,minimals=0,negative_controls=character(0),...) {
 }
 
 # construct our phyloseq objects
-cps <- communities %>%
-  map(make_ps,negative_controls=negative_controls)
-# comm_ps <- communities %>% 
-#   map(~{
-#     rarefied <- .x$raw %>%
-#       pivot_longer(matches(sample_pattern),names_to="site",values_to="reads") %>%
-#       pivot_wider(names_from="OTU",values_from="reads") %>%
-#       column_to_rownames("site") 
-#     if (rarefy) {
-#       rarefied <- rarefied %>%
-#         rrarefy.perm(n=rarefy_perm)
-#     }
-#     rarefied <- switch(
-#       read_transform,
-#       wisconsin = wisconsin(rarefied),
-#       relative = decostand(rarefied,"total"),
-#       sqrt = sqrt(rarefied),
-#       rarefied
-#     )
-#     ps <- as_ps2(rarefied,.x$tax_data,sample_data)
-#     pruno <- filter_taxa(ps,function(x) {
-#       sum(x[negative_controls],na.rm=T) == 0 & sum(x) > 0
-#     })
-#     ps <- prune_taxa(pruno,ps)
-#     ps <- subset_taxa(ps, !family %in% remove_families)
-#     
-#     prune_samples(sample_sums(ps) > 0, ps)
-#   }) 
+# full dataset
+comm_ps <- communities %>%
+  map(make_ps,negative_controls=negative_controls,read_transform=read_transform)
 
-# create the metazoan subset of our three communities
-# minimals <- 500 # minimum reads to retain a sample
-
-aminals <- communities %>%
-  map(~make_ps(.x,minimals=500,negative_controls=negative_controls,kingdom == "Metazoa"))
+# animals subset
+animals <- communities %>%
+  map(~make_ps(.x,minimals=500,negative_controls=negative_controls,read_transform=read_transform,kingdom == "Metazoa"))
+# remove fishes from animals
 animals <- animals[c("inverts","metazoans")]
-# make the animals subset
-# animals <- communities %>%
-#   map(~{
-#     new_tax <- .x$tax_data %>%
-#       filter(kingdom == "Metazoa")
-#     keep_otus <- new_tax$OTU
-#     rarefied <- .x$raw %>%
-#       filter(OTU %in% keep_otus) %>%
-#       pivot_longer(matches(sample_pattern),names_to="site",values_to="reads") %>%
-#       pivot_wider(names_from="OTU",values_from="reads") %>%
-#       column_to_rownames("site")
-#     rarefied <- rarefied[rowSums(rarefied) > minimals,]
-#     
-#     if (rarefy) {
-#       rarefied <- rarefied %>%
-#         rrarefy.perm(n=rarefy_perm)
-#     }
-#     rarefied <- switch(
-#       read_transform,
-#       wisconsin = wisconsin(rarefied),
-#       relative = decostand(rarefied,"total"),
-#       sqrt = sqrt(rarefied),
-#       rarefied
-#     )
-#     ps <- as_ps2(rarefied,new_tax,sample_data)
-# 
-#     pruno <- filter_taxa(ps,function(x) {
-#       sum(x[negative_controls],na.rm=T) == 0 & sum(x) > 0
-#     })
-#     ps <- prune_taxa(pruno,ps)
-#     ps <- subset_taxa(ps, !family %in% remove_families)
-# 
-#     # if (read_transform != "relative") {
-#     #   ps <- prune_samples(sample_sums(ps) >= minimals,ps)
-#     # }
-#     ps
-#   })
 
-
-# remove the following known planktonic taxa from animals dataset
+# benthic subset
 remove_classes <- c("Hexanauplia","Appendicularia","Thaliacea")
 benthic <- communities %>%
-  map(~make_ps(.x,minimals=500,negative_controls=negative_controls,kingdom == "Metazoa" & !class %in% remove_classes))
+  map(~make_ps(.x,minimals=500,negative_controls=negative_controls,read_transform=read_transform,kingdom == "Metazoa" & !class %in% remove_classes))
+# remove fishes from benthic
 benthic <- benthic[c("inverts","metazoans")]
 
-# benthic <- communities %>%
-#   map(~{
-#     new_tax <- .x$tax_data %>%
-#       filter(kingdom == "Metazoa") %>%
-#       filter(!class %in% remove_classes)
-#     keep_otus <- new_tax$OTU
-#     rarefied <- .x$raw %>%
-#       filter(OTU %in% keep_otus) %>%
-#       pivot_longer(matches(sample_pattern),names_to="site",values_to="reads") %>%
-#       pivot_wider(names_from="OTU",values_from="reads") %>%
-#       column_to_rownames("site")
-#     rarefied <- rarefied[rowSums(rarefied) > minimals,]
-#     
-#     if (rarefy) {
-#       rarefied <- rarefied %>%
-#         rrarefy.perm(n=rarefy_perm)
-#     }
-#     rarefied <- switch(
-#       read_transform,
-#       wisconsin = wisconsin(rarefied),
-#       relative = decostand(rarefied,"total"),
-#       sqrt = sqrt(rarefied),
-#       rarefied
-#     )
-#     ps <- as_ps2(rarefied,new_tax,sample_data)
-# 
-#     pruno <- filter_taxa(ps,function(x) {
-#       sum(x[negative_controls],na.rm=T) == 0 & sum(x) > 0
-#     })
-#     ps <- prune_taxa(pruno,ps)
-#     ps <- subset_taxa(ps, !family %in% remove_families)
-# 
-#     # if (read_transform != "relative") {
-#     #   ps <- prune_samples(sample_sums(ps) >= minimals,ps)
-#     # }
-#     ps
-#   })
-
-# benthic <- animals %>%
-#   map(~{
-#     .x <- .x %>% 
-#       subset_taxa(!class %in% remove_classes) %>%
-#       subset_taxa(!is.na(class))
-#     prune_samples(sample_sums(.x) > 0,.x)
-#   })
-
+# smash datasets together
 datasets <- list(all=comm_ps,animals=animals,benthic=benthic)
 
 # text map for plots

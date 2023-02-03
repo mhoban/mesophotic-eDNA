@@ -277,7 +277,7 @@ keep_names <- function(.x,.names,...) {
 # standardize phyloseq object
 ps_standardize <- function(ps, method="total", ...) {
   vegan_methods <- c("total", "max", "frequency", "normalize", "range", "rank", "standardize", "pa", "chi.square", "hellinger", "log")
-  other_methods <- c("wisconsin")
+  other_methods <- c("wisconsin","sqrt")
   
   trows <- phyloseq::taxa_are_rows(ps)
   if(trows == TRUE) { 
@@ -290,17 +290,25 @@ ps_standardize <- function(ps, method="total", ...) {
     otu_table() %>%
     as("matrix")
   
+  if (method == "relative") {
+    method <- "total"
+  }
+  
   if (method %in% vegan_methods) {
     otus_std <- decostand(otus,method=method,MARGIN=marg,...)
     if (method == "chi.square") {
       otus_std <- t(otus_std)
     }
-  } else if (method == "wisconsin") {
-    if (trows) {
-      otus_std <- wisconsin(t(otus))
-      otus_std <- t(otus_std)
-    } else {
-      otus_std <- wisconsin(otus)
+  } else if (method %in% other_methods) {
+    if (method == "wisconsin") {
+      if (trows) {
+        otus_std <- wisconsin(t(otus))
+        otus_std <- t(otus_std)
+      } else {
+        otus_std <- wisconsin(otus)
+      }
+    } else if (method == "sqrt") {
+      otus_std <- sqrt(otus)
     }
   } else {
     otus_std <- NULL

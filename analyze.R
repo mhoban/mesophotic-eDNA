@@ -320,6 +320,8 @@ ps_standardize <- function(ps, method="total", ...) {
   return(ps) 
 }
 
+
+# start here --------------------------------------------------------------
 # shorten calls to suppressMessages (readr outputs all sorts of nonsense)
 sm <- suppressMessages            
 # read sample metadata (this is project-universal)

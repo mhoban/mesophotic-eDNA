@@ -154,7 +154,7 @@ negative_controls <- sample_data %>%
 
 # function to construct a phyloseq object from raw data
 # including possible taxa filtration
-make_ps <- function(dataset,minimals=0,negative_controls=character(0),remove_families=character(0),read_transform="",filtr) {
+make_ps <- function(dataset,minimals=0,negative_controls=character(0),remove_families=character(0),read_transform="",rarefy=FALSE,rarefy_perm=99,filtr) {
   
   # filter taxa as necessary
   new_tax <- dataset$tax_data %>%
@@ -197,18 +197,42 @@ make_ps <- function(dataset,minimals=0,negative_controls=character(0),remove_fam
 # construct our phyloseq objects
 # full dataset
 comm_ps <- communities %>%
-  map(make_ps,negative_controls=negative_controls,read_transform=read_transform,remove_families=remove_families)
+  map(make_ps,negative_controls=negative_controls,read_transform=read_transform,remove_families=remove_families,rarefy=rarefy,rarefy_perm=rarefy_perm)
 
 # animals subset
 animals <- communities %>%
-  map(~make_ps(.x,minimals=500,negative_controls=negative_controls,remove_families=remove_families,read_transform=read_transform,filtr=kingdom == "Metazoa"))
+  map(
+    ~make_ps(
+      .x,
+      minimals=500,
+      negative_controls=negative_controls,
+      remove_families=remove_families,
+      read_transform=read_transform,
+      filtr=kingdom == "Metazoa",
+      rarefy=rarefy,
+      rarefy_perm = rarefy_perm
+    )
+  )
 # remove fishes from animals
 animals <- animals[c("inverts","metazoans")]
 
 # benthic subset
-remove_classes <- c("Hexanauplia","Appendicularia","Thaliacea")
+remove_classes <- c("Hexanauplia","Appendicularia","Thaliacea",NA_character_)
 benthic <- communities %>%
-  map(~make_ps(.x,minimals=500,negative_controls=negative_controls,remove_families=remove_families,read_transform=read_transform,filtr=kingdom == "Metazoa" & !class %in% remove_classes))
+  map(
+    ~make_ps(
+      .x,
+      minimals=500,
+      negative_controls=negative_controls,
+      remove_families=remove_families,
+      read_transform=read_transform,
+      filtr=kingdom == "Metazoa" & phylum != "Ctenophora" & !class %in% remove_classes,
+      rarefy=rarefy,
+      rarefy_perm = rarefy_perm
+      # filtr=kingdom == "Metazoa" & phylum != "Ctenophora" & !class %in% remove_classes & !is.na(class)
+      # filtr=kingdom == "Metazoa" & !class %in% remove_classes 
+    )
+  )
 # remove fishes from benthic
 benthic <- benthic[c("inverts","metazoans")]
 

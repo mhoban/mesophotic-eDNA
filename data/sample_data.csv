@@ -1,302 +1,302 @@
-id,project,volume,method,substrate,date,station,station_grouping,depth_min,depth_max,depth_zone,island,country,protection_status,lat,lon
-B001,mesophotic,2,none,extraction blank,,extraction blank,none,,,,,,,,
-B002,mesophotic,2,none,extraction blank,,extraction blank,none,,,,,,,,
-B003,mesophotic,2,none,extraction blank,,extraction blank,none,,,,,,,,
-B004,mesophotic,2,none,extraction blank,,extraction blank,none,,,,,,,,
-BMSP001,mesophotic,1.5,sentino pump,water,8/6/19,Eel Cove Deep Ridge - 250ft,Eel Cove,75,76,75,Hawaii,United States,none,19.655911,-156.033937
-BMSP002,mesophotic,2,hatay niskin,water,8/6/19,Eel Cove Deep Ridge - 250ft,Eel Cove,75,76,75,Hawaii,United States,none,19.655911,-156.033937
-BMSP003,mesophotic,2,hatay niskin,water,8/6/19,Eel Cove Deep Ridge - 200ft,Eel Cove,60,61,60,Hawaii,United States,none,19.655911,-156.033937
-BMSP004,mesophotic,2,hatay niskin,water,8/6/19,Eel Cove Deep Ridge - 200ft,Eel Cove,60,61,60,Hawaii,United States,none,19.655911,-156.033937
-BMSP005,mesophotic,2,hatay niskin,water,8/6/19,Eel Cove Deep Ridge - 100ft,Eel Cove,30,31,30,Hawaii,United States,none,19.655911,-156.033937
-BMSP006,mesophotic,2,sentino pump,water,8/6/19,Eel Cove Deep Ridge - 100ft,Eel Cove,30,31,30,Hawaii,United States,none,19.655911,-156.033937
-BMSP007,mesophotic,2,hatay niskin,water,8/6/19,Eel Cove Deep Ridge - 50ft,Eel Cove,15,16,15,Hawaii,United States,none,19.655911,-156.033937
-BMSP008,mesophotic,2,hatay niskin,water,8/6/19,Eel Cove Deep Ridge - 50ft,Eel Cove,15,16,15,Hawaii,United States,none,19.655911,-156.033937
-BMSP009,mesophotic,2,sentino pump,bleach solution control,8/6/19,Eel Cove filter control,Eel Cove,0,0,0,Hawaii,United States,none,19.655911,-156.033937
-BMSP010,mesophotic,2,hatay niskin,water,8/7/19,Honaunau North - 300ft,Honaunau North,91,92,90,Hawaii,United States,West Hawai‘i Fish Replenishment Areas,19.4277,-155.9198
-BMSP011,mesophotic,2,hatay niskin,water,8/7/19,Honaunau North - 300ft,Honaunau North,91,92,90,Hawaii,United States,West Hawai‘i Fish Replenishment Areas,19.4277,-155.9198
-BMSP012,mesophotic,2,hatay niskin,water,8/7/19,Honaunau North - 200ft,Honaunau North,60,61,60,Hawaii,United States,West Hawai‘i Fish Replenishment Areas,19.4277,-155.9198
-BMSP013,mesophotic,2,hatay niskin,water,8/7/19,Honaunau North - 200ft,Honaunau North,60,61,60,Hawaii,United States,West Hawai‘i Fish Replenishment Areas,19.4277,-155.9198
-BMSP014,mesophotic,2,hatay niskin,water,8/7/19,Honaunau North - 100ft,Honaunau North,30,31,30,Hawaii,United States,West Hawai‘i Fish Replenishment Areas,19.4277,-155.9198
-BMSP015,mesophotic,2,hatay niskin,water,8/7/19,Honaunau North - 100ft,Honaunau North,30,31,30,Hawaii,United States,West Hawai‘i Fish Replenishment Areas,19.4277,-155.9198
-BMSP016,mesophotic,2,sentino pump,bleach solution control,8/7/19,Honaunau North filter control,Honaunau North,0,0,0,Hawaii,United States,none,19.4277,-155.9198
-BMSP017,mesophotic,2,hatay niskin,water,8/9/19,Eel Cove Deep Ridge - 300ft,Eel Cove,91,92,90,Hawaii,United States,none,19.655911,-156.033937
-BMSP018,mesophotic,2,hatay niskin,water,8/9/19,Eel Cove Deep Ridge - 300ft,Eel Cove,91,92,90,Hawaii,United States,none,19.655911,-156.033937
-BMSP019,mesophotic,2,hatay niskin,water,8/9/19,Eel Cove Deep Ridge - 150ft,Eel Cove,45,46,45,Hawaii,United States,none,19.655911,-156.033937
-BMSP020,mesophotic,2,hatay niskin,water,8/9/19,Eel Cove Deep Ridge - 150ft,Eel Cove,45,46,45,Hawaii,United States,none,19.655911,-156.033937
-BMSP021,mesophotic,2,hatay niskin,water,8/9/19,Eel Cove Deep Ridge - surface,Eel Cove,0,5,0,Hawaii,United States,none,19.655911,-156.033937
-BMSP022,mesophotic,2,hatay niskin,water,8/9/19,Eel Cove Deep Ridge - surface,Eel Cove,0,5,0,Hawaii,United States,none,19.655911,-156.033937
-BMSP023,mesophotic,2,sentino pump,bleach solution control,8/9/19,Eel Cove filter control,Eel Cove,0,0,0,Hawaii,United States,none,19.655911,-156.033937
-BMSP024,mesophotic,2,hatay niskin,water,8/10/19,Outhouse - 250ft,Outhouse,75,76,75,Hawaii,United States,none,19.650033,-156.0301
-BMSP025,mesophotic,2,hatay niskin,water,8/10/19,Outhouse - 250ft,Outhouse,75,76,75,Hawaii,United States,none,19.650033,-156.0301
-BMSP026,mesophotic,2,hatay niskin,water,8/10/19,Outhouse - 200ft,Outhouse,60,61,60,Hawaii,United States,none,19.650033,-156.0301
-BMSP027,mesophotic,2,hatay niskin,water,8/10/19,Outhouse - 200ft,Outhouse,60,61,60,Hawaii,United States,none,19.650033,-156.0301
-BMSP028,mesophotic,2,hatay niskin,water,8/10/19,Outhouse - 100ft,Outhouse,30,31,30,Hawaii,United States,none,19.650033,-156.0301
-BMSP029,mesophotic,2,hatay niskin,water,8/10/19,Outhouse - 100ft,Outhouse,30,31,30,Hawaii,United States,none,19.650033,-156.0301
-BMSP030,mesophotic,2,hatay niskin,water,8/10/19,Outhouse - 50ft,Outhouse,15,16,15,Hawaii,United States,none,19.650033,-156.0301
-BMSP031,mesophotic,2,hatay niskin,water,8/10/19,Outhouse - 50ft,Outhouse,15,16,15,Hawaii,United States,none,19.650033,-156.0301
-BMSP032,mesophotic,2,sentino pump,bleach solution control,8/10/19,Outhouse filter control,Outhouse,0,0,0,Hawaii,United States,none,19.650033,-156.0301
-BMSP033,mesophotic,2,hatay niskin,water,8/11/19,Outhouse - 300ft,Outhouse,91,92,90,Hawaii,United States,none,19.650033,-156.0301
-BMSP034,mesophotic,2,hatay niskin,water,8/11/19,Outhouse - 300ft,Outhouse,91,92,90,Hawaii,United States,none,19.650033,-156.0301
-BMSP035,mesophotic,2,hatay niskin,water,8/11/19,Outhouse - 150ft,Outhouse,45,46,45,Hawaii,United States,none,19.650033,-156.0301
-BMSP036,mesophotic,2,hatay niskin,water,8/11/19,Outhouse - surface,Outhouse,0,0,0,Hawaii,United States,none,19.650033,-156.0301
-BMSP037,mesophotic,2,hatay niskin,water,8/11/19,Outhouse - surface,Outhouse,0,0,0,Hawaii,United States,none,19.650033,-156.0301
-BMSP038,mesophotic,2,sentino pump,bleach solution control,8/11/19,Outhouse filter control,Outhouse,0,0,0,Hawaii,United States,none,19.650033,-156.0301
-NMI001,marianas,1,sentino pump,water,6/14/18,Urracas 1,Mariana Islands,4,4,,Urracas,Commonwealth of the Northern Mariana Islands,none,20.53742,144.89914
-NMI002,marianas,1,sentino pump,water,6/14/18,Urracas 1,Mariana Islands,4,4,,Urracas,Commonwealth of the Northern Mariana Islands,none,20.53742,144.89914
-NMI003,marianas,1,sentino pump,water,6/14/18,Urracas 1,Mariana Islands,4,4,,Urracas,Commonwealth of the Northern Mariana Islands,none,20.53742,144.89914
-NMI004,marianas,1,sentino pump,water,6/14/18,Urracas 1,Mariana Islands,4,4,,Urracas,Commonwealth of the Northern Mariana Islands,none,20.53742,144.89914
-NMI005,marianas,1,sentino pump,water,6/14/18,Urracas 2,Mariana Islands,8,8,,Urracas,Commonwealth of the Northern Mariana Islands,none,20.5362,144.89655
-NMI006,marianas,1,sentino pump,water,6/14/18,Urracas 2,Mariana Islands,8,8,,Urracas,Commonwealth of the Northern Mariana Islands,none,20.5362,144.89655
-NMI007,marianas,1,sentino pump,water,6/14/18,Urracas 2,Mariana Islands,8,8,,Urracas,Commonwealth of the Northern Mariana Islands,none,20.5362,144.89655
-NMI008,marianas,1,sentino pump,water,6/14/18,Urracas 2,Mariana Islands,8,8,,Urracas,Commonwealth of the Northern Mariana Islands,none,20.5362,144.89655
-NMI009,marianas,1,sentino pump,water,6/14/18,Urracas 3,Mariana Islands,6,6,,Urracas,Commonwealth of the Northern Mariana Islands,none,20.54144,144.901
-NMI010,marianas,1,sentino pump,water,6/14/18,Urracas 3,Mariana Islands,6,6,,Urracas,Commonwealth of the Northern Mariana Islands,none,20.54144,144.901
-NMI011,marianas,1,sentino pump,water,6/14/18,Urracas 3,Mariana Islands,6,6,,Urracas,Commonwealth of the Northern Mariana Islands,none,20.54144,144.901
-NMI012,marianas,1,sentino pump,water,6/14/18,Urracas 3,Mariana Islands,6,6,,Urracas,Commonwealth of the Northern Mariana Islands,none,20.54144,144.901
-NMI013,marianas,1,sentino pump,water,6/17/18,Maug East,Mariana Islands,6,6,,Maug,Commonwealth of the Northern Mariana Islands,none,20.01288,145.22737
-NMI014,marianas,1,sentino pump,water,6/17/18,Maug East,Mariana Islands,6,6,,Maug,Commonwealth of the Northern Mariana Islands,none,20.01288,145.22737
-NMI015,marianas,1,sentino pump,water,6/17/18,Maug East,Mariana Islands,6,6,,Maug,Commonwealth of the Northern Mariana Islands,none,20.01288,145.22737
-NMI016,marianas,1,sentino pump,water,6/17/18,Maug East,Mariana Islands,6,6,,Maug,Commonwealth of the Northern Mariana Islands,none,20.01288,145.22737
-NMI017,marianas,1,sentino pump,water,6/17/18,Maug North,Mariana Islands,6,6,,Maug,Commonwealth of the Northern Mariana Islands,none,20.0329,145.22736
-NMI018,marianas,1,sentino pump,water,6/17/18,Maug North,Mariana Islands,6,6,,Maug,Commonwealth of the Northern Mariana Islands,none,20.0329,145.22736
-NMI019,marianas,1,sentino pump,water,6/17/18,Maug North,Mariana Islands,6,6,,Maug,Commonwealth of the Northern Mariana Islands,none,20.0329,145.22736
-NMI020,marianas,1,sentino pump,water,6/17/18,Maug North,Mariana Islands,6,6,,Maug,Commonwealth of the Northern Mariana Islands,none,20.0329,145.22736
-NMI021,marianas,1,sentino pump,water,6/17/18,Maug West,Mariana Islands,6,6,,Maug,Commonwealth of the Northern Mariana Islands,none,20.02407,145.20821
-NMI022,marianas,1,sentino pump,water,6/17/18,Maug West,Mariana Islands,6,6,,Maug,Commonwealth of the Northern Mariana Islands,none,20.02407,145.20821
-NMI023,marianas,1,sentino pump,water,6/17/18,Maug West,Mariana Islands,6,6,,Maug,Commonwealth of the Northern Mariana Islands,none,20.02407,145.20821
-NMI024,marianas,1,sentino pump,water,6/17/18,Maug West,Mariana Islands,6,6,,Maug,Commonwealth of the Northern Mariana Islands,none,20.02407,145.20821
-NMI025,marianas,1,sentino pump,water,6/19/18,Asuncion Northeast,Mariana Islands,6,6,,Asuncion,Commonwealth of the Northern Mariana Islands,none,19.7042,145.41237
-NMI026,marianas,1,sentino pump,water,6/19/18,Asuncion Northeast,Mariana Islands,6,6,,Asuncion,Commonwealth of the Northern Mariana Islands,none,19.7042,145.41237
-NMI027,marianas,1,sentino pump,water,6/19/18,Asuncion Northeast,Mariana Islands,6,6,,Asuncion,Commonwealth of the Northern Mariana Islands,none,19.7042,145.41237
-NMI028,marianas,1,sentino pump,water,6/19/18,Asuncion Northeast,Mariana Islands,6,6,,Asuncion,Commonwealth of the Northern Mariana Islands,none,19.7042,145.41237
-NMI029,marianas,1,sentino pump,water,6/19/18,Asuncion North,Mariana Islands,6,6,,Asuncion,Commonwealth of the Northern Mariana Islands,none,19.70545,145.39656
-NMI030,marianas,1,sentino pump,water,6/19/18,Asuncion North,Mariana Islands,6,6,,Asuncion,Commonwealth of the Northern Mariana Islands,none,19.70545,145.39656
-NMI031,marianas,1,sentino pump,water,6/19/18,Asuncion North,Mariana Islands,6,6,,Asuncion,Commonwealth of the Northern Mariana Islands,none,19.70545,145.39656
-NMI032,marianas,1,sentino pump,water,6/19/18,Asuncion North,Mariana Islands,6,6,,Asuncion,Commonwealth of the Northern Mariana Islands,none,19.70545,145.39656
-NMI033,marianas,1,sentino pump,water,6/19/18,Asuncion Northwest,Mariana Islands,6,6,,Asuncion,Commonwealth of the Northern Mariana Islands,none,19.68976,145.38965
-NMI034,marianas,1,sentino pump,water,6/19/18,Asuncion Northwest,Mariana Islands,6,6,,Asuncion,Commonwealth of the Northern Mariana Islands,none,19.68976,145.38965
-NMI035,marianas,1,sentino pump,water,6/19/18,Asuncion Northwest,Mariana Islands,6,6,,Asuncion,Commonwealth of the Northern Mariana Islands,none,19.68976,145.38965
-NMI036,marianas,1,sentino pump,water,6/19/18,Asuncion Northwest,Mariana Islands,6,6,,Asuncion,Commonwealth of the Northern Mariana Islands,none,19.68976,145.38965
-NMI037,marianas,1,sentino pump,water,6/22/18,Pagan Northwest,Mariana Islands,6,6,,Pagan,Commonwealth of the Northern Mariana Islands,none,18.14635,145.75504
-NMI038,marianas,1,sentino pump,water,6/22/18,Pagan Northwest,Mariana Islands,6,6,,Pagan,Commonwealth of the Northern Mariana Islands,none,18.14635,145.75504
-NMI039,marianas,1,sentino pump,water,6/22/18,Pagan Northwest,Mariana Islands,6,6,,Pagan,Commonwealth of the Northern Mariana Islands,none,18.14635,145.75504
-NMI040,marianas,1,sentino pump,water,6/22/18,Pagan Northwest,Mariana Islands,6,6,,Pagan,Commonwealth of the Northern Mariana Islands,none,18.14635,145.75504
-NMI041,marianas,1,sentino pump,water,6/22/18,Pagan West,Mariana Islands,6,6,,Pagan,Commonwealth of the Northern Mariana Islands,none,18.0983,145.75325
-NMI042,marianas,1,sentino pump,water,6/22/18,Pagan West,Mariana Islands,6,6,,Pagan,Commonwealth of the Northern Mariana Islands,none,18.0983,145.75325
-NMI043,marianas,1,sentino pump,water,6/22/18,Pagan West,Mariana Islands,6,6,,Pagan,Commonwealth of the Northern Mariana Islands,none,18.0983,145.75325
-NMI044,marianas,1,sentino pump,water,6/22/18,Pagan West,Mariana Islands,6,6,,Pagan,Commonwealth of the Northern Mariana Islands,none,18.0983,145.75325
-NMI045,marianas,1,sentino pump,water,6/22/18,Pagan Southwest,Mariana Islands,6,6,,Pagan,Commonwealth of the Northern Mariana Islands,none,18.05336,145.71024
-NMI046,marianas,1,sentino pump,water,6/22/18,Pagan Southwest,Mariana Islands,6,6,,Pagan,Commonwealth of the Northern Mariana Islands,none,18.05336,145.71024
-NMI047,marianas,1,sentino pump,water,6/22/18,Pagan Southwest,Mariana Islands,6,6,,Pagan,Commonwealth of the Northern Mariana Islands,none,18.05336,145.71024
-NMI048,marianas,1,sentino pump,water,6/22/18,Pagan Southwest,Mariana Islands,6,6,,Pagan,Commonwealth of the Northern Mariana Islands,none,18.05336,145.71024
-NMI049,marianas,1,sentino pump,water,6/23/18,Guguan Northwest,Mariana Islands,6,6,,Guguan,Commonwealth of the Northern Mariana Islands,none,17.31804,145.83273
-NMI050,marianas,1,sentino pump,water,6/23/18,Guguan Northwest,Mariana Islands,6,6,,Guguan,Commonwealth of the Northern Mariana Islands,none,17.31804,145.83273
-NMI051,marianas,1,sentino pump,water,6/23/18,Guguan Northwest,Mariana Islands,6,6,,Guguan,Commonwealth of the Northern Mariana Islands,none,17.31804,145.83273
-NMI052,marianas,1,sentino pump,water,6/23/18,Guguan Northwest,Mariana Islands,6,6,,Guguan,Commonwealth of the Northern Mariana Islands,none,17.31804,145.83273
-NMI053,marianas,1,sentino pump,water,6/23/18,Guguan East Cove,Mariana Islands,4,4,,Guguan,Commonwealth of the Northern Mariana Islands,none,17.31369,145.84938
-NMI054,marianas,1,sentino pump,water,6/23/18,Guguan East Cove,Mariana Islands,4,4,,Guguan,Commonwealth of the Northern Mariana Islands,none,17.31369,145.84938
-NMI055,marianas,1,sentino pump,water,6/23/18,Guguan East Cove,Mariana Islands,4,4,,Guguan,Commonwealth of the Northern Mariana Islands,none,17.31369,145.84938
-NMI056,marianas,1,sentino pump,water,6/23/18,Guguan East Cove,Mariana Islands,4,4,,Guguan,Commonwealth of the Northern Mariana Islands,none,17.31369,145.84938
-NMI057,marianas,1,sentino pump,water,6/23/18,Guguan Southwest,Mariana Islands,4,4,,Guguan,Commonwealth of the Northern Mariana Islands,none,17.29946,145.83682
-NMI058,marianas,1,sentino pump,water,6/23/18,Guguan Southwest,Mariana Islands,4,4,,Guguan,Commonwealth of the Northern Mariana Islands,none,17.29946,145.83682
-NMI059,marianas,1,sentino pump,water,6/23/18,Guguan Southwest,Mariana Islands,4,4,,Guguan,Commonwealth of the Northern Mariana Islands,none,17.29946,145.83682
-NMI060,marianas,1,sentino pump,water,6/23/18,Guguan Southwest,Mariana Islands,4,4,,Guguan,Commonwealth of the Northern Mariana Islands,none,17.29946,145.83682
-NMI061,marianas,1,sentino pump,water,6/24/18,Anatahan Northwest,Mariana Islands,5,5,,Anatahan,Commonwealth of the Northern Mariana Islands,none,16.36138,145.63347
-NMI062,marianas,1,sentino pump,water,6/24/18,Anatahan Northwest,Mariana Islands,5,5,,Anatahan,Commonwealth of the Northern Mariana Islands,none,16.36138,145.63347
-NMI063,marianas,1,sentino pump,water,6/24/18,Anatahan Northwest,Mariana Islands,5,5,,Anatahan,Commonwealth of the Northern Mariana Islands,none,16.36138,145.63347
-NMI064,marianas,1,sentino pump,water,6/24/18,Anatahan Northwest,Mariana Islands,5,5,,Anatahan,Commonwealth of the Northern Mariana Islands,none,16.36138,145.63347
-NMI065,marianas,1,sentino pump,water,6/24/18,Anatahan Southwest,Mariana Islands,4,4,,Anatahan,Commonwealth of the Northern Mariana Islands,none,16.33457,145.65788
-NMI066,marianas,1,sentino pump,water,6/24/18,Anatahan Southwest,Mariana Islands,4,4,,Anatahan,Commonwealth of the Northern Mariana Islands,none,16.33457,145.65788
-NMI067,marianas,1,sentino pump,water,6/24/18,Anatahan Southwest,Mariana Islands,4,4,,Anatahan,Commonwealth of the Northern Mariana Islands,none,16.33457,145.65788
-NMI068,marianas,1,sentino pump,water,6/24/18,Anatahan Southwest,Mariana Islands,4,4,,Anatahan,Commonwealth of the Northern Mariana Islands,none,16.33457,145.65788
-NMI069,marianas,1,sentino pump,water,6/24/18,Anatahan West,Mariana Islands,8,8,,Anatahan,Commonwealth of the Northern Mariana Islands,none,16.34374,145.63589
-NMI070,marianas,1,sentino pump,water,6/24/18,Anatahan West,Mariana Islands,8,8,,Anatahan,Commonwealth of the Northern Mariana Islands,none,16.34374,145.63589
-NMI071,marianas,1,sentino pump,water,6/24/18,Anatahan West,Mariana Islands,8,8,,Anatahan,Commonwealth of the Northern Mariana Islands,none,16.34374,145.63589
-NMI072,marianas,1,sentino pump,water,6/24/18,Anatahan West,Mariana Islands,8,8,,Anatahan,Commonwealth of the Northern Mariana Islands,none,16.34374,145.63589
-NMI073,marianas,1,sentino pump,water,7/1/18,Sarigan South,Mariana Islands,8,8,,Sarigan,Commonwealth of the Northern Mariana Islands,none,16.69209,145.78151
-NMI074,marianas,1,sentino pump,water,7/1/18,Sarigan South,Mariana Islands,8,8,,Sarigan,Commonwealth of the Northern Mariana Islands,none,16.69209,145.78151
-NMI075,marianas,1,sentino pump,water,7/1/18,Sarigan South,Mariana Islands,8,8,,Sarigan,Commonwealth of the Northern Mariana Islands,none,16.69209,145.78151
-NMI076,marianas,1,sentino pump,water,7/1/18,Sarigan South,Mariana Islands,8,8,,Sarigan,Commonwealth of the Northern Mariana Islands,none,16.69209,145.78151
-NMI077,marianas,1,sentino pump,water,7/1/18,Sarigan West,Mariana Islands,8,8,,Sarigan,Commonwealth of the Northern Mariana Islands,none,16.70346,145.76619
-NMI078,marianas,1,sentino pump,water,7/1/18,Sarigan West,Mariana Islands,8,8,,Sarigan,Commonwealth of the Northern Mariana Islands,none,16.70346,145.76619
-NMI079,marianas,1,sentino pump,water,7/1/18,Sarigan West,Mariana Islands,8,8,,Sarigan,Commonwealth of the Northern Mariana Islands,none,16.70346,145.76619
-NMI080,marianas,1,sentino pump,water,7/1/18,Sarigan West,Mariana Islands,8,8,,Sarigan,Commonwealth of the Northern Mariana Islands,none,16.70346,145.76619
-NMI081,marianas,1,sentino pump,water,7/1/18,Sarigan North,Mariana Islands,8,8,,Sarigan,Commonwealth of the Northern Mariana Islands,none,16.71508,145.77586
-NMI082,marianas,1,sentino pump,water,7/1/18,Sarigan North,Mariana Islands,8,8,,Sarigan,Commonwealth of the Northern Mariana Islands,none,16.71508,145.77586
-NMI083,marianas,1,sentino pump,water,7/1/18,Sarigan North,Mariana Islands,8,8,,Sarigan,Commonwealth of the Northern Mariana Islands,none,16.71508,145.77586
-NMI084,marianas,1,sentino pump,water,7/1/18,Sarigan North,Mariana Islands,8,8,,Sarigan,Commonwealth of the Northern Mariana Islands,none,16.71508,145.77586
-NMI085,marianas,2,hatay niskin,water,5/13/19,Merizo east,Mariana Islands,1,3,,Guam,United States,none,13.2400167,144.66545
-NMI086,marianas,2,hatay niskin,water,5/13/19,Merizo east,Mariana Islands,1,3,,Guam,United States,none,13.2400167,144.66545
-NMI087,marianas,2,hatay niskin,water,5/13/19,Merizo east,Mariana Islands,1,3,,Guam,United States,none,13.2400167,144.66545
-NMI088,marianas,2,hatay niskin,water,5/13/19,Merizo east,Mariana Islands,1,3,,Guam,United States,none,13.2400167,144.66545
-NMI089,marianas,2,hatay niskin,water,5/13/19,Merizo west,Mariana Islands,1,3,,Guam,United States,none,13.2498,144.6455
-NMI090,marianas,2,hatay niskin,water,5/13/19,Merizo west,Mariana Islands,1,3,,Guam,United States,none,13.2498,144.6455
-NMI091,marianas,2,hatay niskin,water,5/13/19,Merizo west,Mariana Islands,1,3,,Guam,United States,none,13.2498,144.6455
-NMI092,marianas,2,hatay niskin,water,5/13/19,Merizo west,Mariana Islands,1,3,,Guam,United States,none,13.2498,144.6455
-NMI093,marianas,2,sentino pump,bleach solution control,5/13/19,Merizo east,Mariana Islands,1,3,,Guam,United States,none,13.2400167,144.66545
-NMI094,marianas,2,hatay niskin,water,5/14/19,Ritidian west,Mariana Islands,2,2.3,,Guam,United States,none,13.6393333,144.8463
-NMI095,marianas,2,hatay niskin,water,5/14/19,Ritidian west,Mariana Islands,2,2.3,,Guam,United States,none,13.6393333,144.8463
-NMI096,marianas,2,hatay niskin,water,5/14/19,Ritidian west,Mariana Islands,2,2.3,,Guam,United States,none,13.6393333,144.8463
-NMI097,marianas,2,hatay niskin,water,5/14/19,Ritidian west,Mariana Islands,2,2.3,,Guam,United States,none,13.6393333,144.8463
-NMI098,marianas,2,hatay niskin,water,5/14/19,Ritidian east,Mariana Islands,3,3.7,,Guam,United States,none,13.64185,144.8844
-NMI099,marianas,2,hatay niskin,water,5/14/19,Ritidian east,Mariana Islands,3,3.7,,Guam,United States,none,13.64185,144.8844
-NMI100,marianas,2,hatay niskin,water,5/14/19,Ritidian east,Mariana Islands,3,3.7,,Guam,United States,none,13.64185,144.8844
-NMI101,marianas,2,hatay niskin,water,5/14/19,Ritidian east,Mariana Islands,3,3.7,,Guam,United States,none,13.64185,144.8844
-NMI102,marianas,2,hatay niskin,water,5/15/19,Pago Bay Guam ML,Mariana Islands,3,5,,Guam,United States,none,13.426851,144.798694
-NMI103,marianas,2,hatay niskin,water,5/15/19,Pago Bay Guam ML,Mariana Islands,3,5,,Guam,United States,none,13.426851,144.798694
-NMI104,marianas,2,hatay niskin,water,5/15/19,Pago Bay Guam ML,Mariana Islands,3,5,,Guam,United States,none,13.426851,144.798694
-NMI105,marianas,2,hatay niskin,water,5/15/19,Pago Bay Guam ML,Mariana Islands,3,5,,Guam,United States,none,13.426851,144.798694
-NMI106,marianas,2,hatay niskin,water,5/15/19,Tanguisson,Mariana Islands,2,5,,Guam,United States,none,13.543351,144.806781
-NMI107,marianas,2,hatay niskin,water,5/15/19,Tanguisson,Mariana Islands,2,5,,Guam,United States,none,13.543351,144.806781
-NMI108,marianas,2,hatay niskin,water,5/15/19,Tanguisson,Mariana Islands,2,5,,Guam,United States,none,13.543351,144.806781
-NMI109,marianas,2,hatay niskin,water,5/15/19,Tanguisson,Mariana Islands,2,5,,Guam,United States,none,13.543351,144.806781
-NMI110,marianas,2,sentino pump,bleach solution control,5/14/19,Ritidian east,Mariana Islands,3,3.7,,Guam,United States,none,13.64185,144.8844
-NMI111,marianas,2,sentino pump,bleach solution control,5/15/19,Pago Bay Guam ML,Mariana Islands,3,5,,Guam,United States,none,13.426851,144.798694
-NMI112,marianas,2,hatay niskin,water,5/16/19,Laulau beach,Mariana Islands,5,7,,Saipan,Commonwealth of the Northern Mariana Islands,none,15.161757,145.761667
-NMI113,marianas,2,hatay niskin,water,5/16/19,Laulau beach,Mariana Islands,5,7,,Saipan,Commonwealth of the Northern Mariana Islands,none,15.161757,145.761667
-NMI114,marianas,2,hatay niskin,water,5/16/19,Laulau beach,Mariana Islands,5,7,,Saipan,Commonwealth of the Northern Mariana Islands,none,15.161757,145.761667
-NMI115,marianas,2,hatay niskin,water,5/16/19,Laulau beach,Mariana Islands,5,7,,Saipan,Commonwealth of the Northern Mariana Islands,none,15.161757,145.761667
-NMI116,marianas,2,hatay niskin,water,5/16/19,Obyan,Mariana Islands,5,8,,Saipan,Commonwealth of the Northern Mariana Islands,none,15.104655,145.738686
-NMI117,marianas,2,hatay niskin,water,5/16/19,Obyan,Mariana Islands,5,8,,Saipan,Commonwealth of the Northern Mariana Islands,none,15.104655,145.738686
-NMI118,marianas,2,hatay niskin,water,5/16/19,Obyan,Mariana Islands,5,8,,Saipan,Commonwealth of the Northern Mariana Islands,none,15.104655,145.738686
-NMI119,marianas,2,hatay niskin,water,5/16/19,Obyan,Mariana Islands,5,8,,Saipan,Commonwealth of the Northern Mariana Islands,none,15.104655,145.738686
-NMI120,marianas,2,hatay niskin,water,5/17/19,Wing beach,Mariana Islands,0.5,0.5,,Saipan,Commonwealth of the Northern Mariana Islands,none,15.272852,145.793469
-NMI121,marianas,2,hatay niskin,water,5/17/19,Wing beach,Mariana Islands,0.5,0.5,,Saipan,Commonwealth of the Northern Mariana Islands,none,15.272852,145.793469
-NMI122,marianas,2,hatay niskin,water,5/17/19,Wing beach,Mariana Islands,0.5,0.5,,Saipan,Commonwealth of the Northern Mariana Islands,none,15.272852,145.793469
-NMI123,marianas,2,hatay niskin,water,5/17/19,Wing beach,Mariana Islands,0.5,0.5,,Saipan,Commonwealth of the Northern Mariana Islands,none,15.272852,145.793469
-NMI124,marianas,2,hatay niskin,water,5/17/19,Sugar Dock,Mariana Islands,3,5,,Saipan,Commonwealth of the Northern Mariana Islands,none,15.151882,145.693603
-NMI125,marianas,2,hatay niskin,water,5/17/19,Sugar Dock,Mariana Islands,3,5,,Saipan,Commonwealth of the Northern Mariana Islands,none,15.151882,145.693603
-NMI126,marianas,2,hatay niskin,water,5/17/19,Sugar Dock,Mariana Islands,3,5,,Saipan,Commonwealth of the Northern Mariana Islands,none,15.151882,145.693603
-NMI127,marianas,2,hatay niskin,water,5/17/19,Sugar Dock,Mariana Islands,3,5,,Saipan,Commonwealth of the Northern Mariana Islands,none,15.151882,145.693603
-SGP001,seagrant,2,hatay niskin,water,12/12/18,Waikiki Hixon lab reef module 115,Waikiki hixon modules,16.5,16.8,,Oahu,United States,none,21.26987,-157.83904
-SGP002,seagrant,2,hatay niskin,water,12/12/18,Waikiki Hixon lab reef module 115,Waikiki hixon modules,16.5,16.8,,Oahu,United States,none,21.26987,-157.83904
-SGP003,seagrant,2,hatay niskin,water,12/12/18,Waikiki Hixon lab reef module 115,Waikiki hixon modules,16.5,16.8,,Oahu,United States,none,21.26987,-157.83904
-SGP004,seagrant,2,hatay niskin,water,12/12/18,Waikiki Hixon lab anchor site (surface),Waikiki hixon modules,0,0,,Oahu,United States,none,21.27009,-157.83812
-SGP005,seagrant,2,hatay niskin,water,12/12/18,Waikiki Hixon lab anchor site (surface),Waikiki hixon modules,0,0,,Oahu,United States,none,21.27009,-157.83812
-SGP006,seagrant,2,hatay niskin,water,12/12/18,Waikiki Hixon lab anchor site (surface),Waikiki hixon modules,0,0,,Oahu,United States,none,21.27009,-157.83812
-SGP007,seagrant,2,hatay niskin,water,12/13/18,HIMB east,HIMB,0,0,,Oahu,United States,no take,21.4332,-157.7860166
-SGP008,seagrant,2,hatay niskin,water,12/13/18,HIMB east,HIMB,0,0,,Oahu,United States,no take,21.4332,-157.7860166
-SGP009,seagrant,2,hatay niskin,water,12/13/18,HIMB east,HIMB,0,0,,Oahu,United States,no take,21.4332,-157.7860166
-SGP010,seagrant,2,hatay niskin,water,12/13/18,Sampan south,none,0,0,,Oahu,United States,none,21.44968333,-157.7927333
-SGP011,seagrant,2,hatay niskin,water,12/13/18,Sampan south,none,0,0,,Oahu,United States,none,21.44968333,-157.7927333
-SGP012,seagrant,2,hatay niskin,water,12/13/18,Sampan south,none,0,0,,Oahu,United States,none,21.44968333,-157.7927333
-SGP013,seagrant,2,hatay niskin,water,12/13/18,Reef 39,none,0,0,,Oahu,United States,none,21.4733833,-157.8265333
-SGP014,seagrant,2,hatay niskin,water,12/13/18,Reef 39,none,0,0,,Oahu,United States,none,21.4733833,-157.8265333
-SGP015,seagrant,2,hatay niskin,water,12/13/18,Reef 39,none,0,0,,Oahu,United States,none,21.4733833,-157.8265333
-SGP016,seagrant,2,sentino pump,bleach solution control,12/13/18,HIMB east,HIMB,0,0,,Oahu,United States,no take,21.4332,-157.7860166
-SGP017,seagrant,2,hatay niskin,water,10/23/18,Hanauma Bay shallow,Hanauma Bay,1,1,,Oahu,United States,no take,21.271281,-157.696303
-SGP018,seagrant,2,hatay niskin,water,10/23/18,Hanauma Bay shallow,Hanauma Bay,1,1,,Oahu,United States,no take,21.271281,-157.696303
-SGP019,seagrant,2,hatay niskin,water,10/23/18,Hanauma Bay mid-depth,Hanauma Bay,8.2,8.2,,Oahu,United States,no take,21.268622,-157.693761
-SGP020,seagrant,2,hatay niskin,water,10/23/18,Hanauma Bay mid-depth,Hanauma Bay,8.2,8.2,,Oahu,United States,no take,21.268622,-157.693761
-SGP021,seagrant,2,hatay niskin,water,10/23/18,Hanauma Bay mid-depth,Hanauma Bay,8.2,8.2,,Oahu,United States,no take,21.268622,-157.693761
-SGP022,seagrant,2,hatay niskin,water,10/23/18,Hanauma Bay deep,Hanauma Bay,17.4,17.4,,Oahu,United States,no take,21.268051,-157.692133
-SGP023,seagrant,2,hatay niskin,water,10/23/18,Hanauma Bay deep,Hanauma Bay,17.4,17.4,,Oahu,United States,no take,21.268051,-157.692133
-SGP024,seagrant,2,hatay niskin,water,10/23/18,Hanauma Bay deep,Hanauma Bay,17.4,17.4,,Oahu,United States,no take,21.268051,-157.692133
-SGP025,seagrant,2,sentino pump,bleach solution control,12/12/18,Waikiki Hixon lab anchor site (surface),Waikiki hixon modules,0,0,,Oahu,United States,none,21.27009,-157.83812
-SGP026,seagrant,2,hatay niskin,water,12/21/18,Waikiki MLCD inner,Waikiki MLCD,0,0,,Oahu,United States,no take,21.268233,-157.822991
-SGP027,seagrant,2,hatay niskin,water,12/21/18,Waikiki MLCD inner,Waikiki MLCD,0,0,,Oahu,United States,no take,21.268233,-157.822991
-SGP028,seagrant,2,hatay niskin,water,12/21/18,Waikiki MLCD inner,Waikiki MLCD,0,0,,Oahu,United States,no take,21.268233,-157.822991
-SGP029,seagrant,2,hatay niskin,water,12/21/18,Waikiki MLCD mid,Waikiki MLCD,0,0,,Oahu,United States,no take,21.268127,-157.823531
-SGP030,seagrant,2,hatay niskin,water,12/21/18,Waikiki MLCD mid,Waikiki MLCD,0,0,,Oahu,United States,no take,21.268127,-157.823531
-SGP031,seagrant,2,hatay niskin,water,12/21/18,Waikiki MLCD mid,Waikiki MLCD,0,0,,Oahu,United States,no take,21.268127,-157.823531
-SGP032,seagrant,2,hatay niskin,water,12/21/18,Waikiki MLCD outer,Waikiki MLCD,0,0,,Oahu,United States,no take,21.268228,-157.824931
-SGP033,seagrant,2,hatay niskin,water,12/21/18,Waikiki MLCD outer,Waikiki MLCD,0,0,,Oahu,United States,no take,21.268228,-157.824931
-SGP034,seagrant,2,hatay niskin,water,12/21/18,Waikiki MLCD outer,Waikiki MLCD,0,0,,Oahu,United States,no take,21.268228,-157.824931
-SGP035,seagrant,2,sentino pump,bleach solution control,12/21/18,Waikiki MLCD mid,Waikiki MLCD,0,0,,Oahu,United States,no take,21.268127,-157.823531
-SGP036,seagrant,2,hatay niskin,water,4/9/19,Waikiki MLCD inner,Waikiki MLCD,0,0,,Oahu,United States,no take,21.268233,-157.822991
-SGP037,seagrant,2,hatay niskin,water,4/9/19,Waikiki MLCD inner,Waikiki MLCD,0,0,,Oahu,United States,no take,21.268233,-157.822991
-SGP038,seagrant,2,hatay niskin,water,4/9/19,Waikiki MLCD inner,Waikiki MLCD,0,0,,Oahu,United States,no take,21.268233,-157.822991
-SGP039,seagrant,2,hatay niskin,water,4/9/19,Waikiki MLCD mid,Waikiki MLCD,0,0,,Oahu,United States,no take,21.268127,-157.823531
-SGP040,seagrant,2,hatay niskin,water,4/9/19,Waikiki MLCD mid,Waikiki MLCD,0,0,,Oahu,United States,no take,21.268127,-157.823531
-SGP041,seagrant,2,hatay niskin,water,4/9/19,Waikiki MLCD mid,Waikiki MLCD,0,0,,Oahu,United States,no take,21.268127,-157.823531
-SGP042,seagrant,2,hatay niskin,water,4/9/19,Waikiki MLCD outer,Waikiki MLCD,0,0,,Oahu,United States,no take,21.268228,-157.824931
-SGP043,seagrant,2,hatay niskin,water,4/9/19,Waikiki MLCD outer,Waikiki MLCD,0,0,,Oahu,United States,no take,21.268228,-157.824931
-SGP044,seagrant,2,hatay niskin,water,4/9/19,Waikiki MLCD outer,Waikiki MLCD,0,0,,Oahu,United States,no take,21.268228,-157.824931
-SGP045,seagrant,2,sentino pump,bleach solution control,4/9/19,Waikiki MLCD mid,Waikiki MLCD,0,0,,Oahu,United States,no take,21.268127,-157.823531
-SGP046,seagrant,2,hatay niskin,water,4/16/19,Hanauma Bay shallow,Hanauma Bay,1,1,,Oahu,United States,no take,21.271281,-157.696303
-SGP047,seagrant,2,hatay niskin,water,4/16/19,Hanauma Bay shallow,Hanauma Bay,1,1,,Oahu,United States,no take,21.271281,-157.696303
-SGP048,seagrant,2,hatay niskin,water,4/16/19,Hanauma Bay shallow,Hanauma Bay,1,1,,Oahu,United States,no take,21.271281,-157.696303
-SGP049,seagrant,2,hatay niskin,water,4/16/19,Hanauma Bay mid-depth,Hanauma Bay,8.2,8.2,,Oahu,United States,no take,21.268622,-157.693761
-SGP050,seagrant,2,hatay niskin,water,4/16/19,Hanauma Bay mid-depth,Hanauma Bay,8.2,8.2,,Oahu,United States,no take,21.268622,-157.693761
-SGP051,seagrant,2,hatay niskin,water,4/16/19,Hanauma Bay mid-depth,Hanauma Bay,8.2,8.2,,Oahu,United States,no take,21.268622,-157.693761
-SGP052,seagrant,2,hatay niskin,water,4/16/19,Hanauma Bay deep,Hanauma Bay,17.4,17.4,,Oahu,United States,no take,21.268051,-157.692133
-SGP053,seagrant,2,hatay niskin,water,4/16/19,Hanauma Bay deep,Hanauma Bay,17.4,17.4,,Oahu,United States,no take,21.268051,-157.692133
-SGP054,seagrant,2,hatay niskin,water,4/16/19,Hanauma Bay deep,Hanauma Bay,17.4,17.4,,Oahu,United States,no take,21.268051,-157.692133
-SGP055,seagrant,2,hatay niskin,water,4/19/19,China walls inner,China Walls,3,5,,Oahu,United States,none,21.261947,-157.711707
-SGP056,seagrant,2,hatay niskin,water,4/19/19,China walls inner,China Walls,3,5,,Oahu,United States,none,21.261947,-157.711707
-SGP057,seagrant,2,hatay niskin,water,4/19/19,China walls inner,China Walls,3,5,,Oahu,United States,none,21.261947,-157.711707
-SGP058,seagrant,2,hatay niskin,water,4/19/19,China walls mid,China Walls,3,5,,Oahu,United States,none,21.261458,-157.711552
-SGP059,seagrant,2,hatay niskin,water,4/19/19,China walls mid,China Walls,3,5,,Oahu,United States,none,21.261458,-157.711552
-SGP060,seagrant,2,hatay niskin,water,4/19/19,China walls mid,China Walls,3,5,,Oahu,United States,none,21.261458,-157.711552
-SGP061,seagrant,2,hatay niskin,water,4/19/19,China walls outer,China Walls,3,5,,Oahu,United States,none,21.260976,-157.71136
-SGP062,seagrant,2,hatay niskin,water,4/19/19,China walls outer,China Walls,3,5,,Oahu,United States,none,21.260976,-157.71136
-SGP063,seagrant,2,hatay niskin,water,4/19/19,China walls outer,China Walls,3,5,,Oahu,United States,none,21.260976,-157.71136
-SGP064,seagrant,2,sentino pump,bleach solution control,4/20/19,China walls mid,China Walls,3,5,,Oahu,United States,none,21.261458,-157.711552
-SGP065,seagrant,2,hatay niskin,water,4/21/19,Three Tables inner,Three Tables,1,1,,Oahu,United States,no take,21.64591,-158.064082
-SGP066,seagrant,2,hatay niskin,water,4/21/19,Three Tables inner,Three Tables,1,1,,Oahu,United States,no take,21.64591,-158.064082
-SGP067,seagrant,2,hatay niskin,water,4/21/19,Three Tables inner,Three Tables,1,1,,Oahu,United States,no take,21.64591,-158.064082
-SGP068,seagrant,2,hatay niskin,water,4/21/19,Three Tables mid,Three Tables,2,2,,Oahu,United States,no take,21.645995,-158.064627
-SGP069,seagrant,2,hatay niskin,water,4/21/19,Three Tables mid,Three Tables,2,2,,Oahu,United States,no take,21.645995,-158.064627
-SGP070,seagrant,2,hatay niskin,water,4/21/19,Three Tables mid,Three Tables,2,2,,Oahu,United States,no take,21.645995,-158.064627
-SGP071,seagrant,2,hatay niskin,water,4/22/19,Three Tables outer,Three Tables,2,3,,Oahu,United States,no take,21.646133,-158.064854
-SGP072,seagrant,2,hatay niskin,water,4/22/19,Three Tables outer,Three Tables,2,3,,Oahu,United States,no take,21.646133,-158.064854
-SGP073,seagrant,2,hatay niskin,water,4/22/19,Three Tables outer,Three Tables,2,3,,Oahu,United States,no take,21.646133,-158.064854
-SGP074,seagrant,2,sentino pump,bleach solution control,4/22/19,Three Tables mid,Three Tables,2,2,,Oahu,United States,no take,21.645995,-158.064627
-SGP075,seagrant,2,hatay niskin,water,4/23/19,Waikiki MLCD ref outer,Waikiki MLCD ref,0.5,1,,Oahu,United States,none,21.279166,-157.840922
-SGP076,seagrant,2,hatay niskin,water,4/23/19,Waikiki MLCD ref outer,Waikiki MLCD ref,0.5,1,,Oahu,United States,none,21.279166,-157.840922
-SGP077,seagrant,2,hatay niskin,water,4/23/19,Waikiki MLCD ref outer,Waikiki MLCD ref,0.5,1,,Oahu,United States,none,21.279166,-157.840922
-SGP078,seagrant,2,hatay niskin,water,4/23/19,Waikiki MLCD ref mid,Waikiki MLCD ref,1,2,,Oahu,United States,none,21.279994,-157.83963
-SGP079,seagrant,2,hatay niskin,water,4/23/19,Waikiki MLCD ref mid,Waikiki MLCD ref,1,2,,Oahu,United States,none,21.279994,-157.83963
-SGP080,seagrant,2,hatay niskin,water,4/23/19,Waikiki MLCD ref mid,Waikiki MLCD ref,1,2,,Oahu,United States,none,21.279994,-157.83963
-SGP081,seagrant,2,hatay niskin,water,4/24/19,Waikiki MLCD ref inner,Waikiki MLCD ref,1,1,,Oahu,United States,none,21.280932,-157.839075
-SGP082,seagrant,2,hatay niskin,water,4/24/19,Waikiki MLCD ref inner,Waikiki MLCD ref,1,1,,Oahu,United States,none,21.280932,-157.839075
-SGP083,seagrant,2,hatay niskin,water,4/24/19,Waikiki MLCD ref inner,Waikiki MLCD ref,1,1,,Oahu,United States,none,21.280932,-157.839075
-SGP084,seagrant,2,sentino pump,bleach solution control,4/24/19,Waikiki MLCD ref mid,Waikiki MLCD ref,1,2,,Oahu,United States,none,21.279994,-157.83963
-SGP085,seagrant,2,hatay niskin,water,4/24/19,HIMB east,HIMB,0,0,,Oahu,United States,no take,21.4332,-157.7860166
-SGP086,seagrant,2,hatay niskin,water,4/24/19,HIMB east,HIMB,0,0,,Oahu,United States,no take,21.4332,-157.7860166
-SGP087,seagrant,2,hatay niskin,water,4/24/19,HIMB east,HIMB,0,0,,Oahu,United States,no take,21.4332,-157.7860166
-SGP088,seagrant,2,hatay niskin,water,4/24/19,HIMB north,HIMB,0,4,,Oahu,United States,no take,21.437759,-157.788898
-SGP089,seagrant,2,hatay niskin,water,4/24/19,HIMB north,HIMB,0,4,,Oahu,United States,no take,21.437759,-157.788898
-SGP090,seagrant,2,hatay niskin,water,4/24/19,HIMB north,HIMB,0,4,,Oahu,United States,no take,21.437759,-157.788898
-SGP091,seagrant,2,hatay niskin,water,4/24/19,HIMB south,HIMB,0,4,,Oahu,United States,no take,21.430506,-157.790381
-SGP092,seagrant,2,hatay niskin,water,4/24/19,HIMB south,HIMB,0,4,,Oahu,United States,no take,21.430506,-157.790381
-SGP093,seagrant,2,hatay niskin,water,4/24/19,HIMB south,HIMB,0,4,,Oahu,United States,no take,21.430506,-157.790381
-SGP093.5,seagrant,2,hatay niskin,bleach solution control,4/24/19,HIMB north,HIMB,0,4,,Oahu,United States,no take,21.437759,-157.788898
-SGP094,seagrant,2,hatay niskin,water,4/30/19,Kaneohe North 1,Kaneohe North,1,6,,Oahu,United States,none,21.460325,-157.813702
-SGP095,seagrant,2,hatay niskin,water,4/30/19,Kaneohe North 1,Kaneohe North,1,6,,Oahu,United States,none,21.460325,-157.813702
-SGP096,seagrant,2,hatay niskin,water,4/30/19,Kaneohe North 1,Kaneohe North,1,6,,Oahu,United States,none,21.460325,-157.813702
-SGP097,seagrant,2,hatay niskin,water,4/30/19,Kaneohe North 2,Kaneohe North,1,6,,Oahu,United States,none,21.461254,-157.814328
-SGP098,seagrant,2,hatay niskin,water,4/30/19,Kaneohe North 2,Kaneohe North,1,6,,Oahu,United States,none,21.461254,-157.814328
-SGP099,seagrant,2,hatay niskin,water,4/30/19,Kaneohe North 2,Kaneohe North,1,6,,Oahu,United States,none,21.461254,-157.814328
-SGP100,seagrant,2,hatay niskin,water,4/30/19,Kaneohe North 3,Kaneohe North,1,6,,Oahu,United States,none,21.462186,-157.816331
-SGP101,seagrant,2,hatay niskin,water,4/30/19,Kaneohe North 3,Kaneohe North,1,6,,Oahu,United States,none,21.462186,-157.816331
-SGP102,seagrant,2,hatay niskin,water,4/30/19,Kaneohe North 3,Kaneohe North,1,6,,Oahu,United States,none,21.462186,-157.816331
-SGP103,seagrant,2,sentino pump,bleach solution control,4/30/19,Kaneohe North 2,Kaneohe North,1,6,,Oahu,United States,none,21.461254,-157.814328
-SGP104,seagrant,2,hatay niskin,water,5/7/19,Waialea Bay MLCD,Waialea MLCD,1,3,,Hawaii,United States,no take,19.982433,-155.828885
-SGP105,seagrant,2,hatay niskin,water,5/7/19,Waialea Bay MLCD,Waialea MLCD,1,3,,Hawaii,United States,no take,19.982433,-155.828885
-SGP106,seagrant,2,hatay niskin,water,5/7/19,Waialea Bay MLCD,Waialea MLCD,1,3,,Hawaii,United States,no take,19.982433,-155.828885
-SGP107,seagrant,2,hatay niskin,water,5/7/19,Waialea Bay MLCD,Waialea MLCD,1,3,,Hawaii,United States,no take,19.982433,-155.828885
-SGP108,seagrant,2,hatay niskin,water,5/7/19,Waialea ref,Waialea ref,1,3,,Hawaii,United States,none,19.995069,-155.82693
-SGP109,seagrant,2,hatay niskin,water,5/7/19,Waialea ref,Waialea ref,1,3,,Hawaii,United States,none,19.995069,-155.82693
-SGP110,seagrant,2,hatay niskin,water,5/7/19,Waialea ref,Waialea ref,1,3,,Hawaii,United States,none,19.995069,-155.82693
-SGP111,seagrant,2,hatay niskin,water,5/7/19,Waialea ref,Waialea ref,1,3,,Hawaii,United States,none,19.995069,-155.82693
-SGP112,seagrant,2,sentino pump,bleach solution control,5/7/19,Waialea Bay MLCD,Waialea MLCD,1,3,,Hawaii,United States,no take,19.982433,-155.828885
-SGP113,seagrant,2,hatay niskin,water,5/8/19,Kealakekua Bay MLCD,Kealakekua MLCD,1,3,,Hawaii,United States,no take,19.474155,-155.92011
-SGP114,seagrant,2,hatay niskin,water,5/8/19,Kealakekua Bay MLCD,Kealakekua MLCD,1,3,,Hawaii,United States,no take,19.474155,-155.92011
-SGP115,seagrant,2,hatay niskin,water,5/8/19,Kealakekua Bay MLCD,Kealakekua MLCD,1,3,,Hawaii,United States,no take,19.474155,-155.92011
-SGP116,seagrant,2,hatay niskin,water,5/8/19,Kealakekua Bay MLCD,Kealakekua MLCD,1,3,,Hawaii,United States,no take,19.474155,-155.92011
-SGP117,seagrant,2,hatay niskin,water,5/8/19,Kealakekua Bay ref,Kealakekua ref,1,5,,Hawaii,United States,none,19.465206,-155.92265
-SGP118,seagrant,2,hatay niskin,water,5/8/19,Kealakekua Bay ref,Kealakekua ref,1,5,,Hawaii,United States,none,19.465206,-155.92265
-SGP119,seagrant,2,hatay niskin,water,5/8/19,Kealakekua Bay ref,Kealakekua ref,1,5,,Hawaii,United States,none,19.465206,-155.92265
-SGP120,seagrant,2,hatay niskin,water,5/8/19,Kealakekua Bay ref,Kealakekua ref,1,5,,Hawaii,United States,none,19.465206,-155.92265
-SGP121,seagrant,2,sentino pump,bleach solution control,5/8/19,Kealakekua Bay MLCD,Kealakekua MLCD,1,3,,Hawaii,United States,no take,19.474155,-155.92011
-SGP122,seagrant,2,hatay niskin,water,5/8/19,Old Kona Airport MLCD,Old Kona Airport MLCD,1,1,,Hawaii,United States,no take,19.647352,-156.016773
-SGP123,seagrant,2,hatay niskin,water,5/8/19,Old Kona Airport MLCD,Old Kona Airport MLCD,1,1,,Hawaii,United States,no take,19.647352,-156.016773
-SGP124,seagrant,2,hatay niskin,water,5/8/19,Old Kona Airport MLCD,Old Kona Airport MLCD,1,1,,Hawaii,United States,no take,19.647352,-156.016773
-SGP125,seagrant,2,hatay niskin,water,5/8/19,Old Kona Airport MLCD,Old Kona Airport MLCD,1,1,,Hawaii,United States,no take,19.647352,-156.016773
-SGP126,seagrant,2,hatay niskin,water,5/8/19,Old Kona Airport ref,Old Kona Airport ref,1,0,,Hawaii,United States,none,19.667765,-156.028198
-SGP127,seagrant,2,hatay niskin,water,5/8/19,Old Kona Airport ref,Old Kona Airport ref,1,0,,Hawaii,United States,none,19.667765,-156.028198
-SGP128,seagrant,2,hatay niskin,water,5/8/19,Old Kona Airport ref,Old Kona Airport ref,1,0,,Hawaii,United States,none,19.667765,-156.028198
-SGP129,seagrant,2,hatay niskin,water,5/8/19,Old Kona Airport ref,Old Kona Airport ref,1,0,,Hawaii,United States,none,19.667765,-156.028198
-SGP130,seagrant,0,none,extraction blank,5/26/19,none,none,0,0,,n/a,n/a,none,0,0
-SGP131,seagrant,0,none,extraction blank,5/26/19,none,none,0,0,,n/a,n/a,none,0,0
+id,project,volume,method,substrate,date,station,station_grouping,depth_min,depth_max,depth_zone,island,country,protection_status,lat,lon,dive
+B001,mesophotic,2,none,extraction blank,,extraction blank,none,,,,,,,,,
+B002,mesophotic,2,none,extraction blank,,extraction blank,none,,,,,,,,,
+B003,mesophotic,2,none,extraction blank,,extraction blank,none,,,,,,,,,
+B004,mesophotic,2,none,extraction blank,,extraction blank,none,,,,,,,,,
+BMSP001,mesophotic,1.5,sentino pump,water,8/6/19,Eel Cove Deep Ridge - 250ft,Eel Cove,75,76,75,Hawaii,United States,none,19.655911,-156.033937,124
+BMSP002,mesophotic,2,hatay niskin,water,8/6/19,Eel Cove Deep Ridge - 250ft,Eel Cove,75,76,75,Hawaii,United States,none,19.655911,-156.033937,124
+BMSP003,mesophotic,2,hatay niskin,water,8/6/19,Eel Cove Deep Ridge - 200ft,Eel Cove,60,61,60,Hawaii,United States,none,19.655911,-156.033937,124
+BMSP004,mesophotic,2,hatay niskin,water,8/6/19,Eel Cove Deep Ridge - 200ft,Eel Cove,60,61,60,Hawaii,United States,none,19.655911,-156.033937,124
+BMSP005,mesophotic,2,hatay niskin,water,8/6/19,Eel Cove Deep Ridge - 100ft,Eel Cove,30,31,30,Hawaii,United States,none,19.655911,-156.033937,124
+BMSP006,mesophotic,2,sentino pump,water,8/6/19,Eel Cove Deep Ridge - 100ft,Eel Cove,30,31,30,Hawaii,United States,none,19.655911,-156.033937,124
+BMSP007,mesophotic,2,hatay niskin,water,8/6/19,Eel Cove Deep Ridge - 50ft,Eel Cove,15,16,15,Hawaii,United States,none,19.655911,-156.033937,124
+BMSP008,mesophotic,2,hatay niskin,water,8/6/19,Eel Cove Deep Ridge - 50ft,Eel Cove,15,16,15,Hawaii,United States,none,19.655911,-156.033937,124
+BMSP009,mesophotic,2,sentino pump,bleach solution control,8/6/19,Eel Cove filter control,Eel Cove,0,0,0,Hawaii,United States,none,19.655911,-156.033937,
+BMSP010,mesophotic,2,hatay niskin,water,8/7/19,Honaunau North - 300ft,Honaunau North,91,92,90,Hawaii,United States,West Hawai‘i Fish Replenishment Areas,19.4277,-155.9198,125
+BMSP011,mesophotic,2,hatay niskin,water,8/7/19,Honaunau North - 300ft,Honaunau North,91,92,90,Hawaii,United States,West Hawai‘i Fish Replenishment Areas,19.4277,-155.9198,125
+BMSP012,mesophotic,2,hatay niskin,water,8/7/19,Honaunau North - 200ft,Honaunau North,60,61,60,Hawaii,United States,West Hawai‘i Fish Replenishment Areas,19.4277,-155.9198,125
+BMSP013,mesophotic,2,hatay niskin,water,8/7/19,Honaunau North - 200ft,Honaunau North,60,61,60,Hawaii,United States,West Hawai‘i Fish Replenishment Areas,19.4277,-155.9198,125
+BMSP014,mesophotic,2,hatay niskin,water,8/7/19,Honaunau North - 100ft,Honaunau North,30,31,30,Hawaii,United States,West Hawai‘i Fish Replenishment Areas,19.4277,-155.9198,125
+BMSP015,mesophotic,2,hatay niskin,water,8/7/19,Honaunau North - 100ft,Honaunau North,30,31,30,Hawaii,United States,West Hawai‘i Fish Replenishment Areas,19.4277,-155.9198,125
+BMSP016,mesophotic,2,sentino pump,bleach solution control,8/7/19,Honaunau North filter control,Honaunau North,0,0,0,Hawaii,United States,none,19.4277,-155.9198,
+BMSP017,mesophotic,2,hatay niskin,water,8/9/19,Eel Cove Deep Ridge - 300ft,Eel Cove,91,92,90,Hawaii,United States,none,19.655911,-156.033937,126
+BMSP018,mesophotic,2,hatay niskin,water,8/9/19,Eel Cove Deep Ridge - 300ft,Eel Cove,91,92,90,Hawaii,United States,none,19.655911,-156.033937,126
+BMSP019,mesophotic,2,hatay niskin,water,8/9/19,Eel Cove Deep Ridge - 150ft,Eel Cove,45,46,45,Hawaii,United States,none,19.655911,-156.033937,126
+BMSP020,mesophotic,2,hatay niskin,water,8/9/19,Eel Cove Deep Ridge - 150ft,Eel Cove,45,46,45,Hawaii,United States,none,19.655911,-156.033937,126
+BMSP021,mesophotic,2,hatay niskin,water,8/9/19,Eel Cove Deep Ridge - surface,Eel Cove,0,5,0,Hawaii,United States,none,19.655911,-156.033937,126
+BMSP022,mesophotic,2,hatay niskin,water,8/9/19,Eel Cove Deep Ridge - surface,Eel Cove,0,5,0,Hawaii,United States,none,19.655911,-156.033937,126
+BMSP023,mesophotic,2,sentino pump,bleach solution control,8/9/19,Eel Cove filter control,Eel Cove,0,0,0,Hawaii,United States,none,19.655911,-156.033937,
+BMSP024,mesophotic,2,hatay niskin,water,8/10/19,Outhouse - 250ft,Outhouse,75,76,75,Hawaii,United States,none,19.650033,-156.0301,127
+BMSP025,mesophotic,2,hatay niskin,water,8/10/19,Outhouse - 250ft,Outhouse,75,76,75,Hawaii,United States,none,19.650033,-156.0301,127
+BMSP026,mesophotic,2,hatay niskin,water,8/10/19,Outhouse - 200ft,Outhouse,60,61,60,Hawaii,United States,none,19.650033,-156.0301,127
+BMSP027,mesophotic,2,hatay niskin,water,8/10/19,Outhouse - 200ft,Outhouse,60,61,60,Hawaii,United States,none,19.650033,-156.0301,127
+BMSP028,mesophotic,2,hatay niskin,water,8/10/19,Outhouse - 100ft,Outhouse,30,31,30,Hawaii,United States,none,19.650033,-156.0301,127
+BMSP029,mesophotic,2,hatay niskin,water,8/10/19,Outhouse - 100ft,Outhouse,30,31,30,Hawaii,United States,none,19.650033,-156.0301,127
+BMSP030,mesophotic,2,hatay niskin,water,8/10/19,Outhouse - 50ft,Outhouse,15,16,15,Hawaii,United States,none,19.650033,-156.0301,127
+BMSP031,mesophotic,2,hatay niskin,water,8/10/19,Outhouse - 50ft,Outhouse,15,16,15,Hawaii,United States,none,19.650033,-156.0301,127
+BMSP032,mesophotic,2,sentino pump,bleach solution control,8/10/19,Outhouse filter control,Outhouse,0,0,0,Hawaii,United States,none,19.650033,-156.0301,
+BMSP033,mesophotic,2,hatay niskin,water,8/11/19,Outhouse - 300ft,Outhouse,91,92,90,Hawaii,United States,none,19.650033,-156.0301,128
+BMSP034,mesophotic,2,hatay niskin,water,8/11/19,Outhouse - 300ft,Outhouse,91,92,90,Hawaii,United States,none,19.650033,-156.0301,128
+BMSP035,mesophotic,2,hatay niskin,water,8/11/19,Outhouse - 150ft,Outhouse,45,46,45,Hawaii,United States,none,19.650033,-156.0301,128
+BMSP036,mesophotic,2,hatay niskin,water,8/11/19,Outhouse - surface,Outhouse,0,0,0,Hawaii,United States,none,19.650033,-156.0301,128
+BMSP037,mesophotic,2,hatay niskin,water,8/11/19,Outhouse - surface,Outhouse,0,0,0,Hawaii,United States,none,19.650033,-156.0301,128
+BMSP038,mesophotic,2,sentino pump,bleach solution control,8/11/19,Outhouse filter control,Outhouse,0,0,0,Hawaii,United States,none,19.650033,-156.0301,
+NMI001,marianas,1,sentino pump,water,6/14/18,Urracas 1,Mariana Islands,4,4,,Urracas,Commonwealth of the Northern Mariana Islands,none,20.53742,144.89914,
+NMI002,marianas,1,sentino pump,water,6/14/18,Urracas 1,Mariana Islands,4,4,,Urracas,Commonwealth of the Northern Mariana Islands,none,20.53742,144.89914,
+NMI003,marianas,1,sentino pump,water,6/14/18,Urracas 1,Mariana Islands,4,4,,Urracas,Commonwealth of the Northern Mariana Islands,none,20.53742,144.89914,
+NMI004,marianas,1,sentino pump,water,6/14/18,Urracas 1,Mariana Islands,4,4,,Urracas,Commonwealth of the Northern Mariana Islands,none,20.53742,144.89914,
+NMI005,marianas,1,sentino pump,water,6/14/18,Urracas 2,Mariana Islands,8,8,,Urracas,Commonwealth of the Northern Mariana Islands,none,20.5362,144.89655,
+NMI006,marianas,1,sentino pump,water,6/14/18,Urracas 2,Mariana Islands,8,8,,Urracas,Commonwealth of the Northern Mariana Islands,none,20.5362,144.89655,
+NMI007,marianas,1,sentino pump,water,6/14/18,Urracas 2,Mariana Islands,8,8,,Urracas,Commonwealth of the Northern Mariana Islands,none,20.5362,144.89655,
+NMI008,marianas,1,sentino pump,water,6/14/18,Urracas 2,Mariana Islands,8,8,,Urracas,Commonwealth of the Northern Mariana Islands,none,20.5362,144.89655,
+NMI009,marianas,1,sentino pump,water,6/14/18,Urracas 3,Mariana Islands,6,6,,Urracas,Commonwealth of the Northern Mariana Islands,none,20.54144,144.901,
+NMI010,marianas,1,sentino pump,water,6/14/18,Urracas 3,Mariana Islands,6,6,,Urracas,Commonwealth of the Northern Mariana Islands,none,20.54144,144.901,
+NMI011,marianas,1,sentino pump,water,6/14/18,Urracas 3,Mariana Islands,6,6,,Urracas,Commonwealth of the Northern Mariana Islands,none,20.54144,144.901,
+NMI012,marianas,1,sentino pump,water,6/14/18,Urracas 3,Mariana Islands,6,6,,Urracas,Commonwealth of the Northern Mariana Islands,none,20.54144,144.901,
+NMI013,marianas,1,sentino pump,water,6/17/18,Maug East,Mariana Islands,6,6,,Maug,Commonwealth of the Northern Mariana Islands,none,20.01288,145.22737,
+NMI014,marianas,1,sentino pump,water,6/17/18,Maug East,Mariana Islands,6,6,,Maug,Commonwealth of the Northern Mariana Islands,none,20.01288,145.22737,
+NMI015,marianas,1,sentino pump,water,6/17/18,Maug East,Mariana Islands,6,6,,Maug,Commonwealth of the Northern Mariana Islands,none,20.01288,145.22737,
+NMI016,marianas,1,sentino pump,water,6/17/18,Maug East,Mariana Islands,6,6,,Maug,Commonwealth of the Northern Mariana Islands,none,20.01288,145.22737,
+NMI017,marianas,1,sentino pump,water,6/17/18,Maug North,Mariana Islands,6,6,,Maug,Commonwealth of the Northern Mariana Islands,none,20.0329,145.22736,
+NMI018,marianas,1,sentino pump,water,6/17/18,Maug North,Mariana Islands,6,6,,Maug,Commonwealth of the Northern Mariana Islands,none,20.0329,145.22736,
+NMI019,marianas,1,sentino pump,water,6/17/18,Maug North,Mariana Islands,6,6,,Maug,Commonwealth of the Northern Mariana Islands,none,20.0329,145.22736,
+NMI020,marianas,1,sentino pump,water,6/17/18,Maug North,Mariana Islands,6,6,,Maug,Commonwealth of the Northern Mariana Islands,none,20.0329,145.22736,
+NMI021,marianas,1,sentino pump,water,6/17/18,Maug West,Mariana Islands,6,6,,Maug,Commonwealth of the Northern Mariana Islands,none,20.02407,145.20821,
+NMI022,marianas,1,sentino pump,water,6/17/18,Maug West,Mariana Islands,6,6,,Maug,Commonwealth of the Northern Mariana Islands,none,20.02407,145.20821,
+NMI023,marianas,1,sentino pump,water,6/17/18,Maug West,Mariana Islands,6,6,,Maug,Commonwealth of the Northern Mariana Islands,none,20.02407,145.20821,
+NMI024,marianas,1,sentino pump,water,6/17/18,Maug West,Mariana Islands,6,6,,Maug,Commonwealth of the Northern Mariana Islands,none,20.02407,145.20821,
+NMI025,marianas,1,sentino pump,water,6/19/18,Asuncion Northeast,Mariana Islands,6,6,,Asuncion,Commonwealth of the Northern Mariana Islands,none,19.7042,145.41237,
+NMI026,marianas,1,sentino pump,water,6/19/18,Asuncion Northeast,Mariana Islands,6,6,,Asuncion,Commonwealth of the Northern Mariana Islands,none,19.7042,145.41237,
+NMI027,marianas,1,sentino pump,water,6/19/18,Asuncion Northeast,Mariana Islands,6,6,,Asuncion,Commonwealth of the Northern Mariana Islands,none,19.7042,145.41237,
+NMI028,marianas,1,sentino pump,water,6/19/18,Asuncion Northeast,Mariana Islands,6,6,,Asuncion,Commonwealth of the Northern Mariana Islands,none,19.7042,145.41237,
+NMI029,marianas,1,sentino pump,water,6/19/18,Asuncion North,Mariana Islands,6,6,,Asuncion,Commonwealth of the Northern Mariana Islands,none,19.70545,145.39656,
+NMI030,marianas,1,sentino pump,water,6/19/18,Asuncion North,Mariana Islands,6,6,,Asuncion,Commonwealth of the Northern Mariana Islands,none,19.70545,145.39656,
+NMI031,marianas,1,sentino pump,water,6/19/18,Asuncion North,Mariana Islands,6,6,,Asuncion,Commonwealth of the Northern Mariana Islands,none,19.70545,145.39656,
+NMI032,marianas,1,sentino pump,water,6/19/18,Asuncion North,Mariana Islands,6,6,,Asuncion,Commonwealth of the Northern Mariana Islands,none,19.70545,145.39656,
+NMI033,marianas,1,sentino pump,water,6/19/18,Asuncion Northwest,Mariana Islands,6,6,,Asuncion,Commonwealth of the Northern Mariana Islands,none,19.68976,145.38965,
+NMI034,marianas,1,sentino pump,water,6/19/18,Asuncion Northwest,Mariana Islands,6,6,,Asuncion,Commonwealth of the Northern Mariana Islands,none,19.68976,145.38965,
+NMI035,marianas,1,sentino pump,water,6/19/18,Asuncion Northwest,Mariana Islands,6,6,,Asuncion,Commonwealth of the Northern Mariana Islands,none,19.68976,145.38965,
+NMI036,marianas,1,sentino pump,water,6/19/18,Asuncion Northwest,Mariana Islands,6,6,,Asuncion,Commonwealth of the Northern Mariana Islands,none,19.68976,145.38965,
+NMI037,marianas,1,sentino pump,water,6/22/18,Pagan Northwest,Mariana Islands,6,6,,Pagan,Commonwealth of the Northern Mariana Islands,none,18.14635,145.75504,
+NMI038,marianas,1,sentino pump,water,6/22/18,Pagan Northwest,Mariana Islands,6,6,,Pagan,Commonwealth of the Northern Mariana Islands,none,18.14635,145.75504,
+NMI039,marianas,1,sentino pump,water,6/22/18,Pagan Northwest,Mariana Islands,6,6,,Pagan,Commonwealth of the Northern Mariana Islands,none,18.14635,145.75504,
+NMI040,marianas,1,sentino pump,water,6/22/18,Pagan Northwest,Mariana Islands,6,6,,Pagan,Commonwealth of the Northern Mariana Islands,none,18.14635,145.75504,
+NMI041,marianas,1,sentino pump,water,6/22/18,Pagan West,Mariana Islands,6,6,,Pagan,Commonwealth of the Northern Mariana Islands,none,18.0983,145.75325,
+NMI042,marianas,1,sentino pump,water,6/22/18,Pagan West,Mariana Islands,6,6,,Pagan,Commonwealth of the Northern Mariana Islands,none,18.0983,145.75325,
+NMI043,marianas,1,sentino pump,water,6/22/18,Pagan West,Mariana Islands,6,6,,Pagan,Commonwealth of the Northern Mariana Islands,none,18.0983,145.75325,
+NMI044,marianas,1,sentino pump,water,6/22/18,Pagan West,Mariana Islands,6,6,,Pagan,Commonwealth of the Northern Mariana Islands,none,18.0983,145.75325,
+NMI045,marianas,1,sentino pump,water,6/22/18,Pagan Southwest,Mariana Islands,6,6,,Pagan,Commonwealth of the Northern Mariana Islands,none,18.05336,145.71024,
+NMI046,marianas,1,sentino pump,water,6/22/18,Pagan Southwest,Mariana Islands,6,6,,Pagan,Commonwealth of the Northern Mariana Islands,none,18.05336,145.71024,
+NMI047,marianas,1,sentino pump,water,6/22/18,Pagan Southwest,Mariana Islands,6,6,,Pagan,Commonwealth of the Northern Mariana Islands,none,18.05336,145.71024,
+NMI048,marianas,1,sentino pump,water,6/22/18,Pagan Southwest,Mariana Islands,6,6,,Pagan,Commonwealth of the Northern Mariana Islands,none,18.05336,145.71024,
+NMI049,marianas,1,sentino pump,water,6/23/18,Guguan Northwest,Mariana Islands,6,6,,Guguan,Commonwealth of the Northern Mariana Islands,none,17.31804,145.83273,
+NMI050,marianas,1,sentino pump,water,6/23/18,Guguan Northwest,Mariana Islands,6,6,,Guguan,Commonwealth of the Northern Mariana Islands,none,17.31804,145.83273,
+NMI051,marianas,1,sentino pump,water,6/23/18,Guguan Northwest,Mariana Islands,6,6,,Guguan,Commonwealth of the Northern Mariana Islands,none,17.31804,145.83273,
+NMI052,marianas,1,sentino pump,water,6/23/18,Guguan Northwest,Mariana Islands,6,6,,Guguan,Commonwealth of the Northern Mariana Islands,none,17.31804,145.83273,
+NMI053,marianas,1,sentino pump,water,6/23/18,Guguan East Cove,Mariana Islands,4,4,,Guguan,Commonwealth of the Northern Mariana Islands,none,17.31369,145.84938,
+NMI054,marianas,1,sentino pump,water,6/23/18,Guguan East Cove,Mariana Islands,4,4,,Guguan,Commonwealth of the Northern Mariana Islands,none,17.31369,145.84938,
+NMI055,marianas,1,sentino pump,water,6/23/18,Guguan East Cove,Mariana Islands,4,4,,Guguan,Commonwealth of the Northern Mariana Islands,none,17.31369,145.84938,
+NMI056,marianas,1,sentino pump,water,6/23/18,Guguan East Cove,Mariana Islands,4,4,,Guguan,Commonwealth of the Northern Mariana Islands,none,17.31369,145.84938,
+NMI057,marianas,1,sentino pump,water,6/23/18,Guguan Southwest,Mariana Islands,4,4,,Guguan,Commonwealth of the Northern Mariana Islands,none,17.29946,145.83682,
+NMI058,marianas,1,sentino pump,water,6/23/18,Guguan Southwest,Mariana Islands,4,4,,Guguan,Commonwealth of the Northern Mariana Islands,none,17.29946,145.83682,
+NMI059,marianas,1,sentino pump,water,6/23/18,Guguan Southwest,Mariana Islands,4,4,,Guguan,Commonwealth of the Northern Mariana Islands,none,17.29946,145.83682,
+NMI060,marianas,1,sentino pump,water,6/23/18,Guguan Southwest,Mariana Islands,4,4,,Guguan,Commonwealth of the Northern Mariana Islands,none,17.29946,145.83682,
+NMI061,marianas,1,sentino pump,water,6/24/18,Anatahan Northwest,Mariana Islands,5,5,,Anatahan,Commonwealth of the Northern Mariana Islands,none,16.36138,145.63347,
+NMI062,marianas,1,sentino pump,water,6/24/18,Anatahan Northwest,Mariana Islands,5,5,,Anatahan,Commonwealth of the Northern Mariana Islands,none,16.36138,145.63347,
+NMI063,marianas,1,sentino pump,water,6/24/18,Anatahan Northwest,Mariana Islands,5,5,,Anatahan,Commonwealth of the Northern Mariana Islands,none,16.36138,145.63347,
+NMI064,marianas,1,sentino pump,water,6/24/18,Anatahan Northwest,Mariana Islands,5,5,,Anatahan,Commonwealth of the Northern Mariana Islands,none,16.36138,145.63347,
+NMI065,marianas,1,sentino pump,water,6/24/18,Anatahan Southwest,Mariana Islands,4,4,,Anatahan,Commonwealth of the Northern Mariana Islands,none,16.33457,145.65788,
+NMI066,marianas,1,sentino pump,water,6/24/18,Anatahan Southwest,Mariana Islands,4,4,,Anatahan,Commonwealth of the Northern Mariana Islands,none,16.33457,145.65788,
+NMI067,marianas,1,sentino pump,water,6/24/18,Anatahan Southwest,Mariana Islands,4,4,,Anatahan,Commonwealth of the Northern Mariana Islands,none,16.33457,145.65788,
+NMI068,marianas,1,sentino pump,water,6/24/18,Anatahan Southwest,Mariana Islands,4,4,,Anatahan,Commonwealth of the Northern Mariana Islands,none,16.33457,145.65788,
+NMI069,marianas,1,sentino pump,water,6/24/18,Anatahan West,Mariana Islands,8,8,,Anatahan,Commonwealth of the Northern Mariana Islands,none,16.34374,145.63589,
+NMI070,marianas,1,sentino pump,water,6/24/18,Anatahan West,Mariana Islands,8,8,,Anatahan,Commonwealth of the Northern Mariana Islands,none,16.34374,145.63589,
+NMI071,marianas,1,sentino pump,water,6/24/18,Anatahan West,Mariana Islands,8,8,,Anatahan,Commonwealth of the Northern Mariana Islands,none,16.34374,145.63589,
+NMI072,marianas,1,sentino pump,water,6/24/18,Anatahan West,Mariana Islands,8,8,,Anatahan,Commonwealth of the Northern Mariana Islands,none,16.34374,145.63589,
+NMI073,marianas,1,sentino pump,water,7/1/18,Sarigan South,Mariana Islands,8,8,,Sarigan,Commonwealth of the Northern Mariana Islands,none,16.69209,145.78151,
+NMI074,marianas,1,sentino pump,water,7/1/18,Sarigan South,Mariana Islands,8,8,,Sarigan,Commonwealth of the Northern Mariana Islands,none,16.69209,145.78151,
+NMI075,marianas,1,sentino pump,water,7/1/18,Sarigan South,Mariana Islands,8,8,,Sarigan,Commonwealth of the Northern Mariana Islands,none,16.69209,145.78151,
+NMI076,marianas,1,sentino pump,water,7/1/18,Sarigan South,Mariana Islands,8,8,,Sarigan,Commonwealth of the Northern Mariana Islands,none,16.69209,145.78151,
+NMI077,marianas,1,sentino pump,water,7/1/18,Sarigan West,Mariana Islands,8,8,,Sarigan,Commonwealth of the Northern Mariana Islands,none,16.70346,145.76619,
+NMI078,marianas,1,sentino pump,water,7/1/18,Sarigan West,Mariana Islands,8,8,,Sarigan,Commonwealth of the Northern Mariana Islands,none,16.70346,145.76619,
+NMI079,marianas,1,sentino pump,water,7/1/18,Sarigan West,Mariana Islands,8,8,,Sarigan,Commonwealth of the Northern Mariana Islands,none,16.70346,145.76619,
+NMI080,marianas,1,sentino pump,water,7/1/18,Sarigan West,Mariana Islands,8,8,,Sarigan,Commonwealth of the Northern Mariana Islands,none,16.70346,145.76619,
+NMI081,marianas,1,sentino pump,water,7/1/18,Sarigan North,Mariana Islands,8,8,,Sarigan,Commonwealth of the Northern Mariana Islands,none,16.71508,145.77586,
+NMI082,marianas,1,sentino pump,water,7/1/18,Sarigan North,Mariana Islands,8,8,,Sarigan,Commonwealth of the Northern Mariana Islands,none,16.71508,145.77586,
+NMI083,marianas,1,sentino pump,water,7/1/18,Sarigan North,Mariana Islands,8,8,,Sarigan,Commonwealth of the Northern Mariana Islands,none,16.71508,145.77586,
+NMI084,marianas,1,sentino pump,water,7/1/18,Sarigan North,Mariana Islands,8,8,,Sarigan,Commonwealth of the Northern Mariana Islands,none,16.71508,145.77586,
+NMI085,marianas,2,hatay niskin,water,5/13/19,Merizo east,Mariana Islands,1,3,,Guam,United States,none,13.2400167,144.66545,
+NMI086,marianas,2,hatay niskin,water,5/13/19,Merizo east,Mariana Islands,1,3,,Guam,United States,none,13.2400167,144.66545,
+NMI087,marianas,2,hatay niskin,water,5/13/19,Merizo east,Mariana Islands,1,3,,Guam,United States,none,13.2400167,144.66545,
+NMI088,marianas,2,hatay niskin,water,5/13/19,Merizo east,Mariana Islands,1,3,,Guam,United States,none,13.2400167,144.66545,
+NMI089,marianas,2,hatay niskin,water,5/13/19,Merizo west,Mariana Islands,1,3,,Guam,United States,none,13.2498,144.6455,
+NMI090,marianas,2,hatay niskin,water,5/13/19,Merizo west,Mariana Islands,1,3,,Guam,United States,none,13.2498,144.6455,
+NMI091,marianas,2,hatay niskin,water,5/13/19,Merizo west,Mariana Islands,1,3,,Guam,United States,none,13.2498,144.6455,
+NMI092,marianas,2,hatay niskin,water,5/13/19,Merizo west,Mariana Islands,1,3,,Guam,United States,none,13.2498,144.6455,
+NMI093,marianas,2,sentino pump,bleach solution control,5/13/19,Merizo east,Mariana Islands,1,3,,Guam,United States,none,13.2400167,144.66545,
+NMI094,marianas,2,hatay niskin,water,5/14/19,Ritidian west,Mariana Islands,2,2.3,,Guam,United States,none,13.6393333,144.8463,
+NMI095,marianas,2,hatay niskin,water,5/14/19,Ritidian west,Mariana Islands,2,2.3,,Guam,United States,none,13.6393333,144.8463,
+NMI096,marianas,2,hatay niskin,water,5/14/19,Ritidian west,Mariana Islands,2,2.3,,Guam,United States,none,13.6393333,144.8463,
+NMI097,marianas,2,hatay niskin,water,5/14/19,Ritidian west,Mariana Islands,2,2.3,,Guam,United States,none,13.6393333,144.8463,
+NMI098,marianas,2,hatay niskin,water,5/14/19,Ritidian east,Mariana Islands,3,3.7,,Guam,United States,none,13.64185,144.8844,
+NMI099,marianas,2,hatay niskin,water,5/14/19,Ritidian east,Mariana Islands,3,3.7,,Guam,United States,none,13.64185,144.8844,
+NMI100,marianas,2,hatay niskin,water,5/14/19,Ritidian east,Mariana Islands,3,3.7,,Guam,United States,none,13.64185,144.8844,
+NMI101,marianas,2,hatay niskin,water,5/14/19,Ritidian east,Mariana Islands,3,3.7,,Guam,United States,none,13.64185,144.8844,
+NMI102,marianas,2,hatay niskin,water,5/15/19,Pago Bay Guam ML,Mariana Islands,3,5,,Guam,United States,none,13.426851,144.798694,
+NMI103,marianas,2,hatay niskin,water,5/15/19,Pago Bay Guam ML,Mariana Islands,3,5,,Guam,United States,none,13.426851,144.798694,
+NMI104,marianas,2,hatay niskin,water,5/15/19,Pago Bay Guam ML,Mariana Islands,3,5,,Guam,United States,none,13.426851,144.798694,
+NMI105,marianas,2,hatay niskin,water,5/15/19,Pago Bay Guam ML,Mariana Islands,3,5,,Guam,United States,none,13.426851,144.798694,
+NMI106,marianas,2,hatay niskin,water,5/15/19,Tanguisson,Mariana Islands,2,5,,Guam,United States,none,13.543351,144.806781,
+NMI107,marianas,2,hatay niskin,water,5/15/19,Tanguisson,Mariana Islands,2,5,,Guam,United States,none,13.543351,144.806781,
+NMI108,marianas,2,hatay niskin,water,5/15/19,Tanguisson,Mariana Islands,2,5,,Guam,United States,none,13.543351,144.806781,
+NMI109,marianas,2,hatay niskin,water,5/15/19,Tanguisson,Mariana Islands,2,5,,Guam,United States,none,13.543351,144.806781,
+NMI110,marianas,2,sentino pump,bleach solution control,5/14/19,Ritidian east,Mariana Islands,3,3.7,,Guam,United States,none,13.64185,144.8844,
+NMI111,marianas,2,sentino pump,bleach solution control,5/15/19,Pago Bay Guam ML,Mariana Islands,3,5,,Guam,United States,none,13.426851,144.798694,
+NMI112,marianas,2,hatay niskin,water,5/16/19,Laulau beach,Mariana Islands,5,7,,Saipan,Commonwealth of the Northern Mariana Islands,none,15.161757,145.761667,
+NMI113,marianas,2,hatay niskin,water,5/16/19,Laulau beach,Mariana Islands,5,7,,Saipan,Commonwealth of the Northern Mariana Islands,none,15.161757,145.761667,
+NMI114,marianas,2,hatay niskin,water,5/16/19,Laulau beach,Mariana Islands,5,7,,Saipan,Commonwealth of the Northern Mariana Islands,none,15.161757,145.761667,
+NMI115,marianas,2,hatay niskin,water,5/16/19,Laulau beach,Mariana Islands,5,7,,Saipan,Commonwealth of the Northern Mariana Islands,none,15.161757,145.761667,
+NMI116,marianas,2,hatay niskin,water,5/16/19,Obyan,Mariana Islands,5,8,,Saipan,Commonwealth of the Northern Mariana Islands,none,15.104655,145.738686,
+NMI117,marianas,2,hatay niskin,water,5/16/19,Obyan,Mariana Islands,5,8,,Saipan,Commonwealth of the Northern Mariana Islands,none,15.104655,145.738686,
+NMI118,marianas,2,hatay niskin,water,5/16/19,Obyan,Mariana Islands,5,8,,Saipan,Commonwealth of the Northern Mariana Islands,none,15.104655,145.738686,
+NMI119,marianas,2,hatay niskin,water,5/16/19,Obyan,Mariana Islands,5,8,,Saipan,Commonwealth of the Northern Mariana Islands,none,15.104655,145.738686,
+NMI120,marianas,2,hatay niskin,water,5/17/19,Wing beach,Mariana Islands,0.5,0.5,,Saipan,Commonwealth of the Northern Mariana Islands,none,15.272852,145.793469,
+NMI121,marianas,2,hatay niskin,water,5/17/19,Wing beach,Mariana Islands,0.5,0.5,,Saipan,Commonwealth of the Northern Mariana Islands,none,15.272852,145.793469,
+NMI122,marianas,2,hatay niskin,water,5/17/19,Wing beach,Mariana Islands,0.5,0.5,,Saipan,Commonwealth of the Northern Mariana Islands,none,15.272852,145.793469,
+NMI123,marianas,2,hatay niskin,water,5/17/19,Wing beach,Mariana Islands,0.5,0.5,,Saipan,Commonwealth of the Northern Mariana Islands,none,15.272852,145.793469,
+NMI124,marianas,2,hatay niskin,water,5/17/19,Sugar Dock,Mariana Islands,3,5,,Saipan,Commonwealth of the Northern Mariana Islands,none,15.151882,145.693603,
+NMI125,marianas,2,hatay niskin,water,5/17/19,Sugar Dock,Mariana Islands,3,5,,Saipan,Commonwealth of the Northern Mariana Islands,none,15.151882,145.693603,
+NMI126,marianas,2,hatay niskin,water,5/17/19,Sugar Dock,Mariana Islands,3,5,,Saipan,Commonwealth of the Northern Mariana Islands,none,15.151882,145.693603,
+NMI127,marianas,2,hatay niskin,water,5/17/19,Sugar Dock,Mariana Islands,3,5,,Saipan,Commonwealth of the Northern Mariana Islands,none,15.151882,145.693603,
+SGP001,seagrant,2,hatay niskin,water,12/12/18,Waikiki Hixon lab reef module 115,Waikiki hixon modules,16.5,16.8,,Oahu,United States,none,21.26987,-157.83904,
+SGP002,seagrant,2,hatay niskin,water,12/12/18,Waikiki Hixon lab reef module 115,Waikiki hixon modules,16.5,16.8,,Oahu,United States,none,21.26987,-157.83904,
+SGP003,seagrant,2,hatay niskin,water,12/12/18,Waikiki Hixon lab reef module 115,Waikiki hixon modules,16.5,16.8,,Oahu,United States,none,21.26987,-157.83904,
+SGP004,seagrant,2,hatay niskin,water,12/12/18,Waikiki Hixon lab anchor site (surface),Waikiki hixon modules,0,0,,Oahu,United States,none,21.27009,-157.83812,
+SGP005,seagrant,2,hatay niskin,water,12/12/18,Waikiki Hixon lab anchor site (surface),Waikiki hixon modules,0,0,,Oahu,United States,none,21.27009,-157.83812,
+SGP006,seagrant,2,hatay niskin,water,12/12/18,Waikiki Hixon lab anchor site (surface),Waikiki hixon modules,0,0,,Oahu,United States,none,21.27009,-157.83812,
+SGP007,seagrant,2,hatay niskin,water,12/13/18,HIMB east,HIMB,0,0,,Oahu,United States,no take,21.4332,-157.7860166,
+SGP008,seagrant,2,hatay niskin,water,12/13/18,HIMB east,HIMB,0,0,,Oahu,United States,no take,21.4332,-157.7860166,
+SGP009,seagrant,2,hatay niskin,water,12/13/18,HIMB east,HIMB,0,0,,Oahu,United States,no take,21.4332,-157.7860166,
+SGP010,seagrant,2,hatay niskin,water,12/13/18,Sampan south,none,0,0,,Oahu,United States,none,21.44968333,-157.7927333,
+SGP011,seagrant,2,hatay niskin,water,12/13/18,Sampan south,none,0,0,,Oahu,United States,none,21.44968333,-157.7927333,
+SGP012,seagrant,2,hatay niskin,water,12/13/18,Sampan south,none,0,0,,Oahu,United States,none,21.44968333,-157.7927333,
+SGP013,seagrant,2,hatay niskin,water,12/13/18,Reef 39,none,0,0,,Oahu,United States,none,21.4733833,-157.8265333,
+SGP014,seagrant,2,hatay niskin,water,12/13/18,Reef 39,none,0,0,,Oahu,United States,none,21.4733833,-157.8265333,
+SGP015,seagrant,2,hatay niskin,water,12/13/18,Reef 39,none,0,0,,Oahu,United States,none,21.4733833,-157.8265333,
+SGP016,seagrant,2,sentino pump,bleach solution control,12/13/18,HIMB east,HIMB,0,0,,Oahu,United States,no take,21.4332,-157.7860166,
+SGP017,seagrant,2,hatay niskin,water,10/23/18,Hanauma Bay shallow,Hanauma Bay,1,1,,Oahu,United States,no take,21.271281,-157.696303,
+SGP018,seagrant,2,hatay niskin,water,10/23/18,Hanauma Bay shallow,Hanauma Bay,1,1,,Oahu,United States,no take,21.271281,-157.696303,
+SGP019,seagrant,2,hatay niskin,water,10/23/18,Hanauma Bay mid-depth,Hanauma Bay,8.2,8.2,,Oahu,United States,no take,21.268622,-157.693761,
+SGP020,seagrant,2,hatay niskin,water,10/23/18,Hanauma Bay mid-depth,Hanauma Bay,8.2,8.2,,Oahu,United States,no take,21.268622,-157.693761,
+SGP021,seagrant,2,hatay niskin,water,10/23/18,Hanauma Bay mid-depth,Hanauma Bay,8.2,8.2,,Oahu,United States,no take,21.268622,-157.693761,
+SGP022,seagrant,2,hatay niskin,water,10/23/18,Hanauma Bay deep,Hanauma Bay,17.4,17.4,,Oahu,United States,no take,21.268051,-157.692133,
+SGP023,seagrant,2,hatay niskin,water,10/23/18,Hanauma Bay deep,Hanauma Bay,17.4,17.4,,Oahu,United States,no take,21.268051,-157.692133,
+SGP024,seagrant,2,hatay niskin,water,10/23/18,Hanauma Bay deep,Hanauma Bay,17.4,17.4,,Oahu,United States,no take,21.268051,-157.692133,
+SGP025,seagrant,2,sentino pump,bleach solution control,12/12/18,Waikiki Hixon lab anchor site (surface),Waikiki hixon modules,0,0,,Oahu,United States,none,21.27009,-157.83812,
+SGP026,seagrant,2,hatay niskin,water,12/21/18,Waikiki MLCD inner,Waikiki MLCD,0,0,,Oahu,United States,no take,21.268233,-157.822991,
+SGP027,seagrant,2,hatay niskin,water,12/21/18,Waikiki MLCD inner,Waikiki MLCD,0,0,,Oahu,United States,no take,21.268233,-157.822991,
+SGP028,seagrant,2,hatay niskin,water,12/21/18,Waikiki MLCD inner,Waikiki MLCD,0,0,,Oahu,United States,no take,21.268233,-157.822991,
+SGP029,seagrant,2,hatay niskin,water,12/21/18,Waikiki MLCD mid,Waikiki MLCD,0,0,,Oahu,United States,no take,21.268127,-157.823531,
+SGP030,seagrant,2,hatay niskin,water,12/21/18,Waikiki MLCD mid,Waikiki MLCD,0,0,,Oahu,United States,no take,21.268127,-157.823531,
+SGP031,seagrant,2,hatay niskin,water,12/21/18,Waikiki MLCD mid,Waikiki MLCD,0,0,,Oahu,United States,no take,21.268127,-157.823531,
+SGP032,seagrant,2,hatay niskin,water,12/21/18,Waikiki MLCD outer,Waikiki MLCD,0,0,,Oahu,United States,no take,21.268228,-157.824931,
+SGP033,seagrant,2,hatay niskin,water,12/21/18,Waikiki MLCD outer,Waikiki MLCD,0,0,,Oahu,United States,no take,21.268228,-157.824931,
+SGP034,seagrant,2,hatay niskin,water,12/21/18,Waikiki MLCD outer,Waikiki MLCD,0,0,,Oahu,United States,no take,21.268228,-157.824931,
+SGP035,seagrant,2,sentino pump,bleach solution control,12/21/18,Waikiki MLCD mid,Waikiki MLCD,0,0,,Oahu,United States,no take,21.268127,-157.823531,
+SGP036,seagrant,2,hatay niskin,water,4/9/19,Waikiki MLCD inner,Waikiki MLCD,0,0,,Oahu,United States,no take,21.268233,-157.822991,
+SGP037,seagrant,2,hatay niskin,water,4/9/19,Waikiki MLCD inner,Waikiki MLCD,0,0,,Oahu,United States,no take,21.268233,-157.822991,
+SGP038,seagrant,2,hatay niskin,water,4/9/19,Waikiki MLCD inner,Waikiki MLCD,0,0,,Oahu,United States,no take,21.268233,-157.822991,
+SGP039,seagrant,2,hatay niskin,water,4/9/19,Waikiki MLCD mid,Waikiki MLCD,0,0,,Oahu,United States,no take,21.268127,-157.823531,
+SGP040,seagrant,2,hatay niskin,water,4/9/19,Waikiki MLCD mid,Waikiki MLCD,0,0,,Oahu,United States,no take,21.268127,-157.823531,
+SGP041,seagrant,2,hatay niskin,water,4/9/19,Waikiki MLCD mid,Waikiki MLCD,0,0,,Oahu,United States,no take,21.268127,-157.823531,
+SGP042,seagrant,2,hatay niskin,water,4/9/19,Waikiki MLCD outer,Waikiki MLCD,0,0,,Oahu,United States,no take,21.268228,-157.824931,
+SGP043,seagrant,2,hatay niskin,water,4/9/19,Waikiki MLCD outer,Waikiki MLCD,0,0,,Oahu,United States,no take,21.268228,-157.824931,
+SGP044,seagrant,2,hatay niskin,water,4/9/19,Waikiki MLCD outer,Waikiki MLCD,0,0,,Oahu,United States,no take,21.268228,-157.824931,
+SGP045,seagrant,2,sentino pump,bleach solution control,4/9/19,Waikiki MLCD mid,Waikiki MLCD,0,0,,Oahu,United States,no take,21.268127,-157.823531,
+SGP046,seagrant,2,hatay niskin,water,4/16/19,Hanauma Bay shallow,Hanauma Bay,1,1,,Oahu,United States,no take,21.271281,-157.696303,
+SGP047,seagrant,2,hatay niskin,water,4/16/19,Hanauma Bay shallow,Hanauma Bay,1,1,,Oahu,United States,no take,21.271281,-157.696303,
+SGP048,seagrant,2,hatay niskin,water,4/16/19,Hanauma Bay shallow,Hanauma Bay,1,1,,Oahu,United States,no take,21.271281,-157.696303,
+SGP049,seagrant,2,hatay niskin,water,4/16/19,Hanauma Bay mid-depth,Hanauma Bay,8.2,8.2,,Oahu,United States,no take,21.268622,-157.693761,
+SGP050,seagrant,2,hatay niskin,water,4/16/19,Hanauma Bay mid-depth,Hanauma Bay,8.2,8.2,,Oahu,United States,no take,21.268622,-157.693761,
+SGP051,seagrant,2,hatay niskin,water,4/16/19,Hanauma Bay mid-depth,Hanauma Bay,8.2,8.2,,Oahu,United States,no take,21.268622,-157.693761,
+SGP052,seagrant,2,hatay niskin,water,4/16/19,Hanauma Bay deep,Hanauma Bay,17.4,17.4,,Oahu,United States,no take,21.268051,-157.692133,
+SGP053,seagrant,2,hatay niskin,water,4/16/19,Hanauma Bay deep,Hanauma Bay,17.4,17.4,,Oahu,United States,no take,21.268051,-157.692133,
+SGP054,seagrant,2,hatay niskin,water,4/16/19,Hanauma Bay deep,Hanauma Bay,17.4,17.4,,Oahu,United States,no take,21.268051,-157.692133,
+SGP055,seagrant,2,hatay niskin,water,4/19/19,China walls inner,China Walls,3,5,,Oahu,United States,none,21.261947,-157.711707,
+SGP056,seagrant,2,hatay niskin,water,4/19/19,China walls inner,China Walls,3,5,,Oahu,United States,none,21.261947,-157.711707,
+SGP057,seagrant,2,hatay niskin,water,4/19/19,China walls inner,China Walls,3,5,,Oahu,United States,none,21.261947,-157.711707,
+SGP058,seagrant,2,hatay niskin,water,4/19/19,China walls mid,China Walls,3,5,,Oahu,United States,none,21.261458,-157.711552,
+SGP059,seagrant,2,hatay niskin,water,4/19/19,China walls mid,China Walls,3,5,,Oahu,United States,none,21.261458,-157.711552,
+SGP060,seagrant,2,hatay niskin,water,4/19/19,China walls mid,China Walls,3,5,,Oahu,United States,none,21.261458,-157.711552,
+SGP061,seagrant,2,hatay niskin,water,4/19/19,China walls outer,China Walls,3,5,,Oahu,United States,none,21.260976,-157.71136,
+SGP062,seagrant,2,hatay niskin,water,4/19/19,China walls outer,China Walls,3,5,,Oahu,United States,none,21.260976,-157.71136,
+SGP063,seagrant,2,hatay niskin,water,4/19/19,China walls outer,China Walls,3,5,,Oahu,United States,none,21.260976,-157.71136,
+SGP064,seagrant,2,sentino pump,bleach solution control,4/20/19,China walls mid,China Walls,3,5,,Oahu,United States,none,21.261458,-157.711552,
+SGP065,seagrant,2,hatay niskin,water,4/21/19,Three Tables inner,Three Tables,1,1,,Oahu,United States,no take,21.64591,-158.064082,
+SGP066,seagrant,2,hatay niskin,water,4/21/19,Three Tables inner,Three Tables,1,1,,Oahu,United States,no take,21.64591,-158.064082,
+SGP067,seagrant,2,hatay niskin,water,4/21/19,Three Tables inner,Three Tables,1,1,,Oahu,United States,no take,21.64591,-158.064082,
+SGP068,seagrant,2,hatay niskin,water,4/21/19,Three Tables mid,Three Tables,2,2,,Oahu,United States,no take,21.645995,-158.064627,
+SGP069,seagrant,2,hatay niskin,water,4/21/19,Three Tables mid,Three Tables,2,2,,Oahu,United States,no take,21.645995,-158.064627,
+SGP070,seagrant,2,hatay niskin,water,4/21/19,Three Tables mid,Three Tables,2,2,,Oahu,United States,no take,21.645995,-158.064627,
+SGP071,seagrant,2,hatay niskin,water,4/22/19,Three Tables outer,Three Tables,2,3,,Oahu,United States,no take,21.646133,-158.064854,
+SGP072,seagrant,2,hatay niskin,water,4/22/19,Three Tables outer,Three Tables,2,3,,Oahu,United States,no take,21.646133,-158.064854,
+SGP073,seagrant,2,hatay niskin,water,4/22/19,Three Tables outer,Three Tables,2,3,,Oahu,United States,no take,21.646133,-158.064854,
+SGP074,seagrant,2,sentino pump,bleach solution control,4/22/19,Three Tables mid,Three Tables,2,2,,Oahu,United States,no take,21.645995,-158.064627,
+SGP075,seagrant,2,hatay niskin,water,4/23/19,Waikiki MLCD ref outer,Waikiki MLCD ref,0.5,1,,Oahu,United States,none,21.279166,-157.840922,
+SGP076,seagrant,2,hatay niskin,water,4/23/19,Waikiki MLCD ref outer,Waikiki MLCD ref,0.5,1,,Oahu,United States,none,21.279166,-157.840922,
+SGP077,seagrant,2,hatay niskin,water,4/23/19,Waikiki MLCD ref outer,Waikiki MLCD ref,0.5,1,,Oahu,United States,none,21.279166,-157.840922,
+SGP078,seagrant,2,hatay niskin,water,4/23/19,Waikiki MLCD ref mid,Waikiki MLCD ref,1,2,,Oahu,United States,none,21.279994,-157.83963,
+SGP079,seagrant,2,hatay niskin,water,4/23/19,Waikiki MLCD ref mid,Waikiki MLCD ref,1,2,,Oahu,United States,none,21.279994,-157.83963,
+SGP080,seagrant,2,hatay niskin,water,4/23/19,Waikiki MLCD ref mid,Waikiki MLCD ref,1,2,,Oahu,United States,none,21.279994,-157.83963,
+SGP081,seagrant,2,hatay niskin,water,4/24/19,Waikiki MLCD ref inner,Waikiki MLCD ref,1,1,,Oahu,United States,none,21.280932,-157.839075,
+SGP082,seagrant,2,hatay niskin,water,4/24/19,Waikiki MLCD ref inner,Waikiki MLCD ref,1,1,,Oahu,United States,none,21.280932,-157.839075,
+SGP083,seagrant,2,hatay niskin,water,4/24/19,Waikiki MLCD ref inner,Waikiki MLCD ref,1,1,,Oahu,United States,none,21.280932,-157.839075,
+SGP084,seagrant,2,sentino pump,bleach solution control,4/24/19,Waikiki MLCD ref mid,Waikiki MLCD ref,1,2,,Oahu,United States,none,21.279994,-157.83963,
+SGP085,seagrant,2,hatay niskin,water,4/24/19,HIMB east,HIMB,0,0,,Oahu,United States,no take,21.4332,-157.7860166,
+SGP086,seagrant,2,hatay niskin,water,4/24/19,HIMB east,HIMB,0,0,,Oahu,United States,no take,21.4332,-157.7860166,
+SGP087,seagrant,2,hatay niskin,water,4/24/19,HIMB east,HIMB,0,0,,Oahu,United States,no take,21.4332,-157.7860166,
+SGP088,seagrant,2,hatay niskin,water,4/24/19,HIMB north,HIMB,0,4,,Oahu,United States,no take,21.437759,-157.788898,
+SGP089,seagrant,2,hatay niskin,water,4/24/19,HIMB north,HIMB,0,4,,Oahu,United States,no take,21.437759,-157.788898,
+SGP090,seagrant,2,hatay niskin,water,4/24/19,HIMB north,HIMB,0,4,,Oahu,United States,no take,21.437759,-157.788898,
+SGP091,seagrant,2,hatay niskin,water,4/24/19,HIMB south,HIMB,0,4,,Oahu,United States,no take,21.430506,-157.790381,
+SGP092,seagrant,2,hatay niskin,water,4/24/19,HIMB south,HIMB,0,4,,Oahu,United States,no take,21.430506,-157.790381,
+SGP093,seagrant,2,hatay niskin,water,4/24/19,HIMB south,HIMB,0,4,,Oahu,United States,no take,21.430506,-157.790381,
+SGP093.5,seagrant,2,hatay niskin,bleach solution control,4/24/19,HIMB north,HIMB,0,4,,Oahu,United States,no take,21.437759,-157.788898,
+SGP094,seagrant,2,hatay niskin,water,4/30/19,Kaneohe North 1,Kaneohe North,1,6,,Oahu,United States,none,21.460325,-157.813702,
+SGP095,seagrant,2,hatay niskin,water,4/30/19,Kaneohe North 1,Kaneohe North,1,6,,Oahu,United States,none,21.460325,-157.813702,
+SGP096,seagrant,2,hatay niskin,water,4/30/19,Kaneohe North 1,Kaneohe North,1,6,,Oahu,United States,none,21.460325,-157.813702,
+SGP097,seagrant,2,hatay niskin,water,4/30/19,Kaneohe North 2,Kaneohe North,1,6,,Oahu,United States,none,21.461254,-157.814328,
+SGP098,seagrant,2,hatay niskin,water,4/30/19,Kaneohe North 2,Kaneohe North,1,6,,Oahu,United States,none,21.461254,-157.814328,
+SGP099,seagrant,2,hatay niskin,water,4/30/19,Kaneohe North 2,Kaneohe North,1,6,,Oahu,United States,none,21.461254,-157.814328,
+SGP100,seagrant,2,hatay niskin,water,4/30/19,Kaneohe North 3,Kaneohe North,1,6,,Oahu,United States,none,21.462186,-157.816331,
+SGP101,seagrant,2,hatay niskin,water,4/30/19,Kaneohe North 3,Kaneohe North,1,6,,Oahu,United States,none,21.462186,-157.816331,
+SGP102,seagrant,2,hatay niskin,water,4/30/19,Kaneohe North 3,Kaneohe North,1,6,,Oahu,United States,none,21.462186,-157.816331,
+SGP103,seagrant,2,sentino pump,bleach solution control,4/30/19,Kaneohe North 2,Kaneohe North,1,6,,Oahu,United States,none,21.461254,-157.814328,
+SGP104,seagrant,2,hatay niskin,water,5/7/19,Waialea Bay MLCD,Waialea MLCD,1,3,,Hawaii,United States,no take,19.982433,-155.828885,
+SGP105,seagrant,2,hatay niskin,water,5/7/19,Waialea Bay MLCD,Waialea MLCD,1,3,,Hawaii,United States,no take,19.982433,-155.828885,
+SGP106,seagrant,2,hatay niskin,water,5/7/19,Waialea Bay MLCD,Waialea MLCD,1,3,,Hawaii,United States,no take,19.982433,-155.828885,
+SGP107,seagrant,2,hatay niskin,water,5/7/19,Waialea Bay MLCD,Waialea MLCD,1,3,,Hawaii,United States,no take,19.982433,-155.828885,
+SGP108,seagrant,2,hatay niskin,water,5/7/19,Waialea ref,Waialea ref,1,3,,Hawaii,United States,none,19.995069,-155.82693,
+SGP109,seagrant,2,hatay niskin,water,5/7/19,Waialea ref,Waialea ref,1,3,,Hawaii,United States,none,19.995069,-155.82693,
+SGP110,seagrant,2,hatay niskin,water,5/7/19,Waialea ref,Waialea ref,1,3,,Hawaii,United States,none,19.995069,-155.82693,
+SGP111,seagrant,2,hatay niskin,water,5/7/19,Waialea ref,Waialea ref,1,3,,Hawaii,United States,none,19.995069,-155.82693,
+SGP112,seagrant,2,sentino pump,bleach solution control,5/7/19,Waialea Bay MLCD,Waialea MLCD,1,3,,Hawaii,United States,no take,19.982433,-155.828885,
+SGP113,seagrant,2,hatay niskin,water,5/8/19,Kealakekua Bay MLCD,Kealakekua MLCD,1,3,,Hawaii,United States,no take,19.474155,-155.92011,
+SGP114,seagrant,2,hatay niskin,water,5/8/19,Kealakekua Bay MLCD,Kealakekua MLCD,1,3,,Hawaii,United States,no take,19.474155,-155.92011,
+SGP115,seagrant,2,hatay niskin,water,5/8/19,Kealakekua Bay MLCD,Kealakekua MLCD,1,3,,Hawaii,United States,no take,19.474155,-155.92011,
+SGP116,seagrant,2,hatay niskin,water,5/8/19,Kealakekua Bay MLCD,Kealakekua MLCD,1,3,,Hawaii,United States,no take,19.474155,-155.92011,
+SGP117,seagrant,2,hatay niskin,water,5/8/19,Kealakekua Bay ref,Kealakekua ref,1,5,,Hawaii,United States,none,19.465206,-155.92265,
+SGP118,seagrant,2,hatay niskin,water,5/8/19,Kealakekua Bay ref,Kealakekua ref,1,5,,Hawaii,United States,none,19.465206,-155.92265,
+SGP119,seagrant,2,hatay niskin,water,5/8/19,Kealakekua Bay ref,Kealakekua ref,1,5,,Hawaii,United States,none,19.465206,-155.92265,
+SGP120,seagrant,2,hatay niskin,water,5/8/19,Kealakekua Bay ref,Kealakekua ref,1,5,,Hawaii,United States,none,19.465206,-155.92265,
+SGP121,seagrant,2,sentino pump,bleach solution control,5/8/19,Kealakekua Bay MLCD,Kealakekua MLCD,1,3,,Hawaii,United States,no take,19.474155,-155.92011,
+SGP122,seagrant,2,hatay niskin,water,5/8/19,Old Kona Airport MLCD,Old Kona Airport MLCD,1,1,,Hawaii,United States,no take,19.647352,-156.016773,
+SGP123,seagrant,2,hatay niskin,water,5/8/19,Old Kona Airport MLCD,Old Kona Airport MLCD,1,1,,Hawaii,United States,no take,19.647352,-156.016773,
+SGP124,seagrant,2,hatay niskin,water,5/8/19,Old Kona Airport MLCD,Old Kona Airport MLCD,1,1,,Hawaii,United States,no take,19.647352,-156.016773,
+SGP125,seagrant,2,hatay niskin,water,5/8/19,Old Kona Airport MLCD,Old Kona Airport MLCD,1,1,,Hawaii,United States,no take,19.647352,-156.016773,
+SGP126,seagrant,2,hatay niskin,water,5/8/19,Old Kona Airport ref,Old Kona Airport ref,1,0,,Hawaii,United States,none,19.667765,-156.028198,
+SGP127,seagrant,2,hatay niskin,water,5/8/19,Old Kona Airport ref,Old Kona Airport ref,1,0,,Hawaii,United States,none,19.667765,-156.028198,
+SGP128,seagrant,2,hatay niskin,water,5/8/19,Old Kona Airport ref,Old Kona Airport ref,1,0,,Hawaii,United States,none,19.667765,-156.028198,
+SGP129,seagrant,2,hatay niskin,water,5/8/19,Old Kona Airport ref,Old Kona Airport ref,1,0,,Hawaii,United States,none,19.667765,-156.028198,
+SGP130,seagrant,0,none,extraction blank,5/26/19,none,none,0,0,,n/a,n/a,none,0,0,
+SGP131,seagrant,0,none,extraction blank,5/26/19,none,none,0,0,,n/a,n/a,none,0,0,

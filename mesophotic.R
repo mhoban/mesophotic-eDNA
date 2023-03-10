@@ -1,3 +1,5 @@
+# TODO: investigate inverting clustering: do it by species and see if there is any secondary depth effect
+#       similarly, ordinate species by depth and see which groups are driven in which direction by which depth
 # TODO: investigate just using Sørensen? This is the same as bray-curtis with binary=TRUE
 # preliminary exploration shows that clusters are the same but ordinations are different
 library(here)
@@ -36,9 +38,9 @@ abundance_threshold <- 5     # minimum threshold for relative abundance
 remove_families <- c("Hominidae","Bovidae","Felidae","Salmonidae")
 
 # whether to rarefy samples to minimum read depth
-rarefy <- TRUE
+rarefy <- FALSE
 # read count transformation, can be "sqrt", "wisconsin", "relative", or anything else (like "none")
-read_transform <- "relative"
+read_transform <- "none"
 # whether to drop zotus with no assigned taxonomy (NA's across the board)
 drop_unknown <- TRUE
 
@@ -48,7 +50,7 @@ rarefy_perm <- 99
 summary_grouping <- c("station_grouping","station")  # how to group samples for replication report
 
 max_blank <- 5                    # maximum reads in blank to believe it
-min_total <- 2e4                   # minimum total reads in sample
+min_total <- 2e4                  # minimum total reads in sample
 
 insect_classify <- FALSE
 include_unassigned <- TRUE        # include zOTUs that didn't blast to anything
@@ -125,7 +127,22 @@ sample_data <- sample_data %>%
     depth_zone = cut(depth,c(-Inf,30,Inf),labels=c("Shallow","Deep")),
     depth_zone45 = cut(depth,c(-Inf,45,Inf),labels=c("Shallow","Deep")),
     depth_f=recode_factor(factor(str_c(depth,'m')), "0m" = "Surface")
-  )
+  ) %>%
+  mutate(dive = factor(dive))
+
+# dive computer temperature data
+temp_data <- read_csv(here("data","dives.csv"),col_names = c("diveno","date","time","sample_time","sample_depth","sample_temp","sample_pressure","heart"),skip=1) %>%
+  # separate(sample_time,into=c("min","sec"),sep=":",convert=T) %>%
+  # mutate(sample_time=min*60+sec,diff=c(0,diff(sample_temp)),diveno=factor(diveno)) %>%
+  mutate(diveno = factor(diveno)) %>%
+  drop_na(sample_temp) %>%
+  left_join(sample_data,by=c("diveno" = "dive")) %>%
+  filter(sample_depth >= depth_min-5 & sample_depth <= depth_max+4) %>%
+  group_by(id) %>%
+  summarise(temp=mean(sample_temp))
+
+sample_data <- sample_data %>%
+  left_join(temp_data,by="id")
 
 # figure out which samples constitute negative controls 
 # so we can use them to prune out taxa that occur in them
@@ -137,61 +154,61 @@ negative_controls <- sample_data %>%
 
 # function to construct a phyloseq object from raw data
 # including possible taxa filtration
-make_ps <- function(dataset,minimals=0,negative_controls=character(0),remove_families=character(0),read_transform="",...) {
+make_ps <- function(dataset,minimals=0,negative_controls=character(0),remove_families=character(0),read_transform="",filtr) {
+  
+  # filter taxa as necessary
   new_tax <- dataset$tax_data %>%
-    filter(...) 
+    filter({{filtr}}) 
   keep_otus <- new_tax %>% pull(OTU)
   
+  # get filtered OTU table
   rarefied <- dataset$raw %>%
     filter(OTU %in% keep_otus) %>%
     pivot_longer(matches(sample_pattern),names_to="site",values_to="reads") %>%
     pivot_wider(names_from="OTU",values_from="reads") %>%
     column_to_rownames("site")
+  
+  # filter to minimum reads
   rarefied <- rarefied[rowSums(rarefied) > minimals,]
   
+  # rarefy if we want to
   if (rarefy) {
     rarefied <- rarefied %>%
       rrarefy.perm(n=rarefy_perm)
   }
+  # create phyloseq object
   ps <- as_ps2(rarefied,new_tax,sample_data)
+  
+  # prune taxa with zero reads or reads occurring in negative controls
   pruno <- filter_taxa(ps,function(x) {
     sum(x[negative_controls],na.rm=T) == 0 & sum(x) > 0
   })
   ps <- prune_taxa(pruno,ps)
+  
+  # remove requested families
   ps <- subset_taxa(ps, !family %in% remove_families)
   
   # finally, do transformation if one has been requested
   ps <- ps_standardize(ps,read_transform)
   
-  # otus <- switch(
-  #   read_transform,
-  #   wisconsin = wisconsin(rarefied),
-  #   relative = decostand(rarefied,"total"),
-  #   sqrt = sqrt(rarefied),
-  #   rarefied
-  # )
-  
-  # if (read_transform != "relative") {
-  #   ps <- prune_samples(sample_sums(ps) >= minimals,ps)
-  # }
   return(ps)
 }
 
 # construct our phyloseq objects
 # full dataset
 comm_ps <- communities %>%
-  map(make_ps,negative_controls=negative_controls,read_transform=read_transform)
+  map(make_ps,negative_controls=negative_controls,read_transform=read_transform,remove_families=remove_families)
 
 # animals subset
 animals <- communities %>%
-  map(~make_ps(.x,minimals=500,negative_controls=negative_controls,read_transform=read_transform,kingdom == "Metazoa"))
+  map(~make_ps(.x,minimals=500,negative_controls=negative_controls,remove_families=remove_families,read_transform=read_transform,filtr=kingdom == "Metazoa"))
 # remove fishes from animals
 animals <- animals[c("inverts","metazoans")]
 
 # benthic subset
 remove_classes <- c("Hexanauplia","Appendicularia","Thaliacea")
 benthic <- communities %>%
-  map(~make_ps(.x,minimals=500,negative_controls=negative_controls,read_transform=read_transform,kingdom == "Metazoa" & !class %in% remove_classes))
+  map(~make_ps(.x,minimals=500,negative_controls=negative_controls,remove_families=remove_families,read_transform=read_transform,filtr=kingdom == "Metazoa" & !class %in% remove_classes))
 # remove fishes from benthic
 benthic <- benthic[c("inverts","metazoans")]
 
@@ -305,8 +322,9 @@ anovas <- datasets %>%
             list(
               depth_zone = adonis(dd ~ depth_zone, data=sd, permutations=perm),
               depth_zone45 = adonis(dd ~ depth_zone45, data=sd, permutations=perm),
-              depth_f = adonis(dd ~ depth_f, data=sd, permutations = perm), 
-              station_grouping = adonis(dd ~ station_grouping, data=sd, permutations = perm)
+              depth_f = adonis(dd ~ depth_f, data=sd, permutations = perm),
+              station_grouping = adonis(dd ~ station_grouping, data=sd, permutations = perm),
+              depth_site = adonis(dd ~ station_grouping * depth_f, data=sd, permutations = perm)
             )
           }) 
       })

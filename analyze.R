@@ -402,15 +402,6 @@ communities <- targets %>%
         
         otu_table <- bind_rows(otu_table,unassigned %>% select(all_of(names(otu_table)))) 
       }
-      # filter out entries where no taxonomy is assigned
-      if (drop_unknown) {
-        message("dropping unidentified taxa")
-        unid <- otu_table  %>%
-          filter(across(domain:species,is.na)) %>% 
-          pull(OTU)
-        otu_table <- otu_table %>%
-          filter(!OTU %in% unid)
-      }
       
       otu_table <- otu_table %>%
           rowwise() %>%
@@ -430,9 +421,13 @@ communities <- targets %>%
       totals <- otu_table %>% 
         select(matches(sample_pattern)) %>%
         colSums()
+      
+      # separate otu table and taxonomy table
       tax_data <- otu_table %>%
-        select(-matches(sample_pattern),-numberOfUnq_BlastHits) %>%
+        select(domain:species,OTU,id_method) %>%
         mutate(across(domain:species,~na_if(.x,"dropped")))
+      
+      
       curated_file <- path(project_dir,str_glue("{.x}_curated.csv"))
       if (file_exists(curated_file)) {
         curated <- read_csv(curated_file)
@@ -458,17 +453,34 @@ communities <- targets %>%
         tax_data <- tax_data %>%
           rows_upsert(c2,by="OTU")
       }
+      
+      # filter out entries where no taxonomy is assigned
+      unknown_filtered <- 0
+      if (drop_unknown) {
+        message("dropping unidentified taxa")
+        unid <- tax_data  %>%
+          filter(across(domain:species,is.na)) %>% 
+          pull(OTU)
+        
+        unknown_filtered <- length(unid)
+        
+        otu_table <- otu_table %>%
+          filter(!OTU %in% unid)
+        tax_data <- tax_data %>%
+          filter(!OTU %in% unid)
+      }
+      
       otu_table <- otu_table %>%
         select(OTU,matches(sample_pattern))
       
-      unknown_filtered <- 0
-      if (filter_unknown) {
-        unknown_filtered <- tax_data %>%
-          filter(if_all(domain:species,is.na)) %>%
-          nrow()
-        tax_data <- tax_data %>%
-          filter(if_any(domain:species,~!is.na(.x)))
-      }
+      # unknown_filtered <- 0
+      # if (filter_unknown) {
+      #   unknown_filtered <- tax_data %>%
+      #     filter(if_all(domain:species,is.na)) %>%
+      #     nrow()
+      #   tax_data <- tax_data %>%
+      #     filter(if_any(domain:species,~!is.na(.x)))
+      # }
       # convert read count to relative read abundance
       message("WE CHANGED THE RELATIVE THING TO ABSOLUTE, REMEMBER THAT","\n")
       otu_rel <- otu_table %>%

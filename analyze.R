@@ -473,14 +473,6 @@ communities <- targets %>%
       otu_table <- otu_table %>%
         select(OTU,matches(sample_pattern))
       
-      # unknown_filtered <- 0
-      # if (filter_unknown) {
-      #   unknown_filtered <- tax_data %>%
-      #     filter(if_all(domain:species,is.na)) %>%
-      #     nrow()
-      #   tax_data <- tax_data %>%
-      #     filter(if_any(domain:species,~!is.na(.x)))
-      # }
       # convert read count to relative read abundance
       message("WE CHANGED THE RELATIVE THING TO ABSOLUTE, REMEMBER THAT","\n")
       otu_rel <- otu_table %>%

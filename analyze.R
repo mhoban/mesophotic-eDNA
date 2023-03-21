@@ -93,8 +93,12 @@ otu_tibble <- function(ps, rownames = 'sample') {
   as_tibble(as(otu_table(ps),'matrix'),rownames=rownames)
 }
 
-plot_betadisp <- function(ps, group, method="jaccard", list=FALSE, expand=FALSE,binary=TRUE,...) {
+plot_betadisp <- function(ps, group, method="jaccard", list=FALSE, usable_groups=TRUE,expand=FALSE,binary=TRUE,...) {
   # dd <- vdist(otu_table(ps),method=method)
+  if (usable_groups & expand) {
+    stop("expand and usable_groups are mutually exclusive")
+  }
+  
   dd <- distance(ps,method=method,binary=binary)
   sd <- sample_tibble(ps,sid="sample")
   bds <- betadisper(dd,group = sd %>% pull(all_of(group)),...)
@@ -144,6 +148,21 @@ plot_betadisp <- function(ps, group, method="jaccard", list=FALSE, expand=FALSE,
         )
       ) %>% select(-x.x,-x.y,-y.x,-y.y)
   }
+  
+  if (usable_groups) {
+    to_remove <- hull %>%
+      count(!!sym(group)) %>%
+      filter(n <= 2) %>%
+      pull(!!sym(group))
+    
+    hull <- hull %>%
+      group_by(!!sym(group)) %>%
+      filter(n() > 2) %>%
+      ungroup()
+    centroids <- centroids %>%
+      filter(!(!!sym(group) %in% to_remove))
+  }
+  
   hull <- hull %>%
     group_by(!!sym(group)) %>%
     slice(chull(x,y))
@@ -273,6 +292,15 @@ keep_names <- function(.x,.names,...) {
   .x[idx]
 }
 
+# filter a phyloseq object so that there are >min representatives per group
+ps_min_group <- function(ps,group,min) {
+  filter_groups <- ps %>%
+    sample_tibble() %>%
+    group_by(!!enquo(group)) %>%
+    filter(n() > min) %>%
+    pull(sample)
+  prune_samples(filter_groups,ps)
+}
 
 # standardize phyloseq object
 ps_standardize <- function(ps, method="total", ...) {

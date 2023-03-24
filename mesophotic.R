@@ -456,7 +456,7 @@ anova_table <- anovas %>%
 
 
 # manuscript figures ------------------------------------------------------
-figure_dir <- "~/projects/dissertation/manuscript/figures"
+figure_dir <- dir_create(here("output/figures"),recurse=TRUE)
 
 #### Figure: beta diversity heatmaps (everything)
 # map distance types to pretty names
@@ -1440,7 +1440,7 @@ upset_plotz <- upset_data %>%
 # ggsave(path(figure_dir,"mesophotic_upset.pdf"),upset_composite,device=cairo_pdf,width=9,height=14,units="in")
 
 # manuscript tables -------------------------------------------------------
-table_dir <- "~/projects/dissertation/manuscript/tables"
+table_dir <- dir_create(here("output/tables"),recurse=TRUE)
 
 write_ms_table <- function(tbl,file,caption="",bold_header=TRUE,...) {
   if (bold_header) {

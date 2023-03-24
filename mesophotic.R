@@ -6,7 +6,7 @@ library(here)
 library(EcolUtils)
 library(beyonce)
 library(plotly)
-library(indicspecies)
+# library(indicspecies)
 library(betapart)
 library(patchwork)
 library(dendextend)
@@ -14,7 +14,7 @@ library(rfishbase)
 library(fs)
 library(vegan)
 library(viridis)
-library(ggVennDiagram)
+# library(ggVennDiagram)
 
 
 # set random seed for reproduceability
@@ -1178,53 +1178,53 @@ save_fig(curve_composite,fn,fig_format,width=6,height=6,units="in")
 
 
 #### Figure (supplemental?) shallow/deep shared zOTU venn diagrams
-venn_data <- datasets$complete$all %>%
-  map(~{
-    .x %>%
-      psmelt() %>%
-      # mutate(depth_zone45 = cut(depth,c(-Inf,31,61,Inf),labels=c("Shallow","Mid","Deep"))) %>%
-      group_by(OTU,depth_zone45) %>%
-      summarise(present = as.integer(sum(Abundance) > 0)) %>%
-      pivot_wider(names_from="depth_zone45",values_from="present") %>%
-      ungroup()
-  })
-venn_pal <- c(pal[1],pal[length(pal)],pal[(length(pal)+1)/2])
-venn_plotz <- venn_data %>%
-  map(~{
-    shallow <- .x %>% filter(Shallow == 1) %>% pull(OTU)
-    deep <- .x %>% filter(Deep == 1) %>% pull(OTU)
-    # mid <- .x %>% filter(Mid == 1) %>% pull(OTU)
-    f <- list("Shallow\n(0–45m)"=shallow,"Deep\n(60–90m)"=deep)
-    v <- Venn(f)
-    p <- process_data(v)
-    names(venn_pal) <- p@region$name
-    p@region <- p@region %>%
-      mutate(count_label = str_glue("{count}\n({scales::percent(count/sum(count))})"))
-    ggplot() + 
-      geom_sf(aes(fill=name),data = p@region, alpha=0.7) + 
-      geom_sf(color="black", size = 1,data = p@setEdge, show.legend = F) +
-      geom_sf_text(aes(label = name), data = p@setLabel,size=4, nudge_x=c(-50,50)) + 
-      # geom_sf_label(aes(label = name), data = p@setLabel,size=5) + 
-      geom_sf_text(aes(label=count_label), fontface = "bold", family = "serif", size = 6, color = "grey3",  data = p@region) +
-      scale_fill_manual(values=venn_pal) + 
-      expand_limits(y=c(225,815)) +
-      theme_void() +
-      guides(fill="none")  #+ 
-      # theme(panel.border = element_rect(fill=NA))
-    # ggvenn(list("Shallow\n(0–45m)"=shallow,"Deep\n(60–90m)"=deep)) + 
-    #   theme(text = element_text(size=2))
-  })
-
-venn_composite <- venn_plotz %>%
-  reduce(`+`) +
-  plot_annotation(tag_levels = "A") +
-  plot_layout(guides="collect") &
-  theme(plot.tag = element_text(face="bold"), plot.caption = element_text(hjust=0.5,size=16))
-venn_composite
-# ggsave(path(figure_dir,"mesophotic_venn.pdf"),venn_composite,device=cairo_pdf,width=12,height=3.5,units="in")
-fn <- path(figure_dir,"mesophotic_venn")
-save_fig(venn_composite,fn,fig_format,width=12,height=3.5,units="in")
-
+# venn_data <- datasets$complete$all %>%
+#   map(~{
+#     .x %>%
+#       psmelt() %>%
+#       # mutate(depth_zone45 = cut(depth,c(-Inf,31,61,Inf),labels=c("Shallow","Mid","Deep"))) %>%
+#       group_by(OTU,depth_zone45) %>%
+#       summarise(present = as.integer(sum(Abundance) > 0)) %>%
+#       pivot_wider(names_from="depth_zone45",values_from="present") %>%
+#       ungroup()
+#   })
+# venn_pal <- c(pal[1],pal[length(pal)],pal[(length(pal)+1)/2])
+# venn_plotz <- venn_data %>%
+#   map(~{
+#     shallow <- .x %>% filter(Shallow == 1) %>% pull(OTU)
+#     deep <- .x %>% filter(Deep == 1) %>% pull(OTU)
+#     # mid <- .x %>% filter(Mid == 1) %>% pull(OTU)
+#     f <- list("Shallow\n(0–45m)"=shallow,"Deep\n(60–90m)"=deep)
+#     v <- Venn(f)
+#     p <- process_data(v)
+#     names(venn_pal) <- p@region$name
+#     p@region <- p@region %>%
+#       mutate(count_label = str_glue("{count}\n({scales::percent(count/sum(count))})"))
+#     ggplot() + 
+#       geom_sf(aes(fill=name),data = p@region, alpha=0.7) + 
+#       geom_sf(color="black", size = 1,data = p@setEdge, show.legend = F) +
+#       geom_sf_text(aes(label = name), data = p@setLabel,size=4, nudge_x=c(-50,50)) + 
+#       # geom_sf_label(aes(label = name), data = p@setLabel,size=5) + 
+#       geom_sf_text(aes(label=count_label), fontface = "bold", family = "serif", size = 6, color = "grey3",  data = p@region) +
+#       scale_fill_manual(values=venn_pal) + 
+#       expand_limits(y=c(225,815)) +
+#       theme_void() +
+#       guides(fill="none")  #+ 
+#       # theme(panel.border = element_rect(fill=NA))
+#     # ggvenn(list("Shallow\n(0–45m)"=shallow,"Deep\n(60–90m)"=deep)) + 
+#     #   theme(text = element_text(size=2))
+#   })
+# 
+# venn_composite <- venn_plotz %>%
+#   reduce(`+`) +
+#   plot_annotation(tag_levels = "A") +
+#   plot_layout(guides="collect") &
+#   theme(plot.tag = element_text(face="bold"), plot.caption = element_text(hjust=0.5,size=16))
+# venn_composite
+# # ggsave(path(figure_dir,"mesophotic_venn.pdf"),venn_composite,device=cairo_pdf,width=12,height=3.5,units="in")
+# fn <- path(figure_dir,"mesophotic_venn")
+# save_fig(venn_composite,fn,fig_format,width=12,height=3.5,units="in")
+#   
 #### Figure: UpSet plots
 
 # function to make an upset plot from a presence-absence matrix
@@ -1783,77 +1783,77 @@ datasets$complete %>%
 
 # indicator species analysis ----------------------------------------------
 
-# helper function: does IndVal analysis for a phyloseq object across some factor
-get_indicators <- function(community,variable,fdr=0.10,permutations=999,list=TRUE) {
-  # get sample data
-  sd <- sample_tibble(community)
-  # get presence/absence-transformed community matrix
-  mat <- community %>%
-    ps_standardize("pa") %>%
-    otu_table() 
-  
-  # yank analysis factor
-  categories <- sd %>% pull(variable)
-  # do the IndVal analysis
-  iv <- multipatt(mat,categories,control=how(nperm=permutations))
-  
-  # multipatt returns a thing with columns called s.<variable_category>
-  # here we're just enumerating those
-  sign_cats <- str_c("s.",unique(categories))
-  # construct a table with taxa, Indval, p value, and category
-  d <- as_tibble(iv$sign,rownames="zotu") %>% 
-    pivot_longer(all_of(sign_cats),names_to="group",values_to="active") %>%
-    mutate(group = str_replace(group,"^s\\.","")) %>% # strip off the "s." at the beginning of the group name
-    filter(active == 1) %>% # get get only values that apply to the group in question
-    drop_na(p.value) %>%  # drop anything with an NA p value
-    rename(p_value=p.value) %>%
-    # do p value correction for multiple comparisons using the false discovery rate method
-    mutate(p_value = suppressWarnings(fdrtool(p_value,statistic="pvalue",plot=FALSE,verbose=FALSE,cutoff.method="pct0",pct0=fdr)$pval)) %>%
-    select(zotu,group,stat,p_value) %>%
-    arrange(zotu) %>%
-    left_join(community %>% taxa_tibble(),by="zotu")
-  # return the results of the multipatt call and the table we've made
-  # to make it easier to interpret
-  if (list) {
-    return(list(iv=iv,table=d))
-  } else {
-    return(d)
-  }
-}
-
-## all taxa
-# do indicator analysis for deep v shallow
-# and just for animals
-indicators <- datasets %>% 
-  keep_names(c("animals","benthic")) %>%
-  map(~{
-    # stick the fish back in the list
-    .x %>%
-      list_modify(fish = comm_ps$fish) %>%
-      map(~get_indicators(.x,variable="depth_zone45",list=FALSE))
-  })
-
-itable <- indicators %>%
-  map(~{
-    .x %>%
-      enframe(name = "assay", value="indval") %>%
-      unnest(indval) %>%
-      filter(p_value < 0.05) %>%
-      select(assay,group,stat,p_value,domain:species) %>%
-      mutate(assay = plot_text2[assay]) %>%
-      rename(Assay=assay,Depth=group,IndVal=stat,`p-value`=p_value) %>%
-      rename_with(str_to_title,domain:species) %>%
-      arrange(Assay,desc(Depth),Domain,Kingdom,Phylum,Class,Order,Family,Genus,Species) %>%
-      mutate(
-        Depth = case_when(
-          Depth == "Shallow" ~ "Shallow\n(0--45m)",
-          Depth == "Deep" ~ "Deep\n(60--90m)"
-        )
-      ) %>%
-      mutate(Species = str_c("*",Species,"*"))
-  })
-itable
-write_ms_table(itable,path(table_dir,"mesophotic_indicators.csv"),caption = "Significant indicator species (*IndVal*) analysis results",na="",bold_header = TRUE)
+# # helper function: does IndVal analysis for a phyloseq object across some factor
+# get_indicators <- function(community,variable,fdr=0.10,permutations=999,list=TRUE) {
+#   # get sample data
+#   sd <- sample_tibble(community)
+#   # get presence/absence-transformed community matrix
+#   mat <- community %>%
+#     ps_standardize("pa") %>%
+#     otu_table() 
+#   
+#   # yank analysis factor
+#   categories <- sd %>% pull(variable)
+#   # do the IndVal analysis
+#   iv <- multipatt(mat,categories,control=how(nperm=permutations))
+#   
+#   # multipatt returns a thing with columns called s.<variable_category>
+#   # here we're just enumerating those
+#   sign_cats <- str_c("s.",unique(categories))
+#   # construct a table with taxa, Indval, p value, and category
+#   d <- as_tibble(iv$sign,rownames="zotu") %>% 
+#     pivot_longer(all_of(sign_cats),names_to="group",values_to="active") %>%
+#     mutate(group = str_replace(group,"^s\\.","")) %>% # strip off the "s." at the beginning of the group name
+#     filter(active == 1) %>% # get get only values that apply to the group in question
+#     drop_na(p.value) %>%  # drop anything with an NA p value
+#     rename(p_value=p.value) %>%
+#     # do p value correction for multiple comparisons using the false discovery rate method
+#     mutate(p_value = suppressWarnings(fdrtool(p_value,statistic="pvalue",plot=FALSE,verbose=FALSE,cutoff.method="pct0",pct0=fdr)$pval)) %>%
+#     select(zotu,group,stat,p_value) %>%
+#     arrange(zotu) %>%
+#     left_join(community %>% taxa_tibble(),by="zotu")
+#   # return the results of the multipatt call and the table we've made
+#   # to make it easier to interpret
+#   if (list) {
+#     return(list(iv=iv,table=d))
+#   } else {
+#     return(d)
+#   }
+# }
+# 
+# ## all taxa
+# # do indicator analysis for deep v shallow
+# # and just for animals
+# indicators <- datasets %>% 
+#   keep_names(c("animals","benthic")) %>%
+#   map(~{
+#     # stick the fish back in the list
+#     .x %>%
+#       list_modify(fish = comm_ps$fish) %>%
+#       map(~get_indicators(.x,variable="depth_zone45",list=FALSE))
+#   })
+# 
+# itable <- indicators %>%
+#   map(~{
+#     .x %>%
+#       enframe(name = "assay", value="indval") %>%
+#       unnest(indval) %>%
+#       filter(p_value < 0.05) %>%
+#       select(assay,group,stat,p_value,domain:species) %>%
+#       mutate(assay = plot_text2[assay]) %>%
+#       rename(Assay=assay,Depth=group,IndVal=stat,`p-value`=p_value) %>%
+#       rename_with(str_to_title,domain:species) %>%
+#       arrange(Assay,desc(Depth),Domain,Kingdom,Phylum,Class,Order,Family,Genus,Species) %>%
+#       mutate(
+#         Depth = case_when(
+#           Depth == "Shallow" ~ "Shallow\n(0--45m)",
+#           Depth == "Deep" ~ "Deep\n(60--90m)"
+#         )
+#       ) %>%
+#       mutate(Species = str_c("*",Species,"*"))
+#   })
+# itable
+# write_ms_table(itable,path(table_dir,"mesophotic_indicators.csv"),caption = "Significant indicator species (*IndVal*) analysis results",na="",bold_header = TRUE)
 
 
 #### CTD data processing, for mixed-layer depth calculations

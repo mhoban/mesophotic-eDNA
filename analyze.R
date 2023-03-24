@@ -1,10 +1,6 @@
-library(tidyverse)
-library(here)
-library(fs)
 library(phyloseq)
 library(insect)
 library(httr)
-library(ggrepel)
 
 ################################################################################################
 # functions to convert OTU tables & sample data to phyloseq objects, as well as do other things
@@ -148,6 +144,13 @@ plot_betadisp <- function(ps, group, method="jaccard", list=FALSE, usable_groups
         )
       ) %>% select(-x.x,-x.y,-y.x,-y.y)
   }
+  
+  # make these things factors so when/if they're filtered out,
+  # we still see them in the plot legend (if we so desire)
+  hull <- hull %>%
+    mutate(across(all_of(group),as.factor))
+  centroids <- centroids %>%
+    mutate(across(all_of(group),as.factor))
   
   if (usable_groups) {
     to_remove <- hull %>%

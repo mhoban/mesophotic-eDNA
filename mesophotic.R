@@ -1,12 +1,9 @@
 # TODO: investigate inverting clustering: do it by species and see if there is any secondary depth effect
 #       similarly, ordinate species by depth and see which groups are driven in which direction by which depth
-# TODO: investigate just using Sørensen? This is the same as bray-curtis with binary=TRUE
-# preliminary exploration shows that clusters are the same but ordinations are different
 library(here)
 library(EcolUtils)
 library(beyonce)
 library(plotly)
-# library(indicspecies)
 library(betapart)
 library(patchwork)
 library(dendextend)
@@ -14,7 +11,16 @@ library(rfishbase)
 library(fs)
 library(vegan)
 library(viridis)
-# library(ggVennDiagram)
+library(ggrepel)
+
+library(sf)
+library(mapdata)
+library(marmap)
+library(ggspatial)
+library(cowplot)
+
+
+library(tidyverse)
 
 
 # set random seed for reproduceability
@@ -35,22 +41,17 @@ abundance_threshold <- 5     # minimum threshold for relative abundance
 
 remove_families <- c("Hominidae","Bovidae","Felidae","Salmonidae")
 
-# whether to rarefy samples to minimum read depth
-rarefy <- FALSE
 # read count transformation, can be "sqrt", "wisconsin", "relative", or anything else (like "none")
 read_transform <- "none"
 # whether to drop zotus with no assigned taxonomy (NA's across the board)
 drop_unknown <- FALSE
 
+# format to save figures
 fig_format <- "svg"
 
-
-rarefy_perm <- 99
-
-summary_grouping <- c("station_grouping","station")  # how to group samples for replication report
-
-max_blank <- 5                    # maximum reads in blank to believe it
-min_total <- 2e4                  # minimum total reads in sample
+max_blank <- 5      # maximum reads in blank to believe it
+min_total <- 2e4    # minimum total reads in sample 
+# TODO: maybe get rid of min_total
 
 insect_classify <- FALSE
 include_unassigned <- TRUE        # include zOTUs that didn't blast to anything
@@ -229,6 +230,7 @@ datasets <- c("complete","rarefied") %>%
   set_names() %>%
   map(~{
     rarefy <- .x == "rarefied"
+    rarefy_perm <- 99
     
     # full dataset
     all_taxa <- communities %>%
@@ -458,6 +460,7 @@ anova_table <- anovas %>%
 # manuscript figures ------------------------------------------------------
 figure_dir <- dir_create(here("output/figures"),recurse=TRUE)
 
+
 #### Figure: beta diversity heatmaps (everything)
 # map distance types to pretty names
 beta_title_map <- list(
@@ -546,7 +549,8 @@ beta_pairs_composite <- beta_pairs %>%
                       labs(x="Depth zone",y="Depth zone")
                   }) %>%
                   reduce(`+`) +
-                  plot_annotation(tag_levels = list(label_map[[marker]])) & theme(plot.tag = element_text(face="bold"))
+                  plot_annotation(tag_levels = list(label_map[[marker]])) &
+                  theme(plot.tag = element_text(face="bold"))
               ) 
             }) %>%
             reduce(`/`) 
@@ -624,7 +628,8 @@ big_cluster_sim <- cluster_composite %>%
     .x %>%
       map(~.x$sim) %>%
       reduce(`/`) + 
-      plot_annotation(tag_levels="A")
+      plot_annotation(tag_levels="A") &
+      theme(plot.tag = element_text(face="bold"))
   })
 big_cluster_sim$complete
 
@@ -642,7 +647,8 @@ big_cluster_jac <- cluster_composite %>%
     .x %>%
       map(~.x$jaccard) %>%
       reduce(`/`) + 
-      plot_annotation(tag_levels="A")
+      plot_annotation(tag_levels="A") &
+      theme(plot.tag = element_text(face="bold"))
   })
 
 # save the jaccard version of the figure
@@ -655,6 +661,7 @@ big_cluster_jac %>%
 
 
 #### Figure: shallow vs deep ordinations
+# generate depth zone ordinations
 depth_zones <- c("depth_zone","depth_zone45")
 ord_zone_composite <- datasets %>%
   map(~{ # rarefaction?
@@ -676,8 +683,7 @@ ord_zone_composite <- datasets %>%
                     names(dpal) <- c("Shallow","Deep")
                     p <- plot_betadisp(.x, group=zone, method=dm, list=TRUE,binary=dm != "bray")
                     p$plot <- p$plot +
-                      scale_fill_manual(values=dpal,name="Depth Zone") +
-                      # scale_fill_manual(values=pal[c(1,length(pal))],name="Depth Zone") +
+                      scale_fill_manual(values=dpal,name="Depth Zone", drop=FALSE) +
                       plotz_theme("light") +
                       xlab(str_glue("Principle Coordinate 1 ({scales::percent(p$x_var,accuracy=0.1)})")) +
                       ylab(str_glue("Principle Coordinate 2 ({scales::percent(p$y_var,accuracy=0.1)})")) +
@@ -686,98 +692,40 @@ ord_zone_composite <- datasets %>%
                   }) %>%
                   reduce(`+`) +
                   plot_layout(guides="collect") +
-                  plot_annotation(tag_levels = "A") & theme(plot.tag = element_text(face="bold"))
+                  plot_annotation(tag_levels = "A") &
+                  theme(plot.tag = element_text(face="bold"))
               })
           })
       })
   })
 
-# just plot them all, you can scroll back
-# ord_zone_composite %>%
-#   imap(~{
-#     dm <- .y
-#     .x %>% imap(~{
-#       zone <- .y
-#       title <- str_glue("{dm}: {zone}")
-#       .x %>% wrap_elements() +
-#         ggtitle(title)
-#     })
-#   })
-
-# main text figure: 
-# save a bunch of composite figures of the depth zones split by 30/45 and distance method
-depth_zones %>%
-  walk(~{
+# Save composite figures of ordinations by depth zone
+# split by 30/45 and distance method
+# return the plots so we can see them
+zone_plotz <- depth_zones %>%
+  set_names() %>%
+  map(~{
     dz <- .x
     distance_methods %>%
-      walk(~{
+      set_names() %>%
+      map(~{
         dm <- .x
         zone <- if_else(dz == "depth_zone","shallowdeep30","shallowdeep45")
         plotz <- ord_zone_composite$complete$all[[dm]][[dz]] /
-          ord_zone_composite$complete$animals[[dm]][[dz]] /
+          ord_zone_composite$completee$animals[[dm]][[dz]] /
           ord_zone_composite$complete$benthic[[dm]][[dz]] +
           plot_annotation(tag_levels = "A") + 
           plot_layout(guides="collect") &
           theme(plot.tag = element_text(face="bold"))
         fn <- path(figure_dir,str_glue("mesophotic_ord_{zone}_{dm}"))
         save_fig(plotz,fn,fig_format,width=12,height=12,units="in")
-      })
-  })
-
-#### supplemental figure: shallow vs deep ordinations for animals and benthic
-ord_zone_composite_animals <- distance_methods %>%
-  set_names() %>%
-  map(~{
-    dm <- .x
-    depth_zones %>%
-      set_names() %>%
-      map(~{
-        dz <- .x
-        datasets$complete %>%
-          keep_names(~.x != "all") %>%
-          imap(~{ # animals, benthic
-            dataset <- .y  
-            .x %>% 
-              imap(~{ # inverts, metazoans
-                marker <- .y
-                title <- plot_text2[marker]
-                to_plot <- .x
-                dpal <- pal[c(1,length(pal))]
-                names(dpal) <- c("Shallow","Deep")
-                p <- plot_betadisp(to_plot, group=dz, method=dm, list=TRUE, usable_groups=TRUE,binary=dm != "bray")
-                p$plot <- p$plot +
-                  scale_fill_manual(values=dpal,name="Depth") +
-                  plotz_theme("light") +
-                  xlab(str_glue("Principle Coordinate 1 ({scales::percent(p$x_var,accuracy=0.1)})")) +
-                  ylab(str_glue("Principle Coordinate 2 ({scales::percent(p$y_var,accuracy=0.1)})")) +
-                  theme(legend.position = "right") +
-                  guides(color="none")
-                p$plot
-              }) %>% 
-              reduce(`+`)
-          }) %>%
-          reduce(`/`) + 
-          plot_annotation(tag_levels="A") & 
-          theme(plot.tag = element_text(face="bold"))
-      })
-  })
-
-ord_zone_composite_animals$sim$depth_zone45
-
-# save the un-rarefied versions
-ord_zone_composite_animals %>%
-  iwalk(~{ # distance method
-    dm <- .y
-    .x %>% 
-      iwalk(~{ # depth zone
-        zone <- if_else(.y == "depth_zone45","shallowdeep45","shallowdeep30")
-        fn <- path(figure_dir,str_glue("mesophotic_ord_{zone}_animals_{dm}"))
-        save_fig(.x,fn,fig_format,width=12,height=9,units="in")
+        return(plotz)
       })
   })
 
 
 #### Figure: depth zone ordinations
+# generate composite figures of ordinations by individual depth zones
 ord_composite <- datasets %>%
   map(~{ # rarefaction
     .x %>%
@@ -794,7 +742,7 @@ ord_composite <- datasets %>%
                  
                 p <- plot_betadisp(to_plot, group="depth_f", method=dm, list=TRUE, usable_groups=TRUE,binary=dm != "bray")
                 p$plot <- p$plot +
-                  scale_fill_manual(values=pal,name="Depth") +
+                  scale_fill_manual(values=pal,name="Depth",drop=FALSE) +
                   plotz_theme("light") +
                   xlab(str_glue("Principle Coordinate 1 ({scales::percent(p$x_var,accuracy=0.1)})")) +
                   ylab(str_glue("Principle Coordinate 2 ({scales::percent(p$y_var,accuracy=0.1)})")) +
@@ -810,27 +758,67 @@ ord_composite <- datasets %>%
       })
   })
 
-# show them in a big grid
-# ord_composite %>%
-#   map(wrap_elements) %>%
-#   reduce(`/`) + 
-#   plot_annotation(tag_levels=list(names(ord_composite)))
-
-# save a bunch of composite figures of the depth zones split by distance method
-distance_methods %>%
-  walk(~{
+# Save composite figures of ordinations by depth zone
+# split by distance method
+# return the plots so we can see them
+ord_plotz <- distance_methods %>%
+  set_names() %>%
+  map(~{
     dm <- .x
     plotz <- ord_composite$complete$all[[dm]] /
       ord_composite$complete$animals[[dm]] /
       ord_composite$complete$benthic[[dm]] +
-      plot_annotation(tag_levels = "A") +
-      plot_layout(guides="collect") &
+      plot_annotation(tag_levels = "A") &
       theme(plot.tag = element_text(face="bold"))
     fn <- path(figure_dir,str_glue("mesophotic_ord_{dm}"))
     save_fig(plotz,fn,fig_format,width=12,height=12,units="in")
+    return(plotz)
   })
 
-### Supplemental figure: depth zone ordinations for animals and benthic
+#### Figure: ordinations by site
+# generate composite ordinations figure
+ord_sites_composite <- datasets %>%
+  map(~{
+    .x %>%
+      map(~{
+        dataset <- .x
+        distance_methods %>%
+          set_names() %>%
+          map(~{
+            dm <- .x
+            dataset %>%
+              imap(~{
+                title <- plot_text2[.y]
+                spal <- pal[c(1,4,7)]
+                names(spal) <- .x %>%
+                  sample_tibble() %>%
+                  pull(station_grouping) %>%
+                  unique()
+                p <- plot_betadisp(.x, group="station_grouping", method=dm, list=TRUE,binary=dm != "bray")
+                p$plot <- p$plot +
+                  scale_fill_manual(values=spal,name="Site", drop=FALSE) +
+                  plotz_theme("light") + 
+                  xlab(str_glue("Principle Coordinate 1 ({scales::percent(p$x_var,accuracy=0.1)})")) +
+                  ylab(str_glue("Principle Coordinate 2 ({scales::percent(p$y_var,accuracy=0.1)})")) +
+                  theme(legend.position = "right")
+                p$plot
+              }) %>%
+              reduce(`+`) +
+              plot_layout(guides="collect") +
+              plot_annotation(tag_levels = "A") &
+              theme(plot.tag = element_text(face="bold"))
+          })
+      })
+  })
+
+# save the simpson version, un-rarefied
+fn <- path(figure_dir,"mesophotic_ord_sites_all_sim")
+save_fig(ord_sites_composite$complete$all$sim,fn,fig_format,width=12,height=4,units="in")
+
+# save the jaccard version, un-rarefied
+fn <- path(figure_dir,"mesophotic_ord_sites_all_jaccard")
+save_fig(ord_sites_composite$complete$all$jaccard,fn,fig_format,width=12,height=4,units="in")
+
 #### Figure: fish depth distributions vs eDNA detections
 
 # get composite fish data / taxonomy grid
@@ -911,14 +899,12 @@ depth_data <- detected_depth %>%
   mutate(
     depth_range = fb_deep-fb_shallow,
     species = fct_reorder(species,depth_range,.desc = TRUE)
-    # species = fct_reorder(species,as.numeric(factor(family)))
-  ) #%>%
-  # select(all_of(names(dd)))
+  ) 
   
 # what is the most number of observations for a species?
 # we need this to plot the depth ranges elegantly
 # since it'll plot the line range as many time as there
-# are observerations, we just duplicate the observations
+# are observations, we just duplicate the observations
 # for whoever doesn't have the max number
 most <- depth_data %>%
   count(species) %>% 
@@ -942,16 +928,25 @@ depth_data <- depth_data %>%
     return(grp)
   }) 
 
+# make the fish depth detections plot
 depth_plotz <- ggplot(depth_data) + 
+  # this "error bar" is the reported depth range
   geom_errorbar(aes(x=species,ymin=fb_shallow,ymax=fb_deep),width=0.5,color="dodgerblue4") +
+  # these points are where we've actually detected them
   geom_point(aes(x=species,y=depth,size=reads,color=recode_factor(factor(str_c(depth,'m')), "0m" = "Surface")),alpha=0.7) +
+  # put a black bar at the mean detection depth
   stat_summary(aes(x=species,y=depth),geom="point",fun="mean",col="black",size=10,shape="-") + 
+  # color them by depth zone
   scale_color_manual(values=pal,name="Depth zone") +
+  # size them by read count
   scale_size(name="Read count",labels=scales::comma,range=c(2,12),breaks=c(1e2,1e3,1e4,5e4,1e5)) +
+  # flip it upside down because it's depth
   scale_y_reverse(breaks=seq(0,300,by=30),minor_breaks=seq(0,300,by=15)) +
+  # put the x axis on top
   scale_x_discrete(position="top") + 
   plotz_theme("light") +
   theme(
+    # rotate the species names so they're legible
     axis.text.x = element_text(face="italic",angle=20,vjust=1,hjust=0),
     legend.position = "right",
     legend.key = element_rect(color=NA),
@@ -962,81 +957,40 @@ depth_plotz <- ggplot(depth_data) +
   guides(color = guide_legend(override.aes = list(size=7))) +
   ylab("Detection depth (m)") + 
   xlab("Species") 
+
 depth_plotz
 fn <- path(figure_dir,"mesophotic_fish_depth")
-# ggsave(depth_plotz,fn,fig_format,width=12,height=10,units="in")
 save_fig(depth_plotz,fn,fig_format,width=12,height=10,units="in")
-
-#### Figure: ordinations by site
-ord_sites_composite <- datasets %>%
-  map(~{
-    .x %>%
-      map(~{
-        dataset <- .x
-        distance_methods %>%
-          set_names() %>%
-          map(~{
-            dm <- .x
-            dataset %>%
-              imap(~{
-                title <- plot_text2[.y]
-                spal <- pal[c(1,4,7)]
-                names(spal) <- .x %>%
-                  sample_tibble() %>%
-                  pull(station_grouping) %>%
-                  unique()
-                p <- plot_betadisp(.x, group="station_grouping", method=dm, list=TRUE,binary=dm != "bray")
-                p$plot <- p$plot +
-                  scale_fill_manual(values=spal,name="Site") +
-                  plotz_theme("light") + 
-                  xlab(str_glue("Principle Coordinate 1 ({scales::percent(p$x_var,accuracy=0.1)})")) +
-                  ylab(str_glue("Principle Coordinate 2 ({scales::percent(p$y_var,accuracy=0.1)})")) +
-                  theme(legend.position = "right")
-                p$plot
-              }) %>%
-              reduce(`+`) +
-              plot_layout(guides="collect") +
-              plot_annotation(tag_levels = "A") &
-              theme(plot.tag = element_text(face="bold"))
-          })
-      })
-  })
-
-# show them in a big grid
-# ord_sites_composite %>%
-#   map(wrap_elements) %>%
-#   reduce(`/`) + 
-#   plot_annotation(tag_levels=list(names(ord_sites_composite)))
-
-# save the simpson version, un-rarefied
-fn <- path(figure_dir,"mesophotic_ord_sites_all_sim")
-# ggsave(path(figure_dir,"mesophotic_ord_sites_all_sim.pdf"),ord_sites_composite$complete$all$sim,device=cairo_pdf,width=12,height=4,units="in")
-save_fig(ord_sites_composite$complete$all$sim,fn,fig_format,width=12,height=4,units="in")
-# save the jaccard version, un-rarefied
-# ggsave(path(figure_dir,"mesophotic_ord_sites_all_jaccard.pdf"),ord_sites_composite$complete$all$jaccard,device=cairo_pdf,width=12,height=4,units="in")
-fn <- path(figure_dir,"mesophotic_ord_sites_all_jaccard")
-save_fig(ord_sites_composite$complete$all$jaccard,fn,fig_format,width=12,height=4,units="in")
-
 
 #### Figure: species accumulations
 # test species accumulation against various models
-# TODO: do this for complete and rarefied versions
 all_models <- datasets$complete$all %>%
   imap(~{
+    # get the sample data
     sd <- sample_tibble(.x)
     specs <- otu_tibble(.x) %>%
+      # join depth category to otu table
       inner_join(sd %>% select(sample,depth_f),by="sample") %>%
       select(sample,depth_f,everything()) %>%
+      # smash the otu table data into a nested sub-table
       nest(otu_table=-depth_f) %>%
+      # mutate the nested
       mutate(otu_table = map(otu_table,~{
-        # here we use specaccum to permute a bunch of species accuulations
+        # here we use specaccum to permute a bunch of species accumulations
         # for this subset of the data (depth zone)
-        sm(curve <- .x %>%
-              column_to_rownames("sample") %>% 
-              as("matrix") %>%
-              decostand("pa",margin=NULL) %>%
-              specaccum(method="random",permutations=1000))
-        # make the result into a data frame
+        # .x is the otu table for this subset
+        # we'll likely get wraning messages, so suppress them
+        sm(
+          curve <- .x %>%
+            column_to_rownames("sample") %>% 
+            as("matrix") %>%
+            # convert the data to presence/absence first
+            decostand("pa",margin=NULL) %>%               
+            # do the accumulation with 1000 permutations
+            specaccum(method="random",permutations=1000)
+        ) 
+        # make the permutation results into a data frame
+        # and flip it to long format
         as_tibble(curve$perm) %>%
           mutate(sites=row_number()) %>%
           select(sites,everything()) %>%
@@ -1076,9 +1030,9 @@ all_models <- datasets$complete$all %>%
     slopes <- diff(predictions$y)
     slopes <- c(1,slopes)
     # this is our predicted "asymptote", but really it's just
-    # where les than one more species gets added per replicate
+    # where fewer than one species gets added per additional replicate
     asymp <- predictions$x[slopes < 1][1]
-    # predicated number of taxa at "asymptote"
+    # predicated number of taxa at asymptote
     asymp_taxa <- predictions$y[slopes < 1][1]
     # how many would we expect with 6 replicates?
     taxa_6 <- predictions$y[6]
@@ -1090,14 +1044,12 @@ all_models <- datasets$complete$all %>%
     cat("Best model:",best_mod,"\n")
     cat("Asymptote at:",asymp,"replicates\n")
     cat("Taxa at asymptote:",asymp_taxa,"\n")
-    # cat("Taxa at 6 replicates:",taxa_6,"\n")
     walk(c(3,4,6),~{
       tt <- predictions$y[.x]
       pc <- tt/asymp_taxa
       cat(str_glue("Taxa at {.x} replicates: {tt}\n\n"))
       cat(str_glue("Percent of taxa represented by {.x} replicates: {scales::percent(pc)}\n\n"))
     })
-    # cat("Percent of taxa represented by 6 replicates:",scales::percent(percent_taxa),"\n")
     cat("\n\n")
     # return all the data as a list
     list(models = modls, best_model = best_mod, predictions = predictions, asymptote=asymp, asymptote_taxa=asymp_taxa, our_taxa = taxa_6, accum_data=specs)
@@ -1119,7 +1071,6 @@ accum_composite <- all_models %>%
       # this is the best-fit model line
       geom_line(data=p,aes(x=x,y=y),color="blue",size=1.1) + 
       # this marks the "ideal" replication level
-      # geom_vline(xintercept=.x$asymptote,color="red") + 
       geom_vline(xintercept = .x$asymptote,color="firebrick",size=0.7,linetype="dashed") +
       scale_color_manual(values=pal,name="Depth Zone") + 
       # keep us within a reasonable range
@@ -1129,6 +1080,7 @@ accum_composite <- all_models %>%
       theme_bw() + 
       theme(panel.grid = element_blank())
   }) %>%
+  # smash the plots together
   reduce(`+`) + 
   plot_layout(guides="collect") +
   plot_annotation(tag_levels = "A") &
@@ -1169,275 +1121,142 @@ rarecurves <- datasets$complete$all %>%
 curve_composite <- rarecurves %>% 
   reduce(`/`) + 
   plot_layout(guides="collect") + 
-  plot_annotation(tag_levels = "A") 
+  plot_annotation(tag_levels = "A") &
+  theme(plot.tag = element_text(face="bold")) 
 curve_composite
 
 # ggsave(path(figure_dir,"mesophotic_rarefactions.pdf"),curve_composite,device=cairo_pdf,width=6,height=6,units="in")
 fn <- path(figure_dir,"mesophotic_rarefactions")
 save_fig(curve_composite,fn,fig_format,width=6,height=6,units="in")
 
+#### Figure: site map
 
-#### Figure (supplemental?) shallow/deep shared zOTU venn diagrams
-# venn_data <- datasets$complete$all %>%
-#   map(~{
-#     .x %>%
-#       psmelt() %>%
-#       # mutate(depth_zone45 = cut(depth,c(-Inf,31,61,Inf),labels=c("Shallow","Mid","Deep"))) %>%
-#       group_by(OTU,depth_zone45) %>%
-#       summarise(present = as.integer(sum(Abundance) > 0)) %>%
-#       pivot_wider(names_from="depth_zone45",values_from="present") %>%
-#       ungroup()
-#   })
-# venn_pal <- c(pal[1],pal[length(pal)],pal[(length(pal)+1)/2])
-# venn_plotz <- venn_data %>%
-#   map(~{
-#     shallow <- .x %>% filter(Shallow == 1) %>% pull(OTU)
-#     deep <- .x %>% filter(Deep == 1) %>% pull(OTU)
-#     # mid <- .x %>% filter(Mid == 1) %>% pull(OTU)
-#     f <- list("Shallow\n(0–45m)"=shallow,"Deep\n(60–90m)"=deep)
-#     v <- Venn(f)
-#     p <- process_data(v)
-#     names(venn_pal) <- p@region$name
-#     p@region <- p@region %>%
-#       mutate(count_label = str_glue("{count}\n({scales::percent(count/sum(count))})"))
-#     ggplot() + 
-#       geom_sf(aes(fill=name),data = p@region, alpha=0.7) + 
-#       geom_sf(color="black", size = 1,data = p@setEdge, show.legend = F) +
-#       geom_sf_text(aes(label = name), data = p@setLabel,size=4, nudge_x=c(-50,50)) + 
-#       # geom_sf_label(aes(label = name), data = p@setLabel,size=5) + 
-#       geom_sf_text(aes(label=count_label), fontface = "bold", family = "serif", size = 6, color = "grey3",  data = p@region) +
-#       scale_fill_manual(values=venn_pal) + 
-#       expand_limits(y=c(225,815)) +
-#       theme_void() +
-#       guides(fill="none")  #+ 
-#       # theme(panel.border = element_rect(fill=NA))
-#     # ggvenn(list("Shallow\n(0–45m)"=shallow,"Deep\n(60–90m)"=deep)) + 
-#     #   theme(text = element_text(size=2))
-#   })
-# 
-# venn_composite <- venn_plotz %>%
-#   reduce(`+`) +
-#   plot_annotation(tag_levels = "A") +
-#   plot_layout(guides="collect") &
-#   theme(plot.tag = element_text(face="bold"), plot.caption = element_text(hjust=0.5,size=16))
-# venn_composite
-# # ggsave(path(figure_dir,"mesophotic_venn.pdf"),venn_composite,device=cairo_pdf,width=12,height=3.5,units="in")
-# fn <- path(figure_dir,"mesophotic_venn")
-# save_fig(venn_composite,fn,fig_format,width=12,height=3.5,units="in")
-#   
-#### Figure: UpSet plots
+# make an sf object for what we want to display
+spots <- sample_data %>% 
+  filter(
+    project == "mesophotic",
+    !is.na(lon) & !is.na(lat)
+  ) %>%
+  distinct(station_grouping,lat,lon,.keep_all = T) %>% 
+  # let's cheat the point over a bit to make it easier to see
+  mutate(
+    lat = case_when(
+      str_detect(station,"Outhouse") ~  19.636009,
+      TRUE ~ lat
+    ),
+    lon = case_when(
+      str_detect(station,"Outhouse") ~  -156.005123,
+      TRUE ~ lon
+    ),
+    # get the spelling right
+    station_grouping = str_replace(station_grouping,"Honaunau","Hōnaunau")
+  ) %>%
+  st_as_sf(coords=c("lon","lat"),crs=4326,remove=F)
 
-# function to make an upset plot from a presence-absence matrix
-# of category occurrences 
-plot_upset <- function(dataset, name_column, data_columns, dot_size = 6, line_size=2,
-                       prefilter=F, intersects=NA, min_intersects=0, bar_lab = "intersections",
-                       sidebar_lab = "number in category", label_top_bars = FALSE, label_side_bars = FALSE,
-                       group_palette = NULL) {
-  if (prefilter) {
-    dataset <- dataset %>%
-      mutate(
-        across({{data_columns}},~if_else(.x > 0,1,0,missing=0))
-      )
-  }
-  
-  # get category names
-  sets <- dataset %>%
-    select({{data_columns}}) %>%
-    names()
-  
-  dataset <- dataset %>%
-    unite("code",{{data_columns}},sep="",remove = FALSE) %>%
-    mutate(
-      code = str_replace_all(code,"0","n"),
-      code = str_replace_all(code,"1","p")
-    )
-  dataset_long <- dataset %>%
-    pivot_longer({{data_columns}},names_to = "metric_name", values_to = "metric")
-  
-  data1 <- dataset_long %>%
-    group_by(code,metric_name,metric) %>%
-    summarise(n = n_distinct(!!sym(name_column))) %>%
-    arrange(n) %>%
-    ungroup()
-  data2 <- dataset_long %>%
-    group_by(metric_name) %>%
-    summarise(n=sum(metric))
-  
-  x_breaks <- dataset_long %>%
-    group_by(code) %>%
-    summarise(n=n_distinct(!!sym(name_column))) %>%
-    arrange(desc(n)) %>%
-    filter(n > min_intersects) %>%
-    pull(code) %>%
-    as.character()
-  
-  if (!is.na(intersects)) {
-    x_breaks <- x_breaks[1:intersects]
-  }
-  
-  intersects <- length(x_breaks)
-  
-  top_bars <-
-    ggplot(data1, aes(x=reorder(factor(code),-n), y=n)) +
-    geom_col(fill="grey5", position="dodge") +
-    scale_x_discrete(limits=x_breaks) +
-    scale_y_continuous(expand = expansion(mult = c(0, .1))) +
-    theme_bw() +
-    ylab(bar_lab) +
-    theme(legend.position = "none", 
-          # axis.title = element_blank(),
-          axis.line.y.left = element_line(),
-          axis.ticks.x = element_blank(),
-          panel.border = element_blank(),
-          axis.title.x = element_blank(),
-          axis.text.x = element_blank(),
-          panel.grid = element_blank(),
-          plot.margin = margin(0,0,0,0,"cm"))
-  
-  if (!is.null(group_palette)) {
-    fill_vals <- group_palette
-    names(fill_vals) <- sets
-  } else {
-    fill_vals <- rep("grey5",length(sets))
-    names(fill_vals) <- sets
-  }
-  
-  side_bars <-
-    ggplot(data2, aes(x=metric_name, y=n)) +
-    geom_col(aes(fill=metric_name), position="dodge") +
-    scale_fill_manual(values=fill_vals) + 
-    scale_x_discrete(
-      position="top",
-      limits=rev(sets)
-    ) +
-    scale_y_reverse(
-      labels=scales::format_format(big.mark = ",", decimal.mark = ".", scientific = FALSE, digits=0),
-      expand = expansion(mult = c(0.6, 0))
-    ) +
-    coord_flip() +
-    theme_bw() +
-    theme(
-      axis.line.x = element_line(),
-      panel.border = element_blank(),
-      legend.position = "none",
-      axis.title = element_blank(),
-      axis.text.x = element_text(size=6),
-      axis.text.y = element_text(size=12),
-      panel.grid = element_blank(),
-      axis.title.x = element_text(),
-      plot.margin = margin(0,0,0,0,"cm")
-    ) +
-    ylab(sidebar_lab) 
-  
-  if (label_side_bars) { 
-    side_bars <- side_bars + 
-      geom_text(aes(label=n), position = position_dodge(0.9),  hjust=1.1, vjust=0.5) 
-  }
-  
-  if (label_top_bars) {
-    top_bars <- top_bars +  
-      geom_text(aes(label=n), position = position_dodge(0.9), hjust=0.5, vjust=-0.25)
-  }
+# make up a bounding box
+box <- c(ymax=20.337941429661853, xmin=-156.62139587608522, ymin=18.84548284767367, xmax=-155.4117057257134)
 
-  dot_lines <- data1 %>%
-    filter(metric == 1) %>%
-    group_by(code) %>%
-    summarise(
-      f = list(factor(metric_name,levels=sets)),
-      n = unique(n)
-    ) %>%
-    mutate(
-      start = map_chr(f,~sets[min(as.integer(.x))]),
-      end = map_chr(f,~sets[max(as.integer(.x))])
-    ) %>%
-    select(-f)
-  
-  cols <- c("0" = "grey77", "1" = "grey2")  
-  data1 <- data1 %>%
-      mutate(color_group = str_glue("{metric_name}_{metric}"))
-  cols <- data1 %>%
-    ungroup() %>%
-    mutate(
-      color_value = fill_vals[metric_name],
-      color_value = case_when(
-        metric == 0 ~ "grey95",
-        TRUE ~ color_value
-      )
-    ) %>%
-    distinct(color_group,color_value) %>%
-    deframe()
-  dots <-
-    ggplot(data1, aes(y=metric_name, x=reorder(factor(code),-n))) +
-    geom_point(shape=21, size=dot_size, colour="black", aes(fill=color_group)) +
-    geom_point(data=data1 %>% filter(metric == 1),shape=19,size=dot_size/2,color="black") + 
-    geom_segment(data=dot_lines,mapping=aes(x=reorder(factor(code),-n),xend=reorder(factor(code),-n),y=start,yend=end),size=line_size) +
-    scale_fill_manual(values = cols) +
-    scale_color_manual(values=fill_vals) + 
-    scale_x_discrete(limits=x_breaks) +
-    scale_y_discrete(limits=rev(sets)) +
-    theme_minimal() +
-    labs(x="", y="") +
-    theme(legend.position = "none",
-          axis.title = element_blank(),
-          axis.text = element_blank(),
-          plot.margin = margin(0,0,0,0,"cm"))
-  layout <- "
-    #1111
-    #1111
-    #1111
-    23333
-    23333
-  "
-  return(top_bars + side_bars + dots + plot_layout(design=layout))
-}
+# set up some geometries
+pbm <- cbind(c(box['xmin'],box['xmax'],box['xmax'],box['xmin'],box['xmin']),
+             c(box['ymin'],box['ymin'],box['ymax'],box['ymax'],box['ymin']))
+boxpoly <- st_polygon(list(pbm))
+boxsfc <- st_sfc(boxpoly,crs=4326)
+plotbox <- st_sf(name="study area",geometry=boxsfc)
 
-upset_data <- datasets %>%
-  map(~{
-    .x %>%
-      map(~{
-        .x %>%
-          map(~{
-            .x %>%
-              psmelt() %>%
-              group_by(OTU,depth_f) %>%
-              summarise(present = as.integer(sum(Abundance) > 0)) %>%
-              pivot_wider(names_from="depth_f",values_from="present") %>%
-              ungroup()
-          })
-      })
-  })
+# this is the hawaii box
+hbox <- c("ymin"=18.63314470051002, "xmax"=-154.6469259428272, "ymax"=22.434801224940056, "xmin"=-160.76622913125863)
 
-upset_plotz <- upset_data %>%
-  map(~{
-    .x %>%
-      map(~{
-        .x %>%
-          map(~{
-            .x %>%
-              plot_upset("OTU",
-                         Surface:`90m`,
-                         bar_lab="Shared zOTUs",
-                         sidebar_lab="zOTUs detected",
-                         label_side_bars = TRUE,
-                         label_top_bars = TRUE,
-                         group_palette = pal,
-                         intersects = 30,
-                         dot_size = 6,
-                         line_size=2)
-          })
-      })
-  })
+# get the world map and filter it to just hawaii
+hawaii <- st_as_sf(maps::map("worldHires",plot=F,fill=T),crs=4326) %>% 
+  filter(ID == "Hawaii")
+
+# a little cheat value
+x <- 0.01
+
+# get bathymetry data
+bath <- getNOAA.bathy(lon1=hbox['xmin'],lon2=hbox['xmax'],lat1=hbox['ymin'],lat2=hbox['ymax'],resolution = 1)
+
+# convert it into something we can use
+bm <- bath %>%
+  as("matrix") %>%
+  as_tibble(rownames = "lon") %>%
+  mutate(lon = as.numeric(lon)) %>%
+  pivot_longer(-lon,names_to = "lat",values_to = "value") %>%
+  mutate(across(everything(),as.numeric)) %>%
+  filter(value < 0)
+
+# plot our main map
+mainmap <- ggplot() + 
+  # show depth contours
+  geom_contour(data=bm,mapping=aes(x = lon, y = lat, z = value), breaks=c(-10,-20,seq(-50,-10000,by=-50)), color="#8FCFEA") + 
+  # show hawaii island
+  geom_sf(data=hawaii, fill="#8BCA7B",color="#4f4f4f",size=0.5) +
+  # show sampling stations
+  geom_sf(data=spots, shape=25,size=6,color="black",fill="firebrick") +
+  coord_sf(xlim = c(box['xmin']-x,box['xmax']+x),
+           ylim = c(box['ymin']-x,box['ymax']+x)) +
+  # show sampling station names
+  # do this twice so we can have a transparent
+  # background but opaque foreground
+  geom_label_repel(
+    data=spots,
+    aes(label=station_grouping,geometry=geometry),
+    point.padding = 12,
+    stat = "sf_coordinates",
+    min.segment.length = 0,
+    alpha=0.4,
+    seed = 31337
+  ) +
+  geom_label_repel(
+    data=spots,
+    aes(label=station_grouping,geometry=geometry),
+    point.padding = 12,
+    stat = "sf_coordinates",
+    min.segment.length = 0,
+    alpha=1,
+    fill = NA,
+    seed = 31337
+  ) +
+  # make it look nice
+  theme_bw() + 
+  theme(panel.grid = element_blank()) +
+  theme(
+    axis.text = element_text(color="black", size=10),
+    axis.title = element_blank(),
+    panel.background = element_rect(fill="#D1EDFB") ,
+    plot.background = element_rect(fill="white",color=NA),
+    text=element_text(color="black")      
+  ) +
+  # add a scale bar
+  annotation_scale(location="br", width_hint=0.5) 
+
+# make the inset plot of the hawaiian islands
+inset <- ggplot() + 
+  # plot hawaii
+  geom_sf(data=hawaii, fill="#8BCA7B",color="#4f4f4f",size=0.1) +
+  # plot the box to show where the big map is
+  geom_sf(data=plotbox, color="red", fill="transparent") + 
+  coord_sf(xlim = c(hbox['xmin']-x,hbox['xmax']+x),
+           ylim = c(hbox['ymin']-x,hbox['ymax']+x)) +
+  theme_void() +
+  theme(
+    panel.background = element_rect(fill="#d1edfb", color="black") 
+  ) +
+  # add a scale bar
+  annotation_scale(location="bl",width_hint=0.5)
 
 
-# upset_composite <- upset_plotz %>%
-#   map(wrap_elements) %>%
-#   reduce(`/`) + 
-#   plot_annotation(tag_levels = "A") & theme(plot.tag = element_text(face="bold"))
-# upset_composite 
-# upset_plotz$fish
+# smash them together
+sitemap <- ggdraw(mainmap) + 
+  draw_plot(
+    inset,
+    x = -0.130,
+    y = 0.35,
+    scale=0.4
+  ) 
+# and save it
+save_fig(sitemap,path(figure_dir,"mesophotic_map"),"pdf",width=8.5,height=11,units="in")
 
-# ggsave(path(figure_dir,"mesophotic_fish_upset.pdf"),upset_plotz$fish,device=cairo_pdf,width=12,height=9,units="in")
-# ggsave(path(figure_dir,"mesophotic_upset.pdf"),upset_composite,device=cairo_pdf,width=9,height=14,units="in")
 
 # manuscript tables -------------------------------------------------------
 table_dir <- dir_create(here("output/tables"),recurse=TRUE)
@@ -1779,136 +1598,3 @@ datasets$complete %>%
   }) %>% 
   unlist() %>%
   write_lines(include_file,append=TRUE)
-
-
-# indicator species analysis ----------------------------------------------
-
-# # helper function: does IndVal analysis for a phyloseq object across some factor
-# get_indicators <- function(community,variable,fdr=0.10,permutations=999,list=TRUE) {
-#   # get sample data
-#   sd <- sample_tibble(community)
-#   # get presence/absence-transformed community matrix
-#   mat <- community %>%
-#     ps_standardize("pa") %>%
-#     otu_table() 
-#   
-#   # yank analysis factor
-#   categories <- sd %>% pull(variable)
-#   # do the IndVal analysis
-#   iv <- multipatt(mat,categories,control=how(nperm=permutations))
-#   
-#   # multipatt returns a thing with columns called s.<variable_category>
-#   # here we're just enumerating those
-#   sign_cats <- str_c("s.",unique(categories))
-#   # construct a table with taxa, Indval, p value, and category
-#   d <- as_tibble(iv$sign,rownames="zotu") %>% 
-#     pivot_longer(all_of(sign_cats),names_to="group",values_to="active") %>%
-#     mutate(group = str_replace(group,"^s\\.","")) %>% # strip off the "s." at the beginning of the group name
-#     filter(active == 1) %>% # get get only values that apply to the group in question
-#     drop_na(p.value) %>%  # drop anything with an NA p value
-#     rename(p_value=p.value) %>%
-#     # do p value correction for multiple comparisons using the false discovery rate method
-#     mutate(p_value = suppressWarnings(fdrtool(p_value,statistic="pvalue",plot=FALSE,verbose=FALSE,cutoff.method="pct0",pct0=fdr)$pval)) %>%
-#     select(zotu,group,stat,p_value) %>%
-#     arrange(zotu) %>%
-#     left_join(community %>% taxa_tibble(),by="zotu")
-#   # return the results of the multipatt call and the table we've made
-#   # to make it easier to interpret
-#   if (list) {
-#     return(list(iv=iv,table=d))
-#   } else {
-#     return(d)
-#   }
-# }
-# 
-# ## all taxa
-# # do indicator analysis for deep v shallow
-# # and just for animals
-# indicators <- datasets %>% 
-#   keep_names(c("animals","benthic")) %>%
-#   map(~{
-#     # stick the fish back in the list
-#     .x %>%
-#       list_modify(fish = comm_ps$fish) %>%
-#       map(~get_indicators(.x,variable="depth_zone45",list=FALSE))
-#   })
-# 
-# itable <- indicators %>%
-#   map(~{
-#     .x %>%
-#       enframe(name = "assay", value="indval") %>%
-#       unnest(indval) %>%
-#       filter(p_value < 0.05) %>%
-#       select(assay,group,stat,p_value,domain:species) %>%
-#       mutate(assay = plot_text2[assay]) %>%
-#       rename(Assay=assay,Depth=group,IndVal=stat,`p-value`=p_value) %>%
-#       rename_with(str_to_title,domain:species) %>%
-#       arrange(Assay,desc(Depth),Domain,Kingdom,Phylum,Class,Order,Family,Genus,Species) %>%
-#       mutate(
-#         Depth = case_when(
-#           Depth == "Shallow" ~ "Shallow\n(0--45m)",
-#           Depth == "Deep" ~ "Deep\n(60--90m)"
-#         )
-#       ) %>%
-#       mutate(Species = str_c("*",Species,"*"))
-#   })
-# itable
-# write_ms_table(itable,path(table_dir,"mesophotic_indicators.csv"),caption = "Significant indicator species (*IndVal*) analysis results",na="",bold_header = TRUE)
-
-
-#### CTD data processing, for mixed-layer depth calculations
-# calculate mixed-layer depth from a data frame using a threshold 
-# based on the method of de Boyer Montégut et al., 2004
-mld <- function(dataset,depth,variable,threshold,ref=10)
-{
-  # get a temperature delta relative to the minimum depth/pressure
-  data <- dataset %>% select({{depth}},{{variable}}) %>%
-    filter({{depth}} >= ref) %>%
-    mutate( delta = abs(unique({{variable}}[{{depth}}==min(abs({{depth}}))]) - {{variable}}) ) 
-  
-  threshold <- abs(threshold)
-  
-  # find MLD
-  # if(any(data$delta>=threshold)) {
-  data %>%
-    filter(delta >= threshold) %>%
-    slice(1) %>%
-    pull({{depth}})
-  # } else { 
-  #   return(NA)
-  # }
-}
-
-# convert pressure to depth (dbar), based on sampling latitude
-p2d <- function(p,lat) {
-  x <- sin(lat/57.29578)
-  x2 <- x^2
-  gr <- 9.780318*(1.0+(5.2788e-3+2.36e-5*x2)*x2) + 1.092e-6*p
-  d <- (((-1.82e-15*p+2.279e-10)*p-2.2512e-5)*p+9.72659)*p
-  return(d/gr)
-}
-
-cast_lat <- 22.75 # station ALOHA CTD cast latitude
-# get data from HOT cruise 314 (CTD averages for the week of 08-03-2019)
-url <- "https://hahana.soest.hawaii.edu/FTP/hot/ctd/aloha_mean/hot314.mn"
-# url <- "https://hahana.soest.hawaii.edu/FTP/hot/ctd/aloha_mean/hot315.mn"
-# HOT cruise hyperpro PAR data: 
-# https://hahana.soest.hawaii.edu/FTP/hot/light/hyperpro-processed/hot-314/H314_aloha_1_profile_subset.txt
-ctd <- read_table(url,skip = 1,col_names = c("pressure","temp","sal","o2","trans","chloro","casts","p_temp","p_density")) %>%
-  mutate(depth=p2d(pressure,cast_lat))  #%>%
-# filter(pressure>10)
-
-(mld <- castr::mld(ctd$p_density,ctd$depth))
-
-(thermocline <- clined(ctd$temp,ctd$depth))
-(pycnocline <- clined(ctd$p_density,ctd$depth))
-
-(mean_cline <- mean(c(thermocline,pycnocline)))
-
-ctd_plotz <- ggplot(ctd,aes(y=depth)) + 
-  geom_path(aes(x=temp),color="red") + 
-  geom_path(aes(x=p_density),color="black") + 
-  geom_path(aes(x=trans),color="blue") + 
-  scale_y_reverse(limits=c(1000,0))
-
-

@@ -15,8 +15,6 @@ library(fs)
 library(vegan)
 library(viridis)
 library(ggVennDiagram)
-library(castr)
-library(fdrtool)
 
 
 # set random seed for reproduceability
@@ -44,6 +42,8 @@ read_transform <- "none"
 # whether to drop zotus with no assigned taxonomy (NA's across the board)
 drop_unknown <- FALSE
 
+fig_format <- "svg"
+
 
 rarefy_perm <- 99
 
@@ -59,9 +59,22 @@ distance_methods <- c("sim","jaccard","bray")
 distance_method <- "sim"
 plot_theme <- "light"
 
+# save a ggplot figure to preferred format
+save_fig <- function(plotz,basename,format="pdf",...) {
+  device = switch(
+    format,
+    pdf = cairo_pdf,
+    svg = svg,
+    eps = cairo_ps,
+    NULL
+  )
+  filename <- path_ext_set(basename,format)
+  if (!is.null(device)) {
+    ggsave(filename,plotz,device=device,...)
+  }
+}
 
 # convert an adonis result to a tibble in a useful way
-
 as_tibble_adonis <- function(a) {
   a %>%
     as_tibble(rownames="term") %>%
@@ -521,10 +534,10 @@ beta_pairs_composite <- beta_pairs %>%
                   group_by(measurement) %>%
                   group_map(~{
                     measurement <- as.character(.y$measurement)
-                    ggplot(.x) + 
+                    ggplot(.x) +
                       geom_tile(aes(x=depth2,y=depth1,fill=dist)) +
                       scale_fill_viridis(option="inferno",name=beta_title_map[[dm]][measurement]) +
-                      scale_x_discrete(position="top") + 
+                      scale_x_discrete(position="top") +
                       theme_bw() +
                       theme(
                         axis.text.x = element_text(angle=25,vjust=1,hjust=0),
@@ -541,25 +554,23 @@ beta_pairs_composite <- beta_pairs %>%
       })
   })
 
-# show all the plots in a giant grid
-# beta_pairs_composite %>%
-#   map(wrap_elements) %>%
-#   reduce(`/`) + plot_annotation(tag_levels=list(names(beta_pairs_composite)))
+beta_pairs_composite$complete$animals$sim
 
 # save all the different versions to PDF
 beta_pairs_composite %>%
   keep_names(~.x != "rarefied") %>%
-  iwalk(~{
+  iwalk(~{ # rarefaction
     rare <- if_else(.y == "rarefied","_rarefied_","")
     .x %>%
-      iwalk(~{
+      iwalk(~{ # dataset
         dataset <- .y
         .x %>% 
           keep_names(~.x != "bray") %>%
-          iwalk(~{
+          iwalk(~{ # distance method
             dm <- .y
-            fn <- str_glue("mesophotic_beta_pairs_{dataset}_{dm}{rare}.pdf")
-            ggsave(path(figure_dir,fn),.x,device=cairo_pdf,width=12,height=9,units="in")
+            fn <- path(figure_dir,str_glue("mesophotic_beta_pairs_{dataset}_{dm}{rare}"))
+            ht = if_else(dataset == "all",9,6)
+            save_fig(.x,fn,fig_format,width=12,height=ht,units="in")
           })
       })
   })
@@ -621,8 +632,8 @@ big_cluster_sim$complete
 big_cluster_sim %>%
   iwalk(~{
     rare <- if_else(.y == "rarefied","_rarefied","")
-    fn <- str_glue("mesophotic_cluster_all_sim{rare}.pdf") 
-    ggsave(path(figure_dir,fn),.x,device=cairo_pdf,width=12,height=9,units="in")
+    fn <- path(figure_dir,str_glue("mesophotic_cluster_all_sim{rare}"))
+    save_fig(.x,fn,fig_format,width=12,height=9,units="in")
   })
 
 # jaccard version
@@ -638,8 +649,8 @@ big_cluster_jac <- cluster_composite %>%
 big_cluster_jac %>%
   iwalk(~{
     rare <- if_else(.y == "rarefied","_rarefied","")
-    fn <- str_glue("mesophotic_cluster_all_jaccard{rare}.pdf") 
-    ggsave(path(figure_dir,fn),.x,device=cairo_pdf,width=12,height=9,units="in")
+    fn <- path(figure_dir,str_glue("mesophotic_cluster_all_jaccard{rare}"))
+    save_fig(.x,fn,fig_format,width=12,height=9,units="in")
   })
 
 
@@ -693,56 +704,78 @@ ord_zone_composite <- datasets %>%
 #     })
 #   })
 
-# main text figure (shallow = 0-45m)
-# save the simpson version of the figure, un-rarefied
-ggsave(path(figure_dir,"mesophotic_ord_shallowdeep45_all_sim.pdf"),ord_zone_composite$complete$all$sim$depth_zone45,device=cairo_pdf,width=12,height=4,units="in")
-ggsave(path(figure_dir,"mesophotic_ord_shallowdeep45_all_jaccard.pdf"),ord_zone_composite$complete$all$jaccard$depth_zone45,device=cairo_pdf,width=12,height=4,units="in")
-
-# supplemental figure (shallow = 0-30m)
-# save the simpson version of the figure, un-rarefied
-ggsave(path(figure_dir,"mesophotic_ord_shallowdeep30_all_sim.pdf"),ord_zone_composite$complete$all$sim$depth_zone,device=cairo_pdf,width=12,height=4,units="in")
-ggsave(path(figure_dir,"mesophotic_ord_shallowdeep30_all_jaccard.pdf"),ord_zone_composite$complete$all$jaccard$depth_zone,device=cairo_pdf,width=12,height=4,units="in")
+# main text figure: 
+# save a bunch of composite figures of the depth zones split by 30/45 and distance method
+depth_zones %>%
+  walk(~{
+    dz <- .x
+    distance_methods %>%
+      walk(~{
+        dm <- .x
+        zone <- if_else(dz == "depth_zone","shallowdeep30","shallowdeep45")
+        plotz <- ord_zone_composite$complete$all[[dm]][[dz]] /
+          ord_zone_composite$complete$animals[[dm]][[dz]] /
+          ord_zone_composite$complete$benthic[[dm]][[dz]] +
+          plot_annotation(tag_levels = "A") + 
+          plot_layout(guides="collect") &
+          theme(plot.tag = element_text(face="bold"))
+        fn <- path(figure_dir,str_glue("mesophotic_ord_{zone}_{dm}"))
+        save_fig(plotz,fn,fig_format,width=12,height=12,units="in")
+      })
+  })
 
 #### supplemental figure: shallow vs deep ordinations for animals and benthic
-ord_zone_composite_animals <- 
-  depth_zones %>%
+ord_zone_composite_animals <- distance_methods %>%
   set_names() %>%
   map(~{
-    dz <- .x
-    datasets$complete %>%
-      keep_names(~.x != "all") %>%
-      imap(~{ # animals, benthic
-        dataset <- .y  
-        .x %>% 
-          imap(~{ # inverts, metazoans
-            marker <- .y
-                    title <- plot_text2[marker]
-            to_plot <- .x
-            dm <- "sim"
-                    dpal <- pal[c(1,length(pal))]
-            names(dpal) <- c("Shallow","Deep")
-            p <- plot_betadisp(to_plot, group=dz, method=dm, list=TRUE, usable_groups=TRUE,binary=dm != "bray")
-            p$plot <- p$plot +
-              scale_fill_manual(values=dpal,name="Depth") +
-              plotz_theme("light") +
-              xlab(str_glue("Principle Coordinate 1 ({scales::percent(p$x_var,accuracy=0.1)})")) +
-              ylab(str_glue("Principle Coordinate 2 ({scales::percent(p$y_var,accuracy=0.1)})")) +
-              theme(legend.position = "right") +
-              guides(color="none")
-            p$plot
-          }) %>% 
-          reduce(`+`)
-      }) %>%
-      reduce(`/`) + 
-      plot_annotation(tag_levels="A") & 
-      theme(plot.tag = element_text(face="bold"))
+    dm <- .x
+    depth_zones %>%
+      set_names() %>%
+      map(~{
+        dz <- .x
+        datasets$complete %>%
+          keep_names(~.x != "all") %>%
+          imap(~{ # animals, benthic
+            dataset <- .y  
+            .x %>% 
+              imap(~{ # inverts, metazoans
+                marker <- .y
+                title <- plot_text2[marker]
+                to_plot <- .x
+                dpal <- pal[c(1,length(pal))]
+                names(dpal) <- c("Shallow","Deep")
+                p <- plot_betadisp(to_plot, group=dz, method=dm, list=TRUE, usable_groups=TRUE,binary=dm != "bray")
+                p$plot <- p$plot +
+                  scale_fill_manual(values=dpal,name="Depth") +
+                  plotz_theme("light") +
+                  xlab(str_glue("Principle Coordinate 1 ({scales::percent(p$x_var,accuracy=0.1)})")) +
+                  ylab(str_glue("Principle Coordinate 2 ({scales::percent(p$y_var,accuracy=0.1)})")) +
+                  theme(legend.position = "right") +
+                  guides(color="none")
+                p$plot
+              }) %>% 
+              reduce(`+`)
+          }) %>%
+          reduce(`/`) + 
+          plot_annotation(tag_levels="A") & 
+          theme(plot.tag = element_text(face="bold"))
+      })
   })
-  
-ord_zone_composite_animals$depth_zone45
 
-# save the simpson version of the figure, un-rarefied
-ggsave(path(figure_dir,"mesophotic_ord_shallowdeep45_animals_sim.pdf"),ord_zone_composite_animals$depth_zone45,device=cairo_pdf,width=8,height=4,units="in")
-ggsave(path(figure_dir,"mesophotic_ord_shallowdeep30_animals_sim.pdf"),ord_zone_composite_animals$depth_zone,device=cairo_pdf,width=8,height=4,units="in")
+ord_zone_composite_animals$sim$depth_zone45
+
+# save the un-rarefied versions
+ord_zone_composite_animals %>%
+  iwalk(~{ # distance method
+    dm <- .y
+    .x %>% 
+      iwalk(~{ # depth zone
+        zone <- if_else(.y == "depth_zone45","shallowdeep45","shallowdeep30")
+        fn <- path(figure_dir,str_glue("mesophotic_ord_{zone}_animals_{dm}"))
+        save_fig(.x,fn,fig_format,width=12,height=9,units="in")
+      })
+  })
+
 
 #### Figure: depth zone ordinations
 ord_composite <- datasets %>%
@@ -783,42 +816,21 @@ ord_composite <- datasets %>%
 #   reduce(`/`) + 
 #   plot_annotation(tag_levels=list(names(ord_composite)))
 
-# save the simpson version of the figure, un-rarefied
-ggsave(path(figure_dir,"mesophotic_ord_samples_all_sim.pdf"),ord_composite$complete$all$sim,device=cairo_pdf,width=12,height=4,units="in")
-ggsave(path(figure_dir,"mesophotic_ord_samples_all_jaccard.pdf"),ord_composite$complete$all$jaccard,device=cairo_pdf,width=12,height=4,units="in")
+# save a bunch of composite figures of the depth zones split by distance method
+distance_methods %>%
+  walk(~{
+    dm <- .x
+    plotz <- ord_composite$complete$all[[dm]] /
+      ord_composite$complete$animals[[dm]] /
+      ord_composite$complete$benthic[[dm]] +
+      plot_annotation(tag_levels = "A") +
+      plot_layout(guides="collect") &
+      theme(plot.tag = element_text(face="bold"))
+    fn <- path(figure_dir,str_glue("mesophotic_ord_{dm}"))
+    save_fig(plotz,fn,fig_format,width=12,height=12,units="in")
+  })
 
 ### Supplemental figure: depth zone ordinations for animals and benthic
-ord_composite_animals <- datasets$complete %>%
-  keep_names(~.x != "all") %>%
-  imap(~{ # animals, benthic
-    dataset <- .y  
-    .x %>% 
-      imap(~{ # inverts, metazoans
-        marker <- .y
-        title <- plot_text2[marker]
-        to_plot <- .x
-        dm <- "sim"
-        
-        p <- plot_betadisp(to_plot, group="depth_f", method=dm, list=TRUE, usable_groups=TRUE,binary=dm != "bray")
-        p$plot <- p$plot +
-          scale_fill_manual(values=pal,name="Depth") +
-          plotz_theme("light") +
-          xlab(str_glue("Principle Coordinate 1 ({scales::percent(p$x_var,accuracy=0.1)})")) +
-          ylab(str_glue("Principle Coordinate 2 ({scales::percent(p$y_var,accuracy=0.1)})")) +
-          theme(legend.position = "right") +
-          guides(color="none")
-        p$plot
-      }) %>% 
-      reduce(`+`)
-  }) %>%
-  reduce(`/`) + 
-  plot_annotation(tag_levels="A") & 
-  theme(plot.tag = element_text(face="bold"))
-ord_composite_animals
-
-# save the simpson version of the figure, un-rarefied
-ggsave(path(figure_dir,"mesophotic_ord_samples_animals_sim.pdf"),ord_composite_animals,device=cairo_pdf,width=8,height=4,units="in")
-
 #### Figure: fish depth distributions vs eDNA detections
 
 # get composite fish data / taxonomy grid
@@ -951,7 +963,9 @@ depth_plotz <- ggplot(depth_data) +
   ylab("Detection depth (m)") + 
   xlab("Species") 
 depth_plotz
-ggsave(path(figure_dir,"mesophotic_fish_depth.pdf"),depth_plotz,device=cairo_pdf,width=12,height=10,units="in")
+fn <- path(figure_dir,"mesophotic_fish_depth")
+# ggsave(depth_plotz,fn,fig_format,width=12,height=10,units="in")
+save_fig(depth_plotz,fn,fig_format,width=12,height=10,units="in")
 
 #### Figure: ordinations by site
 ord_sites_composite <- datasets %>%
@@ -995,9 +1009,13 @@ ord_sites_composite <- datasets %>%
 #   plot_annotation(tag_levels=list(names(ord_sites_composite)))
 
 # save the simpson version, un-rarefied
-ggsave(path(figure_dir,"mesophotic_ord_sites_all_sim.pdf"),ord_sites_composite$complete$all$sim,device=cairo_pdf,width=12,height=4,units="in")
+fn <- path(figure_dir,"mesophotic_ord_sites_all_sim")
+# ggsave(path(figure_dir,"mesophotic_ord_sites_all_sim.pdf"),ord_sites_composite$complete$all$sim,device=cairo_pdf,width=12,height=4,units="in")
+save_fig(ord_sites_composite$complete$all$sim,fn,fig_format,width=12,height=4,units="in")
 # save the jaccard version, un-rarefied
-ggsave(path(figure_dir,"mesophotic_ord_sites_all_jaccard.pdf"),ord_sites_composite$complete$all$jaccard,device=cairo_pdf,width=12,height=4,units="in")
+# ggsave(path(figure_dir,"mesophotic_ord_sites_all_jaccard.pdf"),ord_sites_composite$complete$all$jaccard,device=cairo_pdf,width=12,height=4,units="in")
+fn <- path(figure_dir,"mesophotic_ord_sites_all_jaccard")
+save_fig(ord_sites_composite$complete$all$jaccard,fn,fig_format,width=12,height=4,units="in")
 
 
 #### Figure: species accumulations
@@ -1101,13 +1119,15 @@ accum_composite <- all_models %>%
       # this is the best-fit model line
       geom_line(data=p,aes(x=x,y=y),color="blue",size=1.1) + 
       # this marks the "ideal" replication level
-      geom_vline(xintercept=.x$asymptote,color="red") + 
+      # geom_vline(xintercept=.x$asymptote,color="red") + 
+      geom_vline(xintercept = .x$asymptote,color="firebrick",size=0.7,linetype="dashed") +
       scale_color_manual(values=pal,name="Depth Zone") + 
       # keep us within a reasonable range
       xlim(1,25) +
       xlab("Replicates") + 
       ylab("zOTUs") + 
-      theme_bw() 
+      theme_bw() + 
+      theme(panel.grid = element_blank())
   }) %>%
   reduce(`+`) + 
   plot_layout(guides="collect") +
@@ -1115,7 +1135,9 @@ accum_composite <- all_models %>%
   theme(plot.tag = element_text(face="bold"))
 
 accum_composite
-ggsave(path(figure_dir,"mesophotic_accum.pdf"),accum_composite,device=cairo_pdf,width=12,height=4,units="in")
+# ggsave(path(figure_dir,"mesophotic_accum.pdf"),accum_composite,device=cairo_pdf,width=12,height=4,units="in")
+fn <- path(figure_dir,"mesophotic_accum")
+save_fig(accum_composite,fn,fig_format,width=12,height=4,units="in")
 
 #### Figure: sample rarefaction curves
 rarecurves <- datasets$complete$all %>%
@@ -1150,7 +1172,9 @@ curve_composite <- rarecurves %>%
   plot_annotation(tag_levels = "A") 
 curve_composite
 
-ggsave(path(figure_dir,"mesophotic_rarefactions.pdf"),curve_composite,device=cairo_pdf,width=12,height=9,units="in")
+# ggsave(path(figure_dir,"mesophotic_rarefactions.pdf"),curve_composite,device=cairo_pdf,width=6,height=6,units="in")
+fn <- path(figure_dir,"mesophotic_rarefactions")
+save_fig(curve_composite,fn,fig_format,width=6,height=6,units="in")
 
 
 #### Figure (supplemental?) shallow/deep shared zOTU venn diagrams
@@ -1170,7 +1194,7 @@ venn_plotz <- venn_data %>%
     shallow <- .x %>% filter(Shallow == 1) %>% pull(OTU)
     deep <- .x %>% filter(Deep == 1) %>% pull(OTU)
     # mid <- .x %>% filter(Mid == 1) %>% pull(OTU)
-    f <- list("Shallow\n(0–30m)"=shallow,"Deep\n(75–90m)"=deep)
+    f <- list("Shallow\n(0–45m)"=shallow,"Deep\n(60–90m)"=deep)
     v <- Venn(f)
     p <- process_data(v)
     names(venn_pal) <- p@region$name
@@ -1197,7 +1221,9 @@ venn_composite <- venn_plotz %>%
   plot_layout(guides="collect") &
   theme(plot.tag = element_text(face="bold"), plot.caption = element_text(hjust=0.5,size=16))
 venn_composite
-ggsave(path(figure_dir,"mesophotic_venn.pdf"),venn_composite,device=cairo_pdf,width=12,height=3.5,units="in")
+# ggsave(path(figure_dir,"mesophotic_venn.pdf"),venn_composite,device=cairo_pdf,width=12,height=3.5,units="in")
+fn <- path(figure_dir,"mesophotic_venn")
+save_fig(venn_composite,fn,fig_format,width=12,height=3.5,units="in")
 
 #### Figure: UpSet plots
 
@@ -1630,41 +1656,6 @@ include_file <- path(resource_dir,"mesophotic_include.m4")
 
 file_delete(include_file)
 
-# permanova results
-anovas$complete %>%
-  iwalk(~{ # dataset
-    dataset <- .y
-    .x %>%
-      iwalk(~{ # distance method
-        method <- .y
-        .x %>%
-          iwalk(~{ # marker
-            marker <- .y
-            lines <- .x %>%
-              keep_names(~.x != "depth_site") %>%
-              imap_dfr(~{ # analysis
-                analysis <- .y
-                .x %>%
-                  as_tibble_adonis() %>%
-                  filter(!term %in% c("Residual","Total")) %>%
-                  select(term,pseudo_f,p_value) %>%
-                  mutate(
-                    analysis=analysis,
-                    term = str_replace_all(term,":","-")
-                  )
-                  
-              })
-            pseudo_f <- str_glue("define({{{{{dataset}_{method}_{marker}_{lines$term}_f}}}},{{{{{lines$pseudo_f}}}}})")
-            p_val <- str_glue("define({{{{{dataset}_{method}_{marker}_{lines$term}_p}}}},{{{{{lines$p_value}}}}})")
-            # pseudo_f <- str_glue("define({{{{{dataset}_{method}_{marker}_{lines$analysis}_{lines$term}_f}}}},{{{{{lines$pseudo_f}}}}})")
-            # p_val <- str_glue("define({{{{{dataset}_{method}_{marker}_{lines$analysis}_{lines$term}_p}}}},{{{{{lines$p_value}}}}})")
-            lines <- c(pseudo_f,p_val)
-            # write_lines(lines,include_file,append=TRUE)
-            message(paste(lines,collapse="\n"))
-          })
-      })
-  })
-
 # write permanova results
 anovas$complete %>%
   iwalk(~{ # dataset
@@ -1678,7 +1669,7 @@ anovas$complete %>%
             marker <- .y
             lines <- .x %>%
               imap_dfr(~{
-                as_tibble(.x$aov.tab,rownames="term") %>%
+                as_tibble(.x,rownames="term") %>%
                   filter(term == .y) %>%
                   select(term,pseudo_f=`F`,p_value=`Pr(>F)`) %>%
                   mutate(
@@ -1693,8 +1684,7 @@ anovas$complete %>%
             pseudo_f <- str_glue("define({{{{{dataset}_{method}_{marker}_{lines$term}_f}}}},{{{{{lines$pseudo_f}}}}})")
             p_val <- str_glue("define({{{{{dataset}_{method}_{marker}_{lines$term}_p}}}},{{{{{lines$p_value}}}}})")
             lines <- c(pseudo_f,p_val)
-            # write_lines(lines,include_file,append=TRUE)
-            message(lines)
+            write_lines(lines,include_file,append=TRUE)
           }) 
       }) 
   })
@@ -1710,7 +1700,7 @@ stat_map <- c(
 )
 
 # write beta diversity stats
-beta_diversity %>%
+beta_diversity$complete %>%
   iwalk(~{
     dataset_name <- .y
     .x %>%
@@ -1731,7 +1721,7 @@ beta_diversity %>%
 
 # write mean/sd beta diversity stats for depth zone comparisons 
 with(
-  beta_pairs %>%
+  beta_pairs$complete %>%
     imap_dfr(~{
       .x %>% 
         keep_names(~.x != "bray") %>%
@@ -1765,7 +1755,7 @@ category_map = c(
 )
 
 #### eDNA read counts for different categories squished together
-datasets %>%
+datasets$complete %>%
   imap(~{
     dataset <- .y
     .x %>% imap(~{

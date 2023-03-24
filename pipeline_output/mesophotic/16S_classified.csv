@@ -1,0 +1,95 @@
+representative,taxID,id_method,taxon,rank,score,kingdom,phylum,class,order,family,genus,species,path,scores,reason,NNtaxID,NNtaxon,NNrank,NNdistance
+Zotu1,175434,insect,Acanthurus thompsoni,species,NA,Metazoa,Chordata,Actinopteri,Acanthuriformes,Acanthuridae,Acanthurus,Acanthurus thompsoni,NA,NA,-1,175434,Acanthurus thompsoni,species,0
+Zotu2,40493,insect,Lutjanus,genus,NA,Metazoa,Chordata,Actinopteri,Lutjaniformes,Lutjanidae,Lutjanus,,NA,NA,-1,396789,Lutjanus quinquelineatus,species,0.0102
+Zotu3,175432,insect,Acanthurus nigroris,species,NA,Metazoa,Chordata,Actinopteri,Acanthuriformes,Acanthuridae,Acanthurus,Acanthurus nigroris,NA,NA,-1,175432,Acanthurus nigroris,species,0
+Zotu4,75027,insect,Naso,genus,NA,Metazoa,Chordata,Actinopteri,Acanthuriformes,Acanthuridae,Naso,,NA,NA,-1,75027,Naso,genus,0
+Zotu5,1489872,insect,Percomorphaceae,clade,1,Metazoa,Chordata,Actinopteri,,,,,212121111,ddddddddd,2,238052,Acanthurus nubilus,species,0.0561
+Zotu6,145345,insect,Acanthurinae,subfamily,NA,Metazoa,Chordata,Actinopteri,Acanthuriformes,Acanthuridae,,,NA,NA,-1,145345,Acanthurinae,subfamily,0
+Zotu7,247628,insect,Scarus rubroviolaceus,species,NA,Metazoa,Chordata,Actinopteri,Labriformes,Labridae,Scarus,Scarus rubroviolaceus,NA,NA,-1,247628,Scarus rubroviolaceus,species,0
+Zotu8,1489872,insect,Percomorphaceae,clade,1,Metazoa,Chordata,Actinopteri,,,,,212121111,ddddddddd,2,238052,Acanthurus nubilus,species,0.0561
+Zotu9,247625,insect,Scarus psittacus,species,NA,Metazoa,Chordata,Actinopteri,Labriformes,Labridae,Scarus,Scarus psittacus,NA,NA,-1,247625,Scarus psittacus,species,0
+Zotu10,12912,insect,Acanthurus,genus,NA,Metazoa,Chordata,Actinopteri,Acanthuriformes,Acanthuridae,Acanthurus,,NA,NA,-1,175435,Acanthurus triostegus,species,0.0102
+Zotu11,51788,insect,Halichoeres,genus,NA,Metazoa,Chordata,Actinopteri,Labriformes,Labridae,Halichoeres,,NA,NA,-1,317493,Halichoeres ornatissimus,species,0.0104
+Zotu12,365067,insect,Engraulinae,subfamily,NA,Metazoa,Chordata,Actinopteri,Clupeiformes,Engraulidae,,,NA,NA,-1,686570,Encrasicholina punctifer,species,0.005
+Zotu13,241500,insect,Novaculichthys taeniourus,species,NA,Metazoa,Chordata,Actinopteri,Labriformes,Labridae,Novaculichthys,Novaculichthys taeniourus,NA,NA,-1,241500,Novaculichthys taeniourus,species,0
+Zotu14,390315,insect,Ctenochaetus hawaiiensis,species,NA,Metazoa,Chordata,Actinopteri,Acanthuriformes,Acanthuridae,Ctenochaetus,Ctenochaetus hawaiiensis,NA,NA,-1,390315,Ctenochaetus hawaiiensis,species,0
+Zotu15,145345,insect,Acanthurinae,subfamily,NA,Metazoa,Chordata,Actinopteri,Acanthuriformes,Acanthuridae,,,NA,NA,-1,145345,Acanthurinae,subfamily,0.0051
+Zotu16,1489872,insect,Percomorphaceae,clade,1,Metazoa,Chordata,Actinopteri,,,,,2.12121E+14,dddbdddddbddddd,3,875775,Fistularia corneta,species,0.0839
+Zotu17,238053,insect,Acanthurus olivaceus,species,NA,Metazoa,Chordata,Actinopteri,Acanthuriformes,Acanthuridae,Acanthurus,Acanthurus olivaceus,NA,NA,-1,238053,Acanthurus olivaceus,species,0
+Zotu18,241262,insect,Anampses,genus,NA,Metazoa,Chordata,Actinopteri,Labriformes,Labridae,Anampses,,NA,NA,-1,1119046,Anampses chrysocephalus,species,0.0084
+Zotu19,126670,insect,Chlorurus,genus,NA,Metazoa,Chordata,Actinopteri,Labriformes,Labridae,Chlorurus,,NA,NA,-1,126671,Chlorurus sordidus,species,0.005
+Zotu20,1489872,insect,Percomorphaceae,clade,0.9996,Metazoa,Chordata,Actinopteri,,,,,2.12211E+13,ddddbdddddddYd,2,2057051,Ostorhinchus fleurieu,species,0.0873
+Zotu21,123369,insect,Euacanthomorphacea,clade,1,Metazoa,Chordata,Actinopteri,,,,,2.12111E+15,ddd^dZdddddddcdd,2,1146976,Myripristis hexagona,species,0.0306
+Zotu22,126671,insect,Chlorurus sordidus,species,NA,Metazoa,Chordata,Actinopteri,Labriformes,Labridae,Chlorurus,Chlorurus sordidus,NA,NA,-1,126671,Chlorurus sordidus,species,0
+Zotu23,80974,insect,Chromis,genus,0.9997,Metazoa,Chordata,Actinopteri,,Pomacentridae,Chromis,,2.12112E+17,dddddddddddddddddd,2,91607,Chromis chromis,species,0.0406
+Zotu24,334899,insect,Parupeneus,genus,NA,Metazoa,Chordata,Actinopteri,Syngnathiformes,Mullidae,Parupeneus,,NA,NA,-1,626244,Parupeneus multifasciatus,species,0.0102
+Zotu25,146143,insect,Decapterus macarellus,species,NA,Metazoa,Chordata,Actinopteri,Carangiformes,Carangidae,Decapterus,Decapterus macarellus,NA,NA,-1,146143,Decapterus macarellus,species,0
+Zotu26,1489872,insect,Percomorphaceae,clade,1,Metazoa,Chordata,Actinopteri,,,,,2.12112E+16,ddddAdddddddddddd,2,342443,Mulloidichthys vanicolensis,species,0.0378
+Zotu27,32443,insect,Teleostei,infraclass,1,Metazoa,Chordata,Actinopteri,,,,,2.11222E+15,dddddddddddddddd,2,700632,Gymnothorax melatremus,species,0.0743
+Zotu28,1489872,insect,Percomorphaceae,clade,1,Metazoa,Chordata,Actinopteri,,,,,212121111,ddddddddd,2,145345,Acanthurinae,subfamily,0.0497
+Zotu29,188111,insect,Calotomus,genus,NA,Metazoa,Chordata,Actinopteri,Labriformes,Labridae,Calotomus,,NA,NA,-1,188111,Calotomus,genus,0
+Zotu30,365067,insect,Engraulinae,subfamily,NA,Metazoa,Chordata,Actinopteri,Clupeiformes,Engraulidae,,,NA,NA,-1,365067,Engraulinae,subfamily,0.0126
+Zotu31,392924,insect,Pervagor,genus,NA,Metazoa,Chordata,Actinopteri,Tetraodontiformes,Monacanthidae,Pervagor,,NA,NA,-1,392925,Pervagor janthinosoma,species,0.0102
+Zotu32,91742,insect,Cephalopholis,genus,NA,Metazoa,Chordata,Actinopteri,Perciformes,Serranidae,Cephalopholis,,NA,NA,-1,309930,Cephalopholis argus,species,0.005
+Zotu33,163142,insect,Kyphosus,genus,NA,Metazoa,Chordata,Actinopteri,Centrarchiformes,Kyphosidae,Kyphosus,,NA,NA,-1,163142,Kyphosus,genus,0
+Zotu34,163142,insect,Kyphosus,genus,NA,Metazoa,Chordata,Actinopteri,Centrarchiformes,Kyphosidae,Kyphosus,,NA,NA,-1,163142,Kyphosus,genus,0
+Zotu35,59660,insect,Scarus,genus,NA,Metazoa,Chordata,Actinopteri,Labriformes,Labridae,Scarus,,NA,NA,-1,247625,Scarus psittacus,species,0.01
+Zotu36,1489872,insect,Percomorphaceae,clade,0.9999,Metazoa,Chordata,Actinopteri,,,,,2.12112E+17,ddddUDdddddddddddd,2,342443,Mulloidichthys vanicolensis,species,0.0531
+Zotu37,1489872,insect,Percomorphaceae,clade,1,Metazoa,Chordata,Actinopteri,,,,,2.12211E+14,dddccdddddd;ddd,2,2057051,Ostorhinchus fleurieu,species,0.0912
+Zotu38,8249,insect,Gomphosus varius,species,NA,Metazoa,Chordata,Actinopteri,Labriformes,Labridae,Gomphosus,Gomphosus varius,NA,NA,-1,8249,Gomphosus varius,species,0
+Zotu39,36213,insect,Abudefduf,genus,NA,Metazoa,Chordata,Actinopteri,,Pomacentridae,Abudefduf,,NA,NA,-1,36213,Abudefduf,genus,0
+Zotu40,1489872,insect,Percomorphaceae,clade,1,Metazoa,Chordata,Actinopteri,,,,,2.12112E+16,dddd\dddddddddddd,2,342443,Mulloidichthys vanicolensis,species,0.0391
+Zotu41,163142,insect,Kyphosus,genus,NA,Metazoa,Chordata,Actinopteri,Centrarchiformes,Kyphosidae,Kyphosus,,NA,NA,-1,163142,Kyphosus,genus,0
+Zotu42,30908,insect,Callionymidae,family,1,Metazoa,Chordata,Actinopteri,Syngnathiformes,Callionymidae,,,2.12222E+13,dddddddddddddd,2,94919,Aphredoderus sayanus,species,0.1204
+Zotu43,303704,insect,Sufflamen bursa,species,NA,Metazoa,Chordata,Actinopteri,Tetraodontiformes,Balistidae,Sufflamen,Sufflamen bursa,NA,NA,-1,303704,Sufflamen bursa,species,0
+Zotu44,229076,insect,Chromis agilis,species,NA,Metazoa,Chordata,Actinopteri,,Pomacentridae,Chromis,Chromis agilis,NA,NA,-1,229076,Chromis agilis,species,0
+Zotu45,192870,insect,Abudefduf sordidus,species,NA,Metazoa,Chordata,Actinopteri,,Pomacentridae,Abudefduf,Abudefduf sordidus,NA,NA,-1,192870,Abudefduf sordidus,species,0
+Zotu46,80974,insect,Chromis,genus,NA,Metazoa,Chordata,Actinopteri,,Pomacentridae,Chromis,,NA,NA,-1,997969,Chromis vanderbilti,species,0.0012
+Zotu47,303700,insect,Xanthichthys,genus,NA,Metazoa,Chordata,Actinopteri,Tetraodontiformes,Balistidae,Xanthichthys,,NA,NA,-1,303700,Xanthichthys,genus,0
+Zotu48,1489872,insect,Percomorphaceae,clade,1,Metazoa,Chordata,Actinopteri,,,,,2.12112E+16,ddddddddddddddddd,2,342443,Mulloidichthys vanicolensis,species,0.0557
+Zotu49,1489872,insect,Percomorphaceae,clade,1,Metazoa,Chordata,Actinopteri,,,,,2.12221E+19,ddddddd`ddddcddddddd,3,166782,Schindleria pietschmanni,species,0.1197
+Zotu50,586812,insect,Ctenochaetus strigosus,species,NA,Metazoa,Chordata,Actinopteri,Acanthuriformes,Acanthuridae,Ctenochaetus,Ctenochaetus strigosus,NA,NA,-1,586812,Ctenochaetus strigosus,species,0
+Zotu51,30854,insect,Mullidae,family,1,Metazoa,Chordata,Actinopteri,Syngnathiformes,Mullidae,,,2.12112E+18,ddddb3ddddddTdddddd,2,626244,Parupeneus multifasciatus,species,0.033
+Zotu52,1489872,insect,Percomorphaceae,clade,1,Metazoa,Chordata,Actinopteri,,,,,2.12112E+16,dddd]dddddddddddd,2,342443,Mulloidichthys vanicolensis,species,0.0378
+Zotu53,1489872,insect,Percomorphaceae,clade,1,Metazoa,Chordata,Actinopteri,,,,,2.12112E+16,ddddddddddddddddd,2,342443,Mulloidichthys vanicolensis,species,0.0608
+Zotu54,997969,insect,Chromis vanderbilti,species,NA,Metazoa,Chordata,Actinopteri,,Pomacentridae,Chromis,Chromis vanderbilti,NA,NA,-1,997969,Chromis vanderbilti,species,0
+Zotu55,30854,insect,Mullidae,family,1,Metazoa,Chordata,Actinopteri,Syngnathiformes,Mullidae,,,2.12112E+18,ddddaAddddddSdddddd,2,626244,Parupeneus multifasciatus,species,0.0279
+Zotu56,123369,insect,Euacanthomorphacea,clade,0.9996,Metazoa,Chordata,Actinopteri,,,,,2.12221E+16,ddddcdddbdddddddd,3,181437,Ostichthys japonicus,species,0.0421
+Zotu57,1489872,insect,Percomorphaceae,clade,1,Metazoa,Chordata,Actinopteri,,,,,2.12221E+19,dddddddaddddcddddddd,3,166782,Schindleria pietschmanni,species,0.1236
+Zotu58,48193,insect,Mugil cephalus,species,NA,Metazoa,Chordata,Actinopteri,Mugiliformes,Mugilidae,Mugil,Mugil cephalus,NA,NA,-1,48193,Mugil cephalus,species,0
+Zotu59,80974,insect,Chromis,genus,NA,Metazoa,Chordata,Actinopteri,,Pomacentridae,Chromis,,NA,NA,-1,1268082,Chromis delta,species,0.0107
+Zotu60,1489872,insect,Percomorphaceae,clade,1,Metazoa,Chordata,Actinopteri,,,,,2.12112E+16,ddd[Z^ddddddddddd,2,334904,Parupeneus indicus,species,0.0754
+Zotu61,1489872,insect,Percomorphaceae,clade,1,Metazoa,Chordata,Actinopteri,,,,,2.12221E+19,dddddddbddddaddddddd,3,166782,Schindleria pietschmanni,species,0.1197
+Zotu62,75045,insect,Zebrasoma,genus,NA,Metazoa,Chordata,Actinopteri,Acanthuriformes,Acanthuridae,Zebrasoma,,NA,NA,-1,75045,Zebrasoma,genus,0
+Zotu63,131567,insect,cellular organisms,no rank,1,,,,,,,,21211121,dddddddd,2,126671,Chlorurus sordidus,species,0.0611
+Zotu64,145345,insect,Acanthurinae,subfamily,NA,Metazoa,Chordata,Actinopteri,Acanthuriformes,Acanthuridae,,,NA,NA,-1,175436,Ctenochaetus striatus,species,0.0115
+Zotu65,1489872,insect,Percomorphaceae,clade,1,Metazoa,Chordata,Actinopteri,,,,,212121111,ddddddddd,2,75013,Acanthurus guttatus,species,0.0497
+Zotu66,1489872,insect,Percomorphaceae,clade,1,Metazoa,Chordata,Actinopteri,,,,,212121111,ddddddddd,2,390315,Ctenochaetus hawaiiensis,species,0.0459
+Zotu67,145345,insect,Acanthurinae,subfamily,0.9765,Metazoa,Chordata,Actinopteri,Acanthuriformes,Acanthuridae,,,2.12121E+12,dddddddddddcb,2,75013,Acanthurus guttatus,species,0.0268
+Zotu68,145345,insect,Acanthurinae,subfamily,NA,Metazoa,Chordata,Actinopteri,Acanthuriformes,Acanthuridae,,,NA,NA,-1,175436,Ctenochaetus striatus,species,0.0128
+Zotu69,131567,insect,cellular organisms,no rank,1,,,,,,,,21211121,dddddddd,2,126671,Chlorurus sordidus,species,0.0561
+Zotu70,1489872,insect,Percomorphaceae,clade,1,Metazoa,Chordata,Actinopteri,,,,,212121111,ddddddddd,2,390315,Ctenochaetus hawaiiensis,species,0.0306
+Zotu71,1489872,insect,Percomorphaceae,clade,1,Metazoa,Chordata,Actinopteri,,,,,2.12112E+16,dddddcdddddd]dddd,2,626244,Parupeneus multifasciatus,species,0.0343
+Zotu72,1489872,insect,Percomorphaceae,clade,1,Metazoa,Chordata,Actinopteri,,,,,2.12221E+19,dddddddbddddaddddddd,3,166782,Schindleria pietschmanni,species,0.1236
+Zotu73,75019,insect,Ctenochaetus,genus,NA,Metazoa,Chordata,Actinopteri,Acanthuriformes,Acanthuridae,Ctenochaetus,,NA,NA,-1,175436,Ctenochaetus striatus,species,0.0179
+Zotu74,1489872,insect,Percomorphaceae,clade,1,Metazoa,Chordata,Actinopteri,,,,,212121111,ddddddddd,2,75013,Acanthurus guttatus,species,0.0446
+Zotu75,123369,insect,Euacanthomorphacea,clade,0.9996,Metazoa,Chordata,Actinopteri,,,,,2.12112E+20,ddddddddddddddbdddddd,3,241500,Novaculichthys taeniourus,species,0.0513
+Zotu76,75027,insect,Naso,genus,1,Metazoa,Chordata,Actinopteri,Acanthuriformes,Acanthuridae,Naso,,2.12121E+14,ddddddddddddadd,2,238067,Naso vlamingii,species,0.0319
+Zotu77,75027,insect,Naso,genus,1,Metazoa,Chordata,Actinopteri,Acanthuriformes,Acanthuridae,Naso,,2.12121E+11,dddddddNdddd,2,238058,Naso elegans,species,0.0242
+Zotu78,7776,insect,Gnathostomata,clade,1,Metazoa,Chordata,,,,,,2.12121E+16,ddddddcdddddddddd,2,163143,Kyphosus vaigiensis,species,0.0434
+Zotu79,30863,insect,Pomacentridae,family,1,Metazoa,Chordata,Actinopteri,,Pomacentridae,,,2.12112E+13,dddddddddddddd,2,91607,Chromis chromis,species,0.0507
+Zotu80,1489872,insect,Percomorphaceae,clade,1,Metazoa,Chordata,Actinopteri,,,,,2.12121E+12,ddddddddddddd,2,1484168,Zebrasoma xanthurum,species,0.0401
+Zotu81,131567,insect,cellular organisms,no rank,1,,,,,,,,21211121,dddddddd,2,126671,Chlorurus sordidus,species,0.0662
+Zotu82,1489872,insect,Percomorphaceae,clade,1,Metazoa,Chordata,Actinopteri,,,,,2.12112E+16,ddd_]Lddddddddddd,2,334904,Parupeneus indicus,species,0.0589
+Zotu83,1489872,insect,Percomorphaceae,clade,1,Metazoa,Chordata,Actinopteri,,,,,212121111,ddddddddd,2,75013,Acanthurus guttatus,species,0.0408
+Zotu84,131567,insect,cellular organisms,no rank,1,,,,,,,,21211121,dddddddd,2,126671,Chlorurus sordidus,species,0.0586
+Zotu85,1489872,insect,Percomorphaceae,clade,1,Metazoa,Chordata,Actinopteri,,,,,2.12221E+19,dddddddaddddaddddddd,3,89952,Merluccius productus,species,0.1278
+Zotu86,123369,insect,Euacanthomorphacea,clade,1,Metazoa,Chordata,Actinopteri,,,,,2.12111E+15,ddddY;dddddddUdd,2,334904,Parupeneus indicus,species,0.0513
+Zotu87,32443,insect,Teleostei,infraclass,1,Metazoa,Chordata,Actinopteri,,,,,211222221,ddddddddd,2,876643,Uropterygius macrocephalus,species,0.0831
+Zotu88,1489872,insect,Percomorphaceae,clade,1,Metazoa,Chordata,Actinopteri,,,,,2.12112E+16,dddbMLddddddddddd,2,334904,Parupeneus indicus,species,0.0602
+Zotu89,8247,insect,Labridae,family,1,Metazoa,Chordata,Actinopteri,Labriformes,Labridae,,,212111211,ddddddddd,2,247628,Scarus rubroviolaceus,species,0.0555
+Zotu90,1489872,insect,Percomorphaceae,clade,1,Metazoa,Chordata,Actinopteri,,,,,212121111,ddddddddd,2,390315,Ctenochaetus hawaiiensis,species,0.0395
+Zotu91,75019,insect,Ctenochaetus,genus,NA,Metazoa,Chordata,Actinopteri,Acanthuriformes,Acanthuridae,Ctenochaetus,,NA,NA,-1,175436,Ctenochaetus striatus,species,0.0153
+Zotu92,1489872,insect,Percomorphaceae,clade,1,Metazoa,Chordata,Actinopteri,,,,,21211212211,ddddddddddd,2,231458,Chromis xanthochira,species,0.1004
+Zotu93,123366,insect,Eurypterygia,clade,0.9999,Metazoa,Chordata,Actinopteri,,,,,2.12221E+13,ddddddFddddddd,2,365067,Engraulinae,subfamily,0.088
+Zotu94,1489872,insect,Percomorphaceae,clade,1,Metazoa,Chordata,Actinopteri,,,,,2.12112E+11,dddddcdddddd,2,229088,Abudefduf bengalensis,species,0.0729

@@ -1,0 +1,205 @@
+domain	kingdom	phylum	class	order	family	genus	species	OTU	id_method	numberOfUnq_BlastHits	B001	B002	BMSP001	BMSP002	BMSP003	BMSP004	BMSP005	BMSP006	BMSP007	BMSP008	BMSP009	BMSP010	BMSP011	BMSP012	BMSP013	BMSP014	BMSP015	BMSP016	BMSP017	BMSP018	BMSP019	BMSP020	BMSP021	BMSP022	BMSP023	BMSP024	BMSP025	BMSP026	BMSP027	BMSP028	BMSP029	BMSP030	BMSP031	BMSP032	BMSP033	BMSP034	BMSP035	BMSP036	BMSP037	BMSP038
+Eukaryota			Pelagophyceae	Pelagomonadales		Pelagomonas	Pelagomonas calceolata	Zotu4	LCA	1	0	0	1366	3248	589	3	71	10	0	1	0	5570	1138	0	196	0	34	0	9624	68	0	43	6	104	0	3752	2274	864	2651	178	1	76	33	0	10881	11495	347	0	9	0
+Eukaryota	Viridiplantae	Chlorophyta	Chloropicophyceae	Chloropicales	Chloropicaceae	Chloroparvula	dropped	Zotu9	LCA	3	0	0	7	332	161	496	3362	467	1655	158	0	441	2876	7592	1706	182	45	0	457	2239	970	652	516	1289	0	229	393	658	205	1131	333	890	168	0	0	405	629	824	467	1
+Eukaryota	Viridiplantae	Chlorophyta	Mamiellophyceae	Mamiellales	Mamiellaceae	Micromonas	Micromonas commoda	Zotu12	LCA	1	0	0	1261	0	856	0	1	73	0	0	0	1449	0	0	348	676	18	0	4170	1	0	36	2	255	0	1667	4949	234	1732	147	195	0	39	0	4419	5660	131	326	4	1
+Eukaryota			Pelagophyceae	Pelagomonadales		Pelagomonas	Pelagomonas calceolata	Zotu27	LCA	1	0	0	438	7	0	1107	0	3	0	0	0	3992	1755	0	1	105	74	0	799	0	61	35	0	0	0	1007	490	319	1536	36	0	0	13	0	645	1914	437	0	0	0
+Eukaryota	Viridiplantae	Chlorophyta	Chloropicophyceae	Chloropicales	Chloropicaceae	Chloropicon	Chloropicon sieburthii	Zotu30	LCA	1	0	0	13	1140	0	0	343	248	0	0	0	439	3	6631	0	21	196	0	76	4722	0	374	1	362	0	184	33	395	0	249	0	0	46	0	56	1030	60	0	0	0
+Eukaryota	Metazoa	Cnidaria	Anthozoa	Scleractinia	Poritidae	Porites	dropped	Zotu56	LCA	5	0	0	7147	0	0	0	42	37	0	198	0	0	0	0	0	0	22	0	17	0	0	0	10	188	0	0	0	0	0	35	0	871	36	0	0	154	0	0	6	0
+Eukaryota	Metazoa	Arthropoda	Hexanauplia	Calanoida	Paracalanidae	Bestiolina	Bestiolina similis	Zotu78	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	4045	0	0	103	0	230	0	0	0	9	0	0	1	0	0	0	1	343	0	0
+Eukaryota	Viridiplantae	Chlorophyta	Chloropicophyceae	Chloropicales	Chloropicaceae	Chloropicon	Chloropicon sieburthii	Zotu84	LCA	1	0	0	1	0	0	0	0	36	0	0	0	48	810	2771	104	0	402	0	0	0	0	0	0	208	0	14	0	35	0	0	0	0	2	0	0	11	0	0	0	0
+Eukaryota	Metazoa	Arthropoda	Hexanauplia	Calanoida	Acartiidae	Acartia	Acartia negligens	Zotu88	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	6357	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota	Viridiplantae	Chlorophyta	Chloropicophyceae	Chloropicales	Chloropicaceae	Chloropicon	Chloropicon roscoffensis	Zotu91	LCA	1	0	0	26	1669	102	0	0	34	140	0	0	22	7	761	22	2	1	0	8	1866	0	15	42	76	0	33	51	28	4	5	0	0	9	0	0	231	26	0	0	0
+Eukaryota	Viridiplantae	Chlorophyta	Chloropicophyceae	Chloropicales	Chloropicaceae	Chloropicon	Chloropicon sieburthii	Zotu133	LCA	1	0	0	37	6	15	0	0	46	0	0	0	32	0	1889	0	0	0	0	15	387	51	41	14	156	0	32	0	207	0	12	0	0	0	0	0	369	0	0	0	0
+Eukaryota	Viridiplantae	Chlorophyta	Mamiellophyceae	Mamiellales	Mamiellaceae	Micromonas	Micromonas commoda	Zotu145	LCA	1	0	0	0	0	0	0	422	102	0	560	0	0	0	0	0	243	0	0	81	0	95	10	273	192	0	36	11	7	0	5	24	80	63	0	0	111	0	129	629	0
+Eukaryota		Haptophyta		Isochrysidales	Noelaerhabdaceae	dropped	dropped	Zotu152	LCA	4	0	0	213	2	2316	169	0	1	0	0	0	464	33	0	0	0	173	0	0	177	0	7	0	0	0	27	0	139	0	19	0	0	11	0	0	62	0	0	0	0
+Eukaryota			Dinophyceae				uncultured dinoflagellate	Zotu179	LCA	1	0	0	14	0	21	0	9	94	0	8	0	153	1674	0	906	31	230	0	161	24	65	96	8	129	0	50	0	62	115	48	142	42	35	0	35	201	0	68	5	1
+Eukaryota	Viridiplantae	Chlorophyta	Chloropicophyceae	Chloropicales	Chloropicaceae	Chloroparvula	Chloroparvula pacifica	Zotu191	LCA	1	0	0	358	1	0	0	0	0	0	0	0	51	585	0	0	0	0	0	1	529	0	0	0	0	0	49	0	20	103	0	0	0	0	0	0	740	0	0	0	0
+Eukaryota		Haptophyta		Phaeocystales	Phaeocystaceae	Phaeocystis	Phaeocystis globosa	Zotu207	LCA	1	0	0	245	0	0	124	16	5	0	53	0	548	0	27	0	1	86	0	344	0	35	8	0	27	0	151	166	43	155	21	0	0	1	0	606	640	256	0	0	0
+Eukaryota	Metazoa	Arthropoda	Hexanauplia	Calanoida	Clausocalanidae	Clausocalanus	Clausocalanus furcatus	Zotu211	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	4011	0	0	0	0	0	0	0	0	0	0	0	0	203	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Arthropoda	Hexanauplia	Poecilostomatoida	Oncaeidae	Oncaea	Oncaea scottodicarloi	Zotu229	LCA	1	0	0	0	0	0	0	0	0	0	0	0	2679	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota	Viridiplantae	Chlorophyta	Chloropicophyceae	Chloropicales	Chloropicaceae	Chloropicon	Chloropicon primus	Zotu249	LCA	1	0	0	0	745	0	0	0	0	0	0	0	3	0	0	0	0	0	0	0	683	0	0	0	0	0	0	373	9	0	0	0	0	0	0	285	1	0	0	0	0
+Eukaryota	Metazoa	Chordata	Mammalia	Primates	Hominidae	Homo	Homo sapiens	Zotu250	LCA	1	0	0	0	0	3	0	626	44	126	0	0	60	0	789	0	0	0	0	0	0	47	0	117	29	0	42	0	196	0	0	0	141	43	0	3	0	0	1633	0	0
+Eukaryota		Cercozoa	Chlorarachniophyceae			Bigelowiella	Bigelowiella natans	Zotu268	LCA	1	0	0	0	0	0	0	0	23	0	0	0	41	0	0	0	153	15	0	97	0	35	13	136	276	0	36	66	32	274	128	68	223	38	0	0	0	0	278	93	0
+Eukaryota	Metazoa	Arthropoda	Hexanauplia	Calanoida	dropped	dropped	dropped	Zotu270	LCA	2	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2018	0	0	0	0	0	4	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota	Viridiplantae	Chlorophyta	Chloropicophyceae	Chloropicales	Chloropicaceae	Chloropicon	Chloropicon roscoffensis	Zotu275	LCA	1	0	0	0	8	0	0	0	1	0	0	0	0	0	707	0	0	0	0	0	56	0	0	0	1	0	1	0	1	0	0	0	0	0	0	1261	13	0	0	0	0
+Eukaryota		Haptophyta		Isochrysidales	Noelaerhabdaceae	dropped	dropped	Zotu300	LCA	3	0	0	757	100	1	0	0	64	0	0	0	148	0	0	0	0	0	0	0	237	0	22	112	0	0	66	0	95	0	19	0	0	3	0	0	30	0	0	0	0
+Eukaryota	Viridiplantae	Chlorophyta	Chloropicophyceae	Chloropicales	Chloropicaceae	Chloropicon	Chloropicon primus	Zotu304	LCA	1	0	0	0	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	110	719	0	0	0	0	0	8	80	137	0	0	0	0	0	0	0	632	0	0	0	1
+Eukaryota	Metazoa	Arthropoda	Hexanauplia	Calanoida	Calocalanidae	Calocalanus	Calocalanus pavo	Zotu316	LCA	1	0	0	0	0	0	0	0	0	0	27	0	0	0	0	0	0	0	0	0	0	2	0	0	0	0	0	0	0	0	0	0	1575	42	0	0	0	0	0	0	0
+Eukaryota			Dinophyceae				uncultured dinoflagellate	Zotu317	LCA	1	0	0	11	1	0	531	11	38	0	3	0	168	331	0	0	119	20	0	9	500	306	93	0	376	0	65	1	118	455	112	24	0	27	0	170	128	16	366	85	0
+Eukaryota	Metazoa	Arthropoda	Hexanauplia	Calanoida	Paracalanidae	Paracalanus	Paracalanus denudatus	Zotu356	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1347	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota			Dinophyceae	dropped	dropped	dropped	dropped	Zotu357	LCA	2	0	0	41	0	0	213	0	46	0	8	0	71	0	0	250	25	617	0	1	24	92	43	0	64	0	37	0	83	48	56	0	164	8	0	141	36	226	97	62	0
+Eukaryota		Haptophyta		Isochrysidales	Noelaerhabdaceae	dropped	dropped	Zotu381	LCA	3	0	0	0	0	4	51	271	100	0	0	0	14	0	0	0	67	21	0	0	645	43	23	0	2	0	9	0	64	0	17	0	0	23	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Arthropoda	Hexanauplia	Poecilostomatoida	Oncaeidae	Oncaea	Oncaea media	Zotu474	LCA	1	0	0	0	0	34	0	0	0	0	0	0	229	0	505	0	0	0	0	0	0	0	0	0	0	0	4	0	0	165	28	0	0	0	0	0	96	0	0	0	0
+Eukaryota	Metazoa	Arthropoda	Hexanauplia	Calanoida	Mecynoceridae	Mecynocera	Mecynocera clausi	Zotu492	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1124	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota	Fungi	Ascomycota	Eurotiomycetes	Eurotiales	Aspergillaceae	Aspergillus	dropped	Zotu507	LCA	4	969	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota			Dinophyceae	Gymnodiniales	Kareniaceae		uncultured Kareniaceae	Zotu548	LCA	1	0	0	0	0	230	0	0	10	0	0	0	0	0	0	0	58	73	0	0	0	69	34	2	13	0	5	0	21	68	56	12	1	4	0	0	2	373	19	8	0
+Eukaryota			Dinophyceae				uncultured dinoflagellate	Zotu580	LCA	1	0	0	8	18	0	391	0	3	0	0	0	0	1	0	0	18	59	0	0	23	220	8	0	17	0	21	0	25	76	12	40	0	5	0	52	23	1	4	3	0
+Eukaryota	Viridiplantae	Prasinodermophyta	Prasinodermophyceae	Prasinodermales	Prasinodermaceae	Prasinoderma	Prasinoderma coloniale	Zotu593	LCA	1	0	0	0	0	0	0	1021	22	0	59	0	3	0	0	0	0	9	0	0	0	2	10	432	112	0	42	0	0	1	55	49	3	46	0	0	0	0	65	38	0
+Eukaryota	Metazoa	Arthropoda	Hexanauplia	Calanoida	Calocalanidae	Calocalanus	Calocalanus pavo	Zotu605	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	829	0	0	0	0	0	0	0	0
+Eukaryota			Dinophyceae	dropped	dropped	dropped	dropped	Zotu627	LCA	2	0	0	24	0	1059	18	1	1	0	0	0	0	2	0	0	1	0	0	0	0	0	10	0	0	0	5	0	8	7	3	2	0	2	0	0	0	0	0	0	0
+Eukaryota			Dinophyceae	dropped	dropped	dropped	dropped	Zotu643	LCA	2	0	0	0	0	0	101	0	3	0	8	0	53	304	0	0	0	14	0	4	39	46	27	1	57	0	26	1	16	75	21	0	0	9	0	1	11	149	9	24	0
+Eukaryota		Bacillariophyta	Mediophyceae	Cymatosirales	Cymatosiraceae	Minutocellus	Minutocellus polymorphus	Zotu646	LCA	1	0	0	0	0	0	0	223	121	0	0	0	0	0	0	0	0	0	0	0	0	22	0	41	104	0	2	0	0	0	17	5	0	127	0	0	4	0	39	105	0
+Eukaryota	Viridiplantae	Chlorophyta	Chloropicophyceae	Chloropicales	Chloropicaceae	Chloroparvula	Chloroparvula pacifica	Zotu649	LCA	1	0	0	1	2	0	0	0	0	0	0	0	100	1	0	0	0	0	0	585	2	0	0	0	0	0	3	0	26	0	0	0	0	0	0	0	4	0	0	0	0
+Eukaryota			Dinophyceae	Gymnodiniales	Kareniaceae		uncultured Kareniaceae	Zotu663	LCA	1	0	0	0	0	0	0	5	3	0	0	0	21	0	0	0	2	87	0	6	133	5	4	0	11	0	9	5	4	1	0	0	429	0	0	0	77	0	1	0	0
+Eukaryota	Metazoa	Chordata	Mammalia	Primates	Hominidae	Homo	Homo sapiens	Zotu737	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	696	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota			Dinophyceae				uncultured dinoflagellate	Zotu738	LCA	1	0	0	0	0	0	0	0	5	0	7	0	15	0	0	0	33	12	0	0	0	4	19	155	83	0	8	312	7	124	18	0	38	5	0	0	0	37	2	0	0
+Eukaryota	Metazoa	Arthropoda	Hexanauplia	Calanoida	Clausocalanidae	Clausocalanus	dropped	Zotu746	LCA	2	0	0	751	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Arthropoda	Hexanauplia	Calanoida	Calocalanidae	Calocalanus	Calocalanus plumulosus	Zotu768	LCA	1	0	0	324	0	0	0	0	0	0	0	0	0	0	0	0	416	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota			Dinophyceae				uncultured dinoflagellate	Zotu828	LCA	1	0	0	124	0	0	0	0	25	0	0	0	56	25	0	0	0	33	0	0	36	1	48	63	136	0	36	3	25	31	54	0	22	46	0	105	19	0	1	6	0
+Eukaryota			Dinophyceae	dropped	dropped	dropped	dropped	Zotu925	LCA	2	0	0	0	0	0	0	152	5	0	0	0	19	1	0	33	0	2	0	47	1	0	47	1	5	0	12	72	15	13	22	3	2	5	0	219	5	0	30	1	0
+Eukaryota			Dinophyceae	dropped	dropped	dropped	dropped	Zotu980	LCA	2	0	0	8	0	0	0	0	4	0	1	0	47	0	0	0	0	49	0	0	5	104	13	2	75	0	3	0	6	34	9	31	19	8	0	0	0	1	226	8	0
+Eukaryota	Metazoa	Chordata	Actinopteri	Acanthuriformes	Acanthuridae	Zebrasoma	dropped	Zotu995	LCA	4	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	220	0	0	0	0	0	0	0	184	38	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Arthropoda	Hexanauplia	Calanoida	Clausocalanidae	Clausocalanus	Clausocalanus paululus	Zotu1051	LCA	1	0	0	67	0	0	0	0	0	0	0	0	0	10	0	0	0	0	0	90	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	285	17	0	0	0	0
+Eukaryota			Dinophyceae	dropped	dropped	dropped	dropped	Zotu1063	LCA	2	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	2	0	8	0	0	0	0	0	3	0	322	2	0	0	0	0	53	100	0
+Eukaryota			Dinophyceae	Gymnodiniales	Kareniaceae		uncultured Kareniaceae	Zotu1067	LCA	1	0	0	2	0	4	3	0	1	0	0	0	31	0	0	1	39	75	0	100	23	7	21	6	7	0	5	4	18	13	20	22	16	2	0	3	11	2	201	1	0
+Eukaryota	Metazoa	Porifera	Demospongiae	Verongiida	Pseudoceratinidae	Pseudoceratina	dropped	Zotu1071	LCA	5	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	151	31	39	165	0	0	0	0	0	2	0	0	14	0	0	0	0	18	0	0
+Eukaryota	Viridiplantae	Chlorophyta	Mamiellophyceae	Dolichomastigales	Dolichomastigaceae	Dolichomastix	Dolichomastix tenuilepis	Zotu1098	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	68	22	0	0	0	0	0	3	0	57	17	0	0	0	0	227	24	0
+Eukaryota	Metazoa	Arthropoda	Hexanauplia	Calanoida	Paracalanidae	Bestiolina	Bestiolina similis	Zotu1121	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	16	425	0	0	0	0	0	0	0	280	0	0	0	0	0	0	0	0	0
+Eukaryota			Dinophyceae	dropped	dropped	dropped	dropped	Zotu1138	LCA	3	0	0	0	393	0	0	0	6	4	0	0	0	0	0	0	0	11	0	0	0	0	0	0	4	0	0	0	0	0	0	10	0	0	0	0	0	0	66	15	0
+Eukaryota	Viridiplantae	Chlorophyta	Chloropicophyceae	Chloropicales	Chloropicaceae	Chloroparvula	Chloroparvula pacifica	Zotu1162	LCA	1	0	0	0	201	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	3	0	0	0	0	0	0	0	206	0	0	0	0
+Eukaryota			Dinophyceae	dropped	dropped	dropped	dropped	Zotu1169	LCA	2	0	0	0	0	0	0	9	19	0	0	0	13	45	0	1	3	4	0	1	55	1	17	42	12	0	6	3	4	62	13	2	49	1	0	0	32	0	24	8	0
+Eukaryota			Dinophyceae	dropped	dropped	dropped	dropped	Zotu1174	LCA	2	0	0	4	0	0	0	0	26	0	0	0	35	0	0	0	0	14	0	0	95	26	18	4	0	0	5	0	38	2	1	23	0	4	0	106	18	0	12	0	0
+Eukaryota			Dinophyceae				uncultured dinoflagellate	Zotu1225	LCA	1	0	0	0	0	0	0	0	10	0	0	0	0	0	0	0	1	0	0	0	0	0	9	0	16	0	1	2	0	0	2	24	0	1	0	0	3	4	364	2	0
+Eukaryota			Dinophyceae				uncultured dinoflagellate	Zotu1322	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	5	0	0	0	0	381	0	0	0	0
+Eukaryota			Dinophyceae	dropped	dropped	dropped	dropped	Zotu1344	LCA	3	0	0	5	2	0	1	81	27	0	2	0	0	0	19	0	10	1	0	17	8	12	37	199	79	0	10	4	14	1	11	0	21	2	0	0	0	1	16	8	0
+Eukaryota			Dinophyceae	Gymnodiniales	Kareniaceae	dropped	dropped	Zotu1350	LCA	3	0	0	0	0	0	0	0	26	0	0	0	7	0	0	0	0	3	0	20	41	0	32	4	53	0	16	1	10	14	21	20	8	12	0	0	37	25	115	21	0
+Eukaryota	Metazoa	Chordata	Ascidiacea	Phlebobranchia	Ascidiidae	Ascidia	Ascidia ahodori	Zotu1375	LCA	1	0	0	0	0	6	0	0	0	0	0	0	0	0	0	0	0	0	0	13	0	0	4	0	0	0	28	123	0	10	0	0	0	0	0	70	45	0	0	0	0
+Eukaryota	Metazoa	Arthropoda	Hexanauplia	Poecilostomatoida	Sapphirinidae	Sapphirina	dropped	Zotu1390	LCA	2	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	410	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Chordata	Actinopteri	Labriformes	Labridae	dropped	dropped	Zotu1423	LCA	3	0	0	0	0	0	0	0	0	0	117	0	0	0	0	0	0	0	0	0	0	0	0	0	92	0	0	0	96	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota			Dinophyceae	Gymnodiniales	Kareniaceae	dropped	dropped	Zotu1452	LCA	3	0	0	0	0	65	0	0	5	0	0	0	1	0	0	0	10	23	0	0	14	4	6	0	9	0	6	4	6	86	7	5	0	2	0	100	1	0	0	1	0
+Eukaryota			Dinophyceae				uncultured dinoflagellate	Zotu1460	LCA	1	0	0	88	0	0	44	72	11	0	0	0	0	0	0	0	1	4	0	0	7	0	22	0	25	0	2	0	12	3	54	19	0	5	0	0	0	0	0	4	0
+Eukaryota		Haptophyta		Isochrysidales	Noelaerhabdaceae	dropped	dropped	Zotu1468	LCA	3	0	0	0	0	0	0	0	71	0	0	0	0	0	0	0	0	0	0	0	192	0	0	0	12	0	2	0	15	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Arthropoda	Hexanauplia	Calanoida	Calocalanidae	Calocalanus	Calocalanus pavo	Zotu1477	LCA	1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	268	0	19	0	0	0	0	0	0	0	0
+Eukaryota			Dinophyceae	Gymnodiniales	Kareniaceae	dropped	dropped	Zotu1659	LCA	6	0	0	3	0	282	0	0	0	0	3	0	5	0	0	0	0	0	0	5	15	0	10	0	0	0	0	0	10	0	6	0	0	0	0	11	2	0	7	0	0
+Eukaryota			Dinophyceae	dropped	dropped	dropped	dropped	Zotu1660	LCA	3	0	0	7	0	0	38	26	15	0	1	0	1	0	0	0	12	2	0	0	26	17	8	11	23	0	0	0	11	19	39	19	9	1	0	0	9	8	9	6	0
+Eukaryota	Metazoa	Chordata	Ascidiacea	Phlebobranchia	Ascidiidae	Ascidia	Ascidia ahodori	Zotu1900	LCA	1	0	0	0	0	0	0	0	2	0	0	0	0	0	0	0	0	1	0	58	0	0	0	3	10	0	58	0	1	7	1	0	0	11	1	1	19	0	7	25	0
+Eukaryota			Dinophyceae	dropped	dropped	dropped	dropped	Zotu1919	LCA	6	0	0	0	0	0	0	0	3	0	0	0	0	0	1	0	0	0	0	0	28	218	9	0	1	0	0	0	1	0	0	0	0	1	0	0	2	0	0	5	0
+Eukaryota			Pelagophyceae	Pelagomonadales		Aureococcus	Aureococcus anophagefferens	Zotu1934	LCA	1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	194	0	0	0	0	0	13	0	3	0	3	0	0	0	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Porifera	Demospongiae	dropped	dropped	dropped	dropped	Zotu1979	LCA	6	0	0	0	0	0	0	86	4	0	0	0	0	0	0	0	0	0	0	0	0	0	2	0	7	0	0	35	0	57	4	0	0	1	0	0	13	0	0	0	0
+Eukaryota			Dinophyceae	dropped	dropped	dropped	dropped	Zotu1992	LCA	6	0	0	8	74	0	0	0	9	31	1	0	1	0	0	1	2	12	0	0	18	4	27	0	13	0	12	4	11	6	7	2	1	0	0	0	3	78	1	6	0
+Eukaryota	Metazoa	Arthropoda	Hexanauplia	Poecilostomatoida	Oncaeidae	Oncaea	dropped	Zotu1998	LCA	2	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	4	0	0	0	0	0	0	0	0	0	219	0	0	0	0
+Eukaryota			Dinophyceae				uncultured dinoflagellate	Zotu2036	LCA	1	0	0	14	0	0	2	0	2	0	0	0	5	1	0	0	0	40	0	0	11	95	7	0	4	0	2	0	0	35	4	1	0	0	0	8	9	5	0	2	0
+Eukaryota	Metazoa	Chordata	Actinopteri	Chaetodontiformes	Chaetodontidae	Chaetodon	dropped	Zotu2046	LCA	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	195	0	0	0	0
+Eukaryota	Metazoa	Chordata	Actinopteri	Acanthuriformes	Acanthuridae	Acanthurus	Acanthurus nigroris	Zotu2059	LCA	1	0	0	0	0	0	189	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota	Viridiplantae	Chlorophyta	Chloropicophyceae	Chloropicales	Chloropicaceae	Chloropicon	Chloropicon laureae	Zotu2085	LCA	1	0	0	0	0	0	0	0	0	0	0	0	5	0	249	0	0	0	0	14	0	0	0	0	11	0	20	0	26	0	0	0	0	0	0	0	76	0	0	0	0
+Eukaryota	Metazoa	Porifera	Homoscleromorpha	Homosclerophorida	Oscarellidae	Oscarella	dropped	Zotu2095	LCA	6	0	0	0	0	0	0	182	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	3	0	0	0	0	0	1	0	0	0
+Eukaryota			Dinophyceae	dropped	dropped	dropped	dropped	Zotu2100	LCA	3	0	0	0	0	0	17	0	0	0	0	0	0	0	0	0	0	13	0	0	130	0	13	0	4	0	0	0	0	0	2	0	0	2	0	0	0	0	12	0	0
+Eukaryota			Dinophyceae	dropped	dropped	dropped	dropped	Zotu2106	LCA	2	0	0	0	0	0	0	0	1	0	0	0	4	0	0	0	0	36	0	0	93	0	14	0	7	0	3	0	11	21	0	0	0	0	0	0	2	0	4	1	0
+Eukaryota			Dinophyceae	dropped	dropped	dropped	dropped	Zotu2175	LCA	2	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	143	0	0	0	0	0	1	0	37	0	0	0	0	0	8	0	0	0	0	0	0	0	0	0	0
+Eukaryota		Rhodophyta	Florideophyceae	Ceramiales	Rhodomelaceae	Laurencia	Laurencia pacifica	Zotu2221	LCA	2	0	0	0	0	0	0	0	161	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	3	0	0	0	0	0	0	0	0	0	0
+Eukaryota			Dinophyceae				uncultured dinoflagellate	Zotu2240	LCA	2	0	0	0	0	0	7	3	16	0	0	0	1	0	0	1	3	19	0	46	4	1	10	5	3	0	9	0	38	0	2	9	18	4	0	0	6	2	1	1	0
+Eukaryota			Dinophyceae				uncultured dinoflagellate	Zotu2331	LCA	1	0	0	0	0	0	0	0	0	0	0	0	7	0	0	0	1	21	0	105	1	0	2	0	3	0	0	0	0	0	0	0	0	0	0	0	3	2	0	0	0
+Eukaryota			Dinophyceae				uncultured dinoflagellate	Zotu2361	LCA	1	0	0	0	0	0	0	0	28	0	0	0	0	0	0	0	0	0	0	0	0	115	6	0	5	0	0	0	0	0	1	0	4	5	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Arthropoda	Hexanauplia	Calanoida	Eucalanidae	Eucalanus	Eucalanus pseudattenuatus	Zotu2403	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	138	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota			Phaeophyceae	Ralfsiales	Mesosporaceae	Mesospora	Mesospora indopacifica	Zotu2405	LCA	1	0	0	0	0	0	0	0	57	0	2	0	0	0	0	0	0	0	0	0	0	0	0	0	24	0	0	0	0	0	0	4	0	0	0	0	0	0	49	0	0
+Eukaryota	Metazoa	Chordata	Actinopteri	Holocentriformes	Holocentridae	Myripristis	dropped	Zotu2406	LCA	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	155	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota			Dinophyceae	dropped	dropped	dropped	dropped	Zotu2417	LCA	2	0	0	0	0	0	0	2	1	0	16	0	11	48	0	0	12	2	0	0	4	0	28	0	5	0	9	0	10	33	0	2	3	0	0	1	3	0	17	1	0
+Eukaryota	Metazoa	Echinodermata	Echinoidea	Cidaroida	Cidaridae	Eucidaris	Eucidaris metularia	Zotu2425	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	97	0	2	0	0	0	0	0	0	29	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Chordata	Mammalia	Primates	Hominidae	Homo	Homo sapiens	Zotu2498	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	309	0	0
+Eukaryota			Dinophyceae	Prorocentrales	Prorocentraceae	Prorocentrum	Prorocentrum micans	Zotu2504	LCA	2	0	0	0	0	0	0	0	2	0	0	0	1	0	148	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Porifera	Demospongiae	Axinellida	Raspailiidae	Lithoplocamia	Lithoplocamia lithistoides	Zotu2555	LCA	1	0	0	86	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	43	0	0	0	0
+Eukaryota			Dinophyceae	Gymnodiniales	Kareniaceae		uncultured Kareniaceae	Zotu2600	LCA	1	0	0	0	0	0	56	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	3	9	3	0	0	0	0	0	1	0	3	1	0	0	4	0	76	1	0
+Eukaryota			Dinophyceae	Gymnodiniales	Kareniaceae		uncultured Kareniaceae	Zotu2645	LCA	1	0	0	0	0	17	2	0	1	0	2	0	1	0	0	0	2	72	0	3	0	1	6	0	10	0	0	0	0	12	8	2	0	1	0	0	0	0	5	0	0
+Eukaryota	Metazoa	Porifera	Demospongiae	Suberitida	dropped	dropped	dropped	Zotu2699	LCA	8	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	110	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Porifera	Demospongiae	Tetractinellida	Theonellidae	dropped	dropped	Zotu2800	LCA	7	0	0	0	0	0	0	0	0	0	0	0	7	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	99	0	0	0	8	0	0	0	0	0	0	0
+Eukaryota			Dinophyceae	dropped	dropped	dropped	dropped	Zotu2816	LCA	2	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	19	12	5	8	13	0	0	0	6	6	2	0	0	0	0	0	17	0	57	0	0
+Eukaryota	Metazoa	Porifera	Demospongiae	Poecilosclerida	Crambeidae	Monanchora	dropped	Zotu2822	LCA	5	0	0	0	0	0	0	108	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2	0	0	0	0	0	0	0	0	0	0
+Eukaryota			Dinophyceae	Gymnodiniales	Kareniaceae		uncultured Kareniaceae	Zotu2875	LCA	1	0	0	1	0	0	0	0	0	0	0	0	7	1	0	0	0	0	0	15	32	3	5	26	7	0	0	5	0	1	6	0	0	0	0	15	1	0	1	0	0
+Eukaryota		Bacillariophyta	Mediophyceae	Cymatosirales	Cymatosiraceae	Minutocellus	Minutocellus polymorphus	Zotu2884	LCA	1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	103	0	0
+Eukaryota	Viridiplantae	Chlorophyta	Ulvophyceae	Dasycladales	Polyphysaceae	Acetabularia	Acetabularia caliculus	Zotu2887	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	70	0	0	0	0	0	0	0	0	0	0	0	0	0	18	11	0
+Eukaryota	Metazoa	Arthropoda	Hexanauplia	Calanoida	Lucicutiidae	Lucicutia	Lucicutia flavicornis	Zotu2927	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	284	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota			Dinophyceae	Gymnodiniales	Kareniaceae		uncultured Kareniaceae	Zotu2939	LCA	1	0	0	0	0	0	2	0	0	0	0	0	3	0	0	41	0	0	0	1	0	0	7	1	11	0	0	1	13	0	8	1	0	2	0	1	1	4	4	0	0
+Eukaryota			Dinophyceae				uncultured dinoflagellate	Zotu2942	LCA	1	0	0	0	0	13	0	0	15	0	0	0	0	1	0	0	4	2	0	1	3	4	4	0	1	0	4	46	0	0	4	2	0	1	0	0	0	0	34	0	0
+Eukaryota			Dinophyceae				uncultured dinoflagellate	Zotu2944	LCA	1	0	0	0	0	0	0	0	15	0	0	0	0	0	0	0	0	0	0	100	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Echinodermata	Echinoidea	Camarodonta	Echinometridae	Colobocentrotus	Colobocentrotus atratus	Zotu2953	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	99	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota			Dinophyceae				uncultured dinoflagellate	Zotu3048	LCA	1	0	0	0	0	0	0	14	0	0	0	0	0	0	0	0	0	0	0	0	0	12	11	0	63	0	0	0	0	0	0	0	0	3	0	0	0	0	0	2	0
+Eukaryota		Haptophyta		Phaeocystales	Phaeocystaceae	Phaeocystis	Phaeocystis globosa	Zotu3081	LCA	1	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	11	0	0	46	0	0	0	0	0	0	46	0	0	0	0
+Eukaryota			Dinophyceae	dropped	dropped	dropped	dropped	Zotu3110	LCA	3	0	0	0	0	0	0	0	0	99	0	0	0	0	0	0	6	2	0	0	0	0	0	0	0	0	0	0	2	0	0	0	0	0	0	0	4	0	0	0	0
+Eukaryota		Rhodophyta	Florideophyceae	Ceramiales	Rhodomelaceae	Herposiphonia	Herposiphonia sparsa	Zotu3139	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	109	0	0	0	0	0	0	0	0	0	0	0	0	0	0	20	0
+Eukaryota	Metazoa	Arthropoda	Hexanauplia	Calanoida	Clausocalanidae	Clausocalanus	Clausocalanus minor	Zotu3141	LCA	1	0	0	0	0	0	0	0	0	0	178	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Echinodermata	Echinoidea	Camarodonta	Echinometridae	Echinometra	Echinometra mathaei	Zotu3189	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	32	0	0	0	0	0	0	0	0	4	0	0	0	0	0	51	0
+Bacteria		Proteobacteria	Alphaproteobacteria	Pelagibacterales	Pelagibacteraceae	Candidatus Pelagibacter	Candidatus Pelagibacter sp. RS39	Zotu3244	LCA	1	0	0	0	0	0	3	1	2	5	1	0	0	0	0	0	12	0	0	1	0	2	8	4	0	0	0	0	6	8	4	1	0	3	0	0	2	0	26	0	0
+Eukaryota	Metazoa	Porifera	Demospongiae	Chondrillida	Chondrillidae	Thymosiopsis	Thymosiopsis conglomerans	Zotu3255	LCA	1	0	0	73	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	7	0	0	0	0	0	0	0	0	0	0
+Eukaryota			Dinophyceae				uncultured dinoflagellate	Zotu3345	LCA	1	0	0	23	0	0	0	0	2	5	0	0	1	0	0	0	0	0	0	0	0	4	0	0	2	0	0	2	0	0	1	0	60	0	0	0	0	0	0	0	0
+Eukaryota			Dinophyceae	dropped	dropped	dropped	dropped	Zotu3373	LCA	6	0	0	0	0	0	6	0	2	116	0	0	4	0	0	0	0	0	0	0	1	10	1	1	5	0	3	0	0	4	3	5	0	0	0	0	3	0	0	0	0
+Eukaryota	Metazoa	Chordata	Actinopteri	Acanthuriformes	Acanthuridae	Acanthurus	Acanthurus thompsoni	Zotu3403	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	13	0	0	0	0	0	0	0	56	0	0	31	0	0	0	0	0	0	0
+Eukaryota			Dinophyceae	dropped	dropped	dropped	dropped	Zotu3422	LCA	2	0	0	77	0	0	0	0	0	0	0	0	6	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	8	0	0	0	0	0	0	0	14	0	1	0	0
+Eukaryota			Dinophyceae	Gymnodiniales	Kareniaceae		uncultured Kareniaceae	Zotu3438	LCA	1	0	0	31	0	0	0	0	0	0	0	0	27	0	0	0	0	29	0	0	0	0	0	0	3	0	2	0	1	0	0	4	0	1	0	0	2	0	0	0	0
+Eukaryota	Metazoa	Echinodermata	Ophiuroidea	Amphilepidida	Ophionereidae	Ophionereis	Ophionereis degeneri	Zotu3441	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	115	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Arthropoda	Hexanauplia	Calanoida	Clausocalanidae	Clausocalanus	Clausocalanus minor	Zotu3497	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	104	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota			Dinophyceae				uncultured dinoflagellate	Zotu3550	LCA	2	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	2	0	29	3	0	0	0	0	0	2	16	7	18	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota		Haptophyta		Phaeocystales	Phaeocystaceae	Phaeocystis	Phaeocystis globosa	Zotu3604	LCA	1	0	0	0	0	0	0	0	0	0	0	0	11	0	0	0	0	0	0	3	0	0	0	0	0	0	3	0	0	12	0	0	0	0	0	0	67	0	0	0	0
+Eukaryota	Metazoa	Porifera	Demospongiae	Tetractinellida	Geodiidae	Caminella	dropped	Zotu3607	LCA	2	0	0	0	0	0	0	0	44	0	9	0	0	0	0	0	0	0	0	0	0	0	7	0	16	0	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota			Dinophyceae	dropped	dropped	dropped	dropped	Zotu3683	LCA	2	0	0	0	0	0	0	0	3	8	0	0	10	12	0	0	0	0	0	0	0	3	3	1	11	0	2	0	5	4	0	0	0	0	0	0	0	0	16	0	0
+Bacteria		Cyanobacteria					uncultured cyanobacterium	Zotu3685	LCA	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	5	0	0	0	0	1	4	0	95	0	0	0	0	0	0	0	0	0
+Eukaryota			Dinophyceae				uncultured dinoflagellate	Zotu3707	LCA	1	0	0	0	0	0	0	0	0	0	0	0	3	0	0	0	0	0	0	24	2	1	0	0	5	0	3	10	5	9	0	1	3	0	0	0	6	2	0	0	0
+Eukaryota	Metazoa	Chordata	Actinopteri	Acanthuriformes	Acanthuridae	Ctenochaetus	dropped	Zotu3716	LCA	2	0	0	0	0	0	0	0	85	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	9	0	0	0	0	0	0	0
+Eukaryota			Dinophyceae	dropped	dropped	dropped	dropped	Zotu3755	LCA	2	0	0	0	0	0	1	62	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2	0	0	0	0	4	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota		Cercozoa	Chlorarachniophyceae			Bigelowiella	Bigelowiella natans	Zotu3769	LCA	1	0	0	0	0	0	0	0	0	0	2	0	0	0	0	0	0	0	0	15	0	0	2	0	21	0	9	0	0	0	11	0	0	2	0	0	0	0	0	0	0
+Eukaryota			Dinophyceae	Prorocentrales	Prorocentraceae	Prorocentrum	Prorocentrum micans	Zotu3778	LCA	2	0	0	0	0	11	0	4	1	0	0	0	2	0	0	0	7	0	0	0	0	2	6	0	4	0	0	0	19	0	11	1	0	0	0	0	0	21	10	0	0
+Eukaryota		Rhodophyta	Florideophyceae	Ceramiales	Rhodomelaceae	Chondria	Chondria sp. ARS-2010	Zotu3779	LCA	1	0	0	0	0	0	0	0	5	0	4	0	0	0	0	0	0	0	0	0	0	0	0	0	28	0	0	0	0	0	25	0	0	21	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Porifera					Porifera sp. HAW02	Zotu3907	LCA	1	0	0	0	0	0	0	0	28	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	79	0	0	0	0	0	0	0	0	5	0	0	0	0	0	0	0
+Eukaryota			Phaeophyceae	Ralfsiales	Neoralfsiaceae	Neoralfsia	Neoralfsia expansa	Zotu3969	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	5	30	0	0	0	0	0	5	0	1	0	0	0	0	0	18	0	0
+Eukaryota			Dinophyceae	Gymnodiniales	Kareniaceae	dropped	dropped	Zotu3976	LCA	3	0	0	3	48	0	0	0	3	0	0	0	5	0	0	0	0	0	0	0	0	3	2	2	2	0	0	3	0	0	1	0	0	0	0	0	0	0	0	0	0
+Eukaryota			Dinophyceae	Gymnodiniales	Kareniaceae		uncultured Kareniaceae	Zotu3997	LCA	1	0	0	0	0	0	28	0	0	0	0	0	1	0	0	0	1	0	0	1	1	3	1	0	0	0	2	0	0	1	0	1	4	8	0	1	0	1	4	4	0
+Eukaryota	Metazoa	Porifera	Demospongiae	dropped	dropped	dropped	dropped	Zotu4134	LCA	6	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0	0	0	39	0	0	0	0	2	0	0	0	0	9	0	3	0	0	0	0	0	0	0
+Eukaryota	Fungi	Ascomycota	Dothideomycetes	Cladosporiales	Cladosporiaceae	Cladosporium	Cladosporium cladosporioides	Zotu4165	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	75	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Chordata	Actinopteri	Acanthuriformes	Acanthuridae	Acanthurus	Acanthurus leucopareius	Zotu4172	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	114	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota		Rhodophyta	Florideophyceae	Ceramiales	Rhodomelaceae	Chondria	Chondria sp. ARS-2010	Zotu4186	LCA	1	0	0	0	0	0	0	0	25	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	20	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Chordata	Actinopteri	Acanthuriformes	Acanthuridae	Acanthurus	Acanthurus thompsoni	Zotu4250	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	47	0	0	0	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Sipuncula		Aspidosiphonidormes	Aspidosiphonidae	Aspidosiphon	Aspidosiphon laevis	Zotu4336	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	69	0
+Eukaryota			Dinophyceae				uncultured dinoflagellate	Zotu4410	LCA	1	0	0	0	0	0	0	21	2	0	0	0	0	0	0	0	22	0	0	0	0	1	1	0	2	0	0	0	4	0	9	0	2	0	0	0	2	0	0	0	0
+Eukaryota			Dinophyceae	dropped	dropped	dropped	dropped	Zotu4427	LCA	5	0	0	0	0	0	0	0	1	0	1	0	2	10	0	0	0	3	0	0	0	0	3	0	2	0	0	0	1	0	0	1	36	0	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Mollusca	Bivalvia	Mytilida	Mytilidae	Leiosolenus	Leiosolenus sp. HAW02	Zotu4552	LCA	1	0	0	0	0	0	0	0	12	0	0	0	46	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Porifera	Demospongiae	Polymastiida			Polymastiida sp. KY090	Zotu4588	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	14	0	0	0	0	0	0	0	0	0	0	0	24	0	5	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Chordata	Mammalia	Artiodactyla	Bovidae	Bos	Bos taurus	Zotu4657	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	5	0	77	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota			Dinophyceae	Gymnodiniales	Kareniaceae		uncultured Kareniaceae	Zotu4709	LCA	1	0	0	0	0	0	18	1	2	0	4	0	1	0	0	0	1	0	0	0	0	0	0	1	10	0	1	0	2	0	9	0	0	1	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Sipuncula		Aspidosiphonidormes	Aspidosiphonidae	Aspidosiphon	Aspidosiphon albus	Zotu4721	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	3	7	0	0	0	0	0	0	0	61	0	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Arthropoda	Insecta	Hemiptera	Belostomatidae	Appasus	Appasus major	Zotu4774	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	103	0	3	0	0	0	0	0	0	0
+Eukaryota			Dinophyceae	dropped	dropped	dropped	dropped	Zotu4782	LCA	3	0	0	0	0	58	0	0	0	0	0	0	0	0	0	0	2	0	0	1	0	0	5	1	1	0	0	0	2	0	1	0	0	0	0	0	0	1	4	0	0
+Eukaryota	Metazoa	Chordata	Actinopteri	Acanthuriformes	Acanthuridae	Acanthurus	dropped	Zotu4830	LCA	2	0	0	0	0	0	0	0	7	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	29	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Annelida	Polychaeta	Eunicida	Eunicidae	Eunice	Eunice afra	Zotu4883	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	22	0	0	0	0	0	0	0	28	0	32	1	0	0	0	0	0	0	0
+Eukaryota			Dinophyceae	dropped	dropped	dropped	dropped	Zotu4885	LCA	8	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2	29	0	0	0	2	0	0	5	2	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Echinodermata	Asteroidea	Spinulosida	Mithrodiidae	Mithrodia	Mithrodia bradleyi	Zotu4908	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	35	0	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota		Rhodophyta	Florideophyceae	Gelidiales	Gelidiellaceae	Gelidiella	Gelidiella sp. GHB-2016a	Zotu4997	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	69	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Chordata	Ascidiacea	Phlebobranchia	Ascidiidae	Ascidia	Ascidia ahodori	Zotu5128	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	31	0	0
+Eukaryota	Metazoa	Cnidaria	Anthozoa	Antipatharia	Antipathidae	dropped	dropped	Zotu5160	LCA	8	0	0	1	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0	0	0	1	12	0	0	0	0	0	0	14	0	1	0	0	0	0	0	0	0	0	0
+Eukaryota			Phaeophyceae	Ectocarpales	Scytosiphonaceae	Hydroclathrus	Hydroclathrus clathratus	Zotu5168	LCA	1	0	0	0	0	0	0	0	37	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Arthropoda	Hexanauplia	Calanoida	Clausocalanidae	Clausocalanus	Clausocalanus furcatus	Zotu5193	LCA	2	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	26	0	0	0	0	0	0	0	0	0	0	4	0	0	0	0	0	0	0
+Eukaryota			Phaeophyceae	Ralfsiales	Mesosporaceae	Mesospora	Mesospora indopacifica	Zotu5298	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	28	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota			Dinophyceae				uncultured dinoflagellate	Zotu5303	LCA	1	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	15	0	0	1	0	1	0	4	0	8	1	2	0	1	0	0	0	0	0	0	0	2	0	0
+Eukaryota	Metazoa	Chordata	Actinopteri		Pomacentridae	Chromis	Chromis agilis	Zotu5355	LCA	1	0	0	0	0	0	0	0	41	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	14	0	0	0	0	0	0	0
+Eukaryota			Dinophyceae	Gymnodiniales	Kareniaceae	Karenia	dropped	Zotu5448	LCA	4	0	0	0	0	0	0	0	2	0	0	0	0	0	0	0	13	12	0	0	5	0	1	5	13	0	0	0	1	0	0	0	0	0	0	0	0	0	1	0	0
+Eukaryota	Viridiplantae	Chlorophyta			Pycnococcaceae	Pycnococcus	Pycnococcus provasolii	Zotu5459	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	34	0	0	1	0	0	0	0	0	0	0
+Eukaryota		Rhodophyta	Florideophyceae	Gelidiales	Pterocladiaceae	Pterocladiella	Pterocladiella caerulescens	Zotu5550	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	45	0
+Eukaryota	Metazoa	Annelida	Polychaeta	Eunicida	Amphinomidae	Pherecardia	dropped	Zotu5614	LCA	2	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	75	0	0	0	0	0	0	0	0	0	4	0	0	0	0	0	0	0
+Eukaryota			Dinophyceae	Syndiniales	Syndiniaceae	Hematodinium	Hematodinium sp.	Zotu5664	LCA	1	0	0	0	0	0	0	0	0	0	0	0	2	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	6	0	0	0	0	0	0	0	26	0	0	0	0
+Eukaryota		Haptophyta		Phaeocystales	Phaeocystaceae	Phaeocystis	Phaeocystis globosa	Zotu5744	LCA	2	0	0	0	0	0	0	0	0	0	0	0	28	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Chordata	Actinopteri	Labriformes	Labridae	dropped	dropped	Zotu5799	LCA	6	0	0	0	0	0	0	0	17	0	0	0	0	0	0	0	0	0	0	0	0	0	5	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Chordata	Actinopteri	Acanthuriformes	Acanthuridae	Zebrasoma	dropped	Zotu5898	LCA	4	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	14	0	0	25	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Chordata	Mammalia	Primates	Hominidae	Homo	Homo sapiens	Zotu5900	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	20	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Porifera	Demospongiae	dropped	dropped	dropped	dropped	Zotu6005	LCA	6	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	17	0	1	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Cnidaria	Anthozoa	Antipatharia	Antipathidae	dropped	dropped	Zotu6078	LCA	8	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	19	4	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Arthropoda	Hexanauplia	Calanoida	Calanidae	Ctenocalanus	Ctenocalanus vanus	Zotu6090	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	24	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Porifera	Demospongiae	Dictyoceratida	Thorectidae	Fasciospongia	Fasciospongia cavernosa	Zotu6250	LCA	1	0	0	0	0	0	0	0	0	0	17	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	3	0	0	0	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Cnidaria	Anthozoa	Scleractinia	Pocilloporidae	Pocillopora	Pocillopora damicornis	Zotu6269	LCA	1	0	0	0	0	0	0	0	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	3	0	0	0	0	0	0	16	0	0	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Chordata	Actinopteri		Pomacentridae	Abudefduf	Abudefduf abdominalis	Zotu6436	LCA	2	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	15	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Porifera	Demospongiae	Poecilosclerida	Microcionidae	Clathria	dropped	Zotu6438	LCA	6	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	17	0	0	0
+Eukaryota	Viridiplantae	Chlorophyta			Pycnococcaceae	Pycnococcus	Pycnococcus provasolii	Zotu6533	LCA	1	0	0	0	0	0	0	0	12	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	5	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Mollusca	Polyplacophora	Chitonida	Acanthochitonidae	Acanthochitona	Acanthochitona viridis	Zotu6561	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	14	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Porifera	Demospongiae	dropped	dropped	dropped	dropped	Zotu6567	LCA	6	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	15	0	0
+Eukaryota			Phaeophyceae	Ectocarpales	Chordariaceae	dropped	dropped	Zotu6661	LCA	2	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	15	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Porifera	Demospongiae	Haplosclerida	Callyspongiidae	Callyspongia	Callyspongia plicifera	Zotu6740	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	16	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Mollusca	Gastropoda	Littorinimorpha	Vermetidae	Thylacodes	Thylacodes variabilis	Zotu6982	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	12	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Chordata	Mammalia	Primates	Hominidae	Homo	Homo sapiens	Zotu7045	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	33	0	0
+Eukaryota	Metazoa	Echinodermata	Ophiuroidea	Amphilepidida	Ophionereidae	Ophionereis	Ophionereis degeneri	Zotu7144	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	19	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Mollusca	Gastropoda	Littorinimorpha	Hipponicidae	Antisabia	Antisabia imbricata	Zotu7175	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	10	0	2	0	0	0	0	0	0	0
+Eukaryota		Haptophyta		Phaeocystales	Phaeocystaceae	Phaeocystis	Phaeocystis globosa	Zotu7218	LCA	2	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0	0	0	0	6	0	1	5	0	0	0	0	0	0	28	0	0	0	0
+Eukaryota	Metazoa	Cnidaria	Hydrozoa	Leptothecata	Sertulariidae	Dynamena	Dynamena sp. CC-2020	Zotu7349	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	8	0	0	2	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Echinodermata	Ophiuroidea	Amphilepidida	Ophionereidae	Ophionereis	Ophionereis degeneri	Zotu7350	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	25	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Mollusca	Gastropoda	Cephalaspidea	Aglajidae	dropped	dropped	Zotu7428	LCA	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	17	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Cnidaria	Anthozoa	Actiniaria	Hormathiidae	Calliactis	Calliactis polypus	Zotu7492	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	10	0	0	0	0	0	0	0	0	0
+Eukaryota	Metazoa	Mollusca	Gastropoda	Cephalaspidea	Smaragdinellidae	Phanerophthalmus	Phanerophthalmus perpallidus	Zotu7622	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	11	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Eukaryota		Rhodophyta	Florideophyceae	Gigartinales	Peyssonneliaceae	Ramicrusta	Ramicrusta hawaiiensis	Zotu7717	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	3	0	9	0	0	0	0	0	0	0	0	0	0	0	0	0	0	3	0
+Eukaryota			Dinophyceae				uncultured dinoflagellate	Zotu7736	LCA	1	0	0	0	0	0	0	0	1	0	0	0	4	0	0	0	0	0	0	1	0	0	0	0	2	0	2	1	4	0	1	2	0	0	0	0	0	0	0	3	0
+Eukaryota	Metazoa	Porifera	Demospongiae	Poecilosclerida	Tedaniidae	Tedania	Tedania ignis	Zotu7827	LCA	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	9	0	0	0	0	0	0	0	0	0	0	0

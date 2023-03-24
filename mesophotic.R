@@ -120,10 +120,6 @@ plotz_theme <- function(which="dark") {
     
 }
 
-
-
-
-
 # load our OTU tables and sample data
 source("analyze.R")
 
@@ -712,7 +708,7 @@ zone_plotz <- depth_zones %>%
         dm <- .x
         zone <- if_else(dz == "depth_zone","shallowdeep30","shallowdeep45")
         plotz <- ord_zone_composite$complete$all[[dm]][[dz]] /
-          ord_zone_composite$completee$animals[[dm]][[dz]] /
+          ord_zone_composite$complete$animals[[dm]][[dz]] /
           ord_zone_composite$complete$benthic[[dm]][[dz]] +
           plot_annotation(tag_levels = "A") + 
           plot_layout(guides="collect") &
@@ -1424,19 +1420,6 @@ write_ms_table(bd,path(table_dir,"mesophotic_beta_diversity.csv"),
                caption="Beta diversity summary statistics",
                bold_header = TRUE)
 
-# replicate summary table
-# reps <- datasets$complete$all %>%
-#   imap_dfr(~{
-#     .x %>%
-#       sample_tibble() %>%
-#       count(depth_f,name = "passed") %>%
-#       mutate(dataset=plot_text2[.y])
-#   }) %>%
-#   pivot_wider(names_from="dataset",values_from = "passed") %>%
-#   mutate(across(all_of(unname(plot_text2)),~replace_na(.x,0))) %>%
-#   arrange(depth_f) %>%
-#   rename(`Depth Zone`=depth_f)
-
 reps <- datasets$complete$all %>%
   imap_dfr(~{
     dataset <- .y
@@ -1451,7 +1434,6 @@ reps <- datasets$complete$all %>%
       inner_join(zotus,by="depth_f") %>%
       mutate(dataset=dataset) %>%
       mutate(
-        # taxa = modl$predictions$y[passed],
         percent = scales::percent(zotus/modl$asymptote_taxa),
         zotus = scales::comma(zotus,accuracy = 1),
         status = str_glue("{passed} ({zotus} zOTUs, ~{percent})")
@@ -1460,7 +1442,6 @@ reps <- datasets$complete$all %>%
   }) %>%
   mutate(dataset = plot_text2[dataset]) %>%
   pivot_wider(names_from="dataset",values_from = "status") %>%
-  # mutate(across(all_of(unname(plot_text2)),~replace_na(.x,0))) %>%
   arrange(depth_f) %>%
   rename(`Depth Zone`=depth_f)
 write_ms_table(reps,path(table_dir,"mesophotic_sample_reps.csv"),caption="Sample replicates passing QA/QC by depth zone with recovered zOTUs and percentage of total predicted diversity",bold_header=T)
@@ -1469,7 +1450,7 @@ write_ms_table(reps,path(table_dir,"mesophotic_sample_reps.csv"),caption="Sample
 
 # write PERMANOVA and beta diversity results to an include file for the
 # manuscript so I don't have to keep changing the numbers when they change here
-resource_dir="~/projects/dissertation/manuscript/resources/"
+resource_dir <- dir_create(here("output/resources"),recurse=TRUE)
 include_file <- path(resource_dir,"mesophotic_include.m4")
 
 

@@ -1,29 +1,31 @@
 # TODO: investigate inverting clustering: do it by species and see if there is any secondary depth effect
 #       similarly, ordinate species by depth and see which groups are driven in which direction by which depth
-library(here)
-library(EcolUtils)
-library(beyonce)
-library(plotly)
-library(betapart)
-library(patchwork)
-library(dendextend)
-library(rfishbase)
-library(fs)
-library(vegan)
-library(viridis)
-library(ggrepel)
 
-library(sf)
-library(mapdata)
-library(marmap)
-library(ggspatial)
-library(cowplot)
+# load libraries quietly
+lib <- function(...) suppressPackageStartupMessages(library(...))
+
+lib(here)
+lib(EcolUtils)
+lib(beyonce)
+lib(plotly)
+lib(betapart)
+lib(patchwork)
+lib(dendextend)
+lib(rfishbase)
+lib(fs)
+lib(vegan)
+lib(viridis)
+lib(ggrepel)
+
+lib(sf)
+lib(mapdata)
+lib(marmap)
+lib(ggspatial)
+lib(cowplot)
+lib(tidyverse)
 
 
-library(tidyverse)
-
-
-# set random seed for reproduceability
+# set random seed for reproducibility
 set.seed(31337)
 
 # Community setup and initial analysis ------------------------------------
@@ -222,6 +224,7 @@ make_ps <- function(otus,taxa,sample_data,minimals=0,negative_controls=character
 
 minimals <- 300
 # construct our phyloseq objects
+message("constructing phyloseq objects")
 datasets <- c("complete","rarefied") %>%
   set_names() %>%
   map(~{
@@ -229,6 +232,8 @@ datasets <- c("complete","rarefied") %>%
     rarefy_perm <- 99
     
     # full dataset
+    msg <- str_glue("making all taxa {.x} dataset") 
+    message(msg)
     all_taxa <- communities %>%
       map(
         ~make_ps(
@@ -244,6 +249,8 @@ datasets <- c("complete","rarefied") %>%
       )
     
     # animals subset
+    msg <- str_glue("making animals {.x} dataset") 
+    message(msg)
     animals <- communities %>%
       keep_names(~.x != "fish") %>% 
       map(
@@ -262,6 +269,8 @@ datasets <- c("complete","rarefied") %>%
       )
     
     # benthic subset
+    msg <- str_glue("making benthic {.x} dataset") 
+    message(msg)
     remove_classes <- c("Hexanauplia","Appendicularia","Thaliacea",NA_character_)
     benthic <- communities %>%
       keep_names(~.x != "fish") %>%
@@ -323,7 +332,9 @@ beta_wrapper <- function(x,method) {
     return(NULL)
   }
 }
+
 # pairwise (by depth zone) beta diversity metrics
+message("caluclating mean pairwise dissimilarity")
 beta_pairs <- datasets %>%
   map(~{
     .x %>%
@@ -361,6 +372,7 @@ beta_pairs <- datasets %>%
 
 
 # overall beta diversity metrics
+message("caluclating overall beta diversity statistics")
 beta_diversity <- datasets %>%
   map(~{
     .x %>%

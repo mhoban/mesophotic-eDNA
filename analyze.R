@@ -1,6 +1,9 @@
-library(phyloseq)
-library(insect)
-library(httr)
+# load libraries quietly
+lib <- function(...) suppressPackageStartupMessages(library(...))
+
+lib(phyloseq)
+lib(insect)
+lib(httr)
 
 ################################################################################################
 # functions to convert OTU tables & sample data to phyloseq objects, as well as do other things
@@ -272,7 +275,7 @@ get_ncbi_taxonomy <- function() {
       return(NULL)
     }
   }
-  read_delim(nlf,delim="\t",col_names = c("taxid","name","species","genus","family","order","class","phylum","kingdom","domain")) %>%
+  read_delim(nlf,delim="\t",col_names = c("taxid","name","species","genus","family","order","class","phylum","kingdom","domain"),col_types=cols()) %>%
     select(taxid,name,domain,kingdom,phylum,class,order,family,genus,species) %>%
     return()
 }
@@ -356,18 +359,24 @@ ps_standardize <- function(ps, method="total", ...) {
 # shorten calls to suppressMessages (readr outputs all sorts of nonsense)
 sm <- suppressMessages            
 # read sample metadata (this is project-universal)
-sample_data <- sm(read_csv(here("data","sample_data.csv"))) %>%
+sample_data <- read_csv(here("data","sample_data.csv"),col_types=cols()) %>%
   filter(project %in% active_project)
-  # filter(str_detect(id,sample_pattern))
-markers <- sm(read_csv(here::here("data","marker_config.csv")))
+
+# get marker info
+markers <- read_csv(here::here("data","marker_config.csv"),col_types=cols())
+
+# make a little lookup table of marker descriptions
 marker_descriptions <- markers %>%
   filter(skip == "N") %>%
   pull(gene) %>%
   set_names %>%
   map_chr(~markers %>% filter(gene == .x) %>% pull(description))
 
+# gene targets
 targets <- names(marker_descriptions)
 
+# load ranked lineage taxonomy from NCBI
+message("loading NCBI taxonomy")
 ncbi <- get_ncbi_taxonomy()
 
 communities <- targets %>%
@@ -382,33 +391,32 @@ communities <- targets %>%
     tab_file <- path(project_dir,str_glue("{.x}_collapsed_taxa.tab"))
     if (file_exists(tab_file)) {
       
-      otu_table <- sm(read_tsv(tab_file)) #%>%
-        # mutate(
-        #   across(domain:species,~replace_na(.x,"unspecified"))
-        # )
-      
+      message("loading OTU table and taxonomy data")
+      otu_table <- read_tsv(tab_file,col_types=cols()) #%>%
+     
       unassigned_file <- path(project_dir,str_glue("{.x}_all_taxa.tab"))
       if (include_unassigned & file_exists(unassigned_file)) {
-        unassigned <- read_tsv(unassigned_file) %>% 
+        unassigned <- read_tsv(unassigned_file,col_types=cols()) %>% 
           filter(!(OTU %in% otu_table$OTU)) 
         classified_file <- path(project_dir,str_glue("{.x}_classified.csv"))    
-        if (insect_classify) {
-          if (!file_exists(classified_file)) {
-            classifier_file <- here("classifiers",str_glue("{.x}_classifier.rds"))
-            zotu_file <- path(project_dir,str_glue("{.x}_zotus.fasta"))
-            if (all(file_exists(c(classifier_file,zotu_file)))) {
-              classifier <- readRDS(classifier_file)
-              zotu <- readFASTA(zotu_file)
-              cores <- parallel::detectCores() 
-              cat("running insect classifier model....\n")
-              classified <- classify(zotu, classifier, threshold = 0.5, metadata = TRUE, offset = -2, mincount = 1, cores=cores)
-              write_csv(classified,classified_file) 
-            }
-          }
-        }
+        # if (insect_classify) {
+        #   if (!file_exists(classified_file)) {
+        #     classifier_file <- here("classifiers",str_glue("{.x}_classifier.rds"))
+        #     zotu_file <- path(project_dir,str_glue("{.x}_zotus.fasta"))
+        #     if (all(file_exists(c(classifier_file,zotu_file)))) {
+        #       classifier <- readRDS(classifier_file)
+        #       zotu <- readFASTA(zotu_file)
+        #       cores <- parallel::detectCores() 
+        #       cat("running insect classifier model....\n")
+        #       classified <- classify(zotu, classifier, threshold = 0.5, metadata = TRUE, offset = -2, mincount = 1, cores=cores)
+        #       write_csv(classified,classified_file) 
+        #     }
+        #   }
+        # }
         
         if (file_exists(classified_file)) {
-          insect_taxa <- read_csv(classified_file) %>%
+          message("loading insect classified taxonomy")
+          insect_taxa <- read_csv(classified_file,col_types=cols()) %>%
             rename(taxid=taxID) %>%
             left_join(ncbi %>% select(taxid,domain),by="taxid") %>%
             mutate(
@@ -441,6 +449,7 @@ communities <- targets %>%
           ) %>%
           ungroup() 
       
+      message("filtering OTUs found in extraction blanks")
       filtered_blanks <- otu_table %>%
         filter(blanks >= max_blank)
       unfiltered <- otu_table %>% select(-blanks)
@@ -461,9 +470,8 @@ communities <- targets %>%
       
       curated_file <- path(project_dir,str_glue("{.x}_curated.csv"))
       if (file_exists(curated_file)) {
-        curated <- read_csv(curated_file)
-        # lineages <- ncbi %>%
-        #   filter(name %in% unique(curated$new_name))
+        message("loading manually curated taxonomy")
+        curated <- read_csv(curated_file,col_types=cols())
         c2 <- curated %>%
           left_join(ncbi,by=c("new_name" = "name")) %>%
           pmap_dfr(~{
@@ -504,8 +512,7 @@ communities <- targets %>%
       otu_table <- otu_table %>%
         select(OTU,matches(sample_pattern))
       
-      # convert read count to relative read abundance
-      message("WE CHANGED THE RELATIVE THING TO ABSOLUTE, REMEMBER THAT","\n")
+      message("filtering by minimum reads and dumping OTUs with zero reads")
       otu_rel <- otu_table %>%
         mutate(
           # across(matches(sample_pattern),~.x/sum(.x)),

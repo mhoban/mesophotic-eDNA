@@ -826,8 +826,8 @@ zone_plotz <- depth_zones %>%
           plot_annotation(tag_levels = "A") + 
           plot_layout(guides="collect") &
           theme(plot.tag = element_text(face="bold"))
-        # fn <- path(figure_dir,str_glue("mesophotic_ord_{zone}_{dm}"))
-        # save_fig(plotz,fn,fig_format,width=12,height=12,units="in")
+        fn <- path(figure_dir,str_glue("mesophotic_ord_{zone}_{dm}"))
+        save_fig(plotz,fn,fig_format,width=12,height=12,units="in")
         return(plotz)
       })
   })
@@ -904,8 +904,8 @@ ord_plotz <- distance_methods %>%
       ord_composite$complete$benthic[[dm]] +
       plot_annotation(tag_levels = "A") &
       theme(plot.tag = element_text(face="bold"))
-    # fn <- path(figure_dir,str_glue("mesophotic_ord_{dm}"))
-    # save_fig(plotz,fn,fig_format,width=12,height=12,units="in")
+    fn <- path(figure_dir,str_glue("mesophotic_ord_{dm}"))
+    save_fig(plotz,fn,fig_format,width=12,height=12,units="in")
     return(plotz)
   })
 

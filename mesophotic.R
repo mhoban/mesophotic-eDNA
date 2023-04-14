@@ -1,28 +1,24 @@
-# TODO: investigate inverting clustering: do it by species and see if there is any secondary depth effect
-#       similarly, ordinate species by depth and see which groups are driven in which direction by which depth
+library(here)
+library(EcolUtils)
+library(beyonce)
+library(plotly)
+library(betapart)
+library(patchwork)
+library(dendextend)
+library(rfishbase)
+library(fs)
+library(vegan)
+library(viridis)
+library(ggrepel)
 
-# load libraries quietly
-lib <- function(...) suppressPackageStartupMessages(library(...))
-
-lib(here)
-lib(EcolUtils)
-lib(beyonce)
-lib(plotly)
-lib(betapart)
-lib(patchwork)
-lib(dendextend)
-lib(rfishbase)
-lib(fs)
-lib(vegan)
-lib(viridis)
-lib(ggrepel)
-
-lib(sf)
-lib(mapdata)
-lib(marmap)
-lib(ggspatial)
-lib(cowplot)
-lib(tidyverse)
+library(sf)
+library(mapdata)
+library(marmap)
+library(ggspatial)
+library(cowplot)
+library(tidyverse)
+library(indicspecies)
+library(fdrtool)
 
 
 # set random seed for reproducibility
@@ -283,11 +279,9 @@ datasets <- c("complete","rarefied") %>%
           negative_controls=negative_controls,
           remove_families=remove_families,
           read_transform=read_transform,
-          filtr=kingdom == "Metazoa" & phylum != "Ctenophora" & !class %in% remove_classes,
+          filtr=kingdom == "Metazoa" & phylum != "Ctenophora" & !class %in% remove_classes & order != "Siphonophorae",
           rarefy=rarefy,
           rarefy_perm = rarefy_perm
-          # filtr=kingdom == "Metazoa" & phylum != "Ctenophora" & !class %in% remove_classes & !is.na(class)
-          # filtr=kingdom == "Metazoa" & !class %in% remove_classes 
         )
       )
     
@@ -311,6 +305,7 @@ plot_text2 <- c(
 # set up depth zone color palette
 pal <- rev(beyonce_palette(75))[5:12]
 pal <- pal[c(1:3,5,4,6:7)]
+text_fill <- beyonce_palette(75)[3]
 pal[4] <- '#827222'
 names(pal) <- levels(sample_data$depth_f)
 
@@ -396,12 +391,13 @@ beta_diversity <- datasets %>%
 # start here --------------------------------------------------------------
 
 
-
 # permanova analyses ------------------------------------------------------
 anovas <- datasets %>%
-  map(~{ # rarefaction
+  imap(~{ # rarefaction
+    rarefaction <- .y
     .x %>%
-      map(~{ # dataset
+      imap(~{ # dataset
+        ds <- .y
         dataset <- .x
         distance_methods %>%
           set_names() %>%
@@ -410,14 +406,16 @@ anovas <- datasets %>%
             dataset %>%
               imap(~{
                 ps <- .x
-                min_group <- 2
+                min_group <- 3
+                assay <- .y
                 # go through permanova terms and make sure we're only using groups with >=3 members
                 c("depth_zone","depth_zone45","depth_f","station_grouping") %>%
                   set_names() %>%
                   map(~{
+                    message(str_glue("{rarefaction} - {ds} - {assay} - {dm} - {.x}"))
                     perm <- 9999
                     group <- .x
-                    pps <- ps_min_group(ps,!!sym(group),2)
+                    pps <- ps_min_group(ps,!!sym(group),min_group)
                     sd <- sample_tibble(pps)
                     dd <- distance(pps,method=dm,binary=dm != "bray")
                     formula <- as.formula(str_glue("dd ~ {.x}"))
@@ -464,10 +462,84 @@ anova_table <- anovas %>%
       mutate(rarefied = .y == "rarefied")
   })
 
+# indicator species analysis ----------------------------------------------
+
+# helper function: does IndVal analysis for a phyloseq object across some factor
+get_indicators <- function(community,variable,fdr=0.10,permutations=999,list=TRUE) {
+  # get sample data
+  sd <- sample_tibble(community)
+  # get presence/absence-transformed community matrix
+  mat <- community %>%
+    ps_standardize("pa") %>%
+    otu_table()
+
+  # yank analysis factor
+  categories <- sd %>% pull(variable)
+  # do the IndVal analysis
+  iv <- multipatt(mat,categories,control=how(nperm=permutations))
+
+  # multipatt returns a thing with columns called s.<variable_category>
+  # here we're just enumerating those
+  sign_cats <- str_c("s.",unique(categories))
+  # construct a table with taxa, Indval, p value, and category
+  d <- as_tibble(iv$sign,rownames="zotu") %>%
+    pivot_longer(all_of(sign_cats),names_to="group",values_to="active") %>%
+    mutate(group = str_replace(group,"^s\\.","")) %>% # strip off the "s." at the beginning of the group name
+    filter(active == 1) %>% # get get only values that apply to the group in question
+    drop_na(p.value) %>%  # drop anything with an NA p value
+    rename(p_value=p.value) %>%
+    # do p value correction for multiple comparisons using the false discovery rate method
+    mutate(p_value = suppressWarnings(fdrtool(p_value,statistic="pvalue",plot=FALSE,verbose=FALSE,cutoff.method="pct0",pct0=fdr)$pval)) %>%
+    select(zotu,group,stat,p_value) %>%
+    arrange(zotu) %>%
+    left_join(community %>% taxa_tibble(),by="zotu")
+  # return the results of the multipatt call and the table we've made
+  # to make it easier to interpret
+  if (list) {
+    return(list(iv=iv,table=d))
+  } else {
+    return(d)
+  }
+}
+
+## all taxa
+# do indicator analysis for deep v shallow
+# and just for animals
+indicators <- datasets$complete %>%
+  keep_names(c("animals","benthic")) %>%
+  map(~{
+    # stick the fish back in the list
+    .x %>%
+      # list_modify(fish = comm_ps$fish) %>%
+      map(~get_indicators(.x,variable="depth_zone45",list=FALSE,permutations = 9999))
+  })
+
+# make tables of significant indicators
+indicator_table <- indicators %>%
+  map(~{
+    .x %>%
+      enframe(name = "assay", value="indval") %>%
+      unnest(indval) %>%
+      filter(p_value < 0.05) %>%
+      select(assay,group,stat,p_value,domain:species) %>%
+      mutate(assay = plot_text2[assay]) %>%
+      rename(Assay=assay,Depth=group,IndVal=stat,`p-value`=p_value) %>%
+      rename_with(str_to_title,domain:species) %>%
+      arrange(Assay,desc(Depth),Domain,Kingdom,Phylum,Class,Order,Family,Genus,Species) %>%
+      mutate(
+        Depth = case_when(
+          Depth == "Shallow" ~ "Shallow\n(0--45m)",
+          Depth == "Deep" ~ "Deep\n(60--90m)"
+        )
+      ) %>%
+      mutate(Species = str_c("*",Species,"*"))
+  })
+
 
 # manuscript figures ------------------------------------------------------
 figure_dir <- dir_create(here("output/figures"),recurse=TRUE)
 
+pcoa_variances <- list()
 
 #### Figure: beta diversity heatmaps (everything)
 # map distance types to pretty names
@@ -592,6 +664,7 @@ cluster_composite <- beta_pairs %>%
   map(~{ # rarefaction
     .x %>%
       imap(~{ # dataset
+        dataset <- .y
         .x %>%
           imap(~{ # distance method
             dm <- .y 
@@ -617,8 +690,10 @@ cluster_composite <- beta_pairs %>%
                 labels(dd) <- str_c(labels(dd)," ")
                 expando <- if_else(.y == "fish",0.6,0.3)
                 ggplot(as.dendrogram(hclust(dd),hang=0.5)) +
+                  labs(subtitle=str_glue("{title} - {dataset}")) + 
                   theme(
-                    plot.caption = element_text(hjust=0.5,size=14)
+                    plot.caption = element_text(hjust=0.5,size=14),
+                    plot.subtitle = element_text(hjust=0.5)
                   ) + 
                   expand_limits(y=-0.59)
               }) %>%
@@ -658,6 +733,7 @@ big_cluster_jac <- cluster_composite %>%
       plot_annotation(tag_levels="A") &
       theme(plot.tag = element_text(face="bold"))
   })
+big_cluster_jac$complete
 
 # save the jaccard version of the figure
 big_cluster_jac %>%
@@ -672,9 +748,11 @@ big_cluster_jac %>%
 # generate depth zone ordinations
 depth_zones <- c("depth_zone","depth_zone45")
 ord_zone_composite <- datasets %>%
-  map(~{ # rarefaction?
+  imap(~{ # rarefaction?
+    rarefaction <- .y
     .x %>%
       imap(~{ # datasets
+        dsn <- .y
         dataset <- .x
         distance_methods %>%
           set_names() %>%
@@ -686,17 +764,40 @@ ord_zone_composite <- datasets %>%
                 zone <- .x
                 dataset %>%
                   imap(~{ # marker
-                    title <- plot_text2[.y]
+                    marker <- .y
+                    title <- plot_text2[marker]
                     dpal <- pal[c(1,length(pal))]
                     names(dpal) <- c("Shallow","Deep")
+                    aov_tbl <- anovas[[rarefaction]][[dsn]][[dm]][[marker]][[zone]] %>%
+                      as_tibble(rownames="term") %>%
+                      rename(df=2,ss=3,r2=4,pseudo_f=5,p_value=6) %>%
+                      filter(term == zone)
+                    pstr <- case_when(
+                      aov_tbl$p_value < 0.001 ~ "italic(p)<0.001",
+                      aov_tbl$p_value < 0.01 ~ "italic(p)<0.01",
+                      TRUE ~ as.character(str_glue("italic(p)=={scales::number(aov_tbl$p_value,accuracy=0.01)}"))
+                    )
+                    
+                    
                     p <- plot_betadisp(.x, group=zone, method=dm, list=TRUE,binary=dm != "bray")
+                    
+                    # record explained variances
+                    pcoa_variances[[rarefaction]][[dsn]][[dm]][[marker]][[zone]]$x <<- scales::percent(p$x_var,accuracy=0.1)
+                    pcoa_variances[[rarefaction]][[dsn]][[dm]][[marker]][[zone]]$y <<- scales::percent(p$y_var,accuracy=0.1)
+                                        
                     p$plot <- p$plot +
                       scale_fill_manual(values=dpal,name="Depth Zone", drop=FALSE) +
                       plotz_theme("light") +
                       xlab(str_glue("Principle Coordinate 1 ({scales::percent(p$x_var,accuracy=0.1)})")) +
                       ylab(str_glue("Principle Coordinate 2 ({scales::percent(p$y_var,accuracy=0.1)})")) +
-                      theme(legend.position = "right")
-                    p$plot
+                      theme(legend.position = "right", plot.subtitle = element_text(hjust=0.5))  +
+                      labs(subtitle = str_glue("{title} - {dsn}"))
+                    if (aov_tbl$p_value < 0.05) {
+                      p$plot <- p$plot + 
+                        expand_limits(y=-0.5) + 
+                        annotate(geom="text", x=-Inf, y=-Inf, label = pstr, hjust = -0.1, vjust = -1,parse=TRUE)#, fill="grey89", alpha=0.5)
+                    }
+                    return(p$plot)
                   }) %>%
                   reduce(`+`) +
                   plot_layout(guides="collect") +
@@ -725,19 +826,20 @@ zone_plotz <- depth_zones %>%
           plot_annotation(tag_levels = "A") + 
           plot_layout(guides="collect") &
           theme(plot.tag = element_text(face="bold"))
-        fn <- path(figure_dir,str_glue("mesophotic_ord_{zone}_{dm}"))
-        save_fig(plotz,fn,fig_format,width=12,height=12,units="in")
+        # fn <- path(figure_dir,str_glue("mesophotic_ord_{zone}_{dm}"))
+        # save_fig(plotz,fn,fig_format,width=12,height=12,units="in")
         return(plotz)
       })
   })
 
-
 #### Figure: depth zone ordinations
 # generate composite figures of ordinations by individual depth zones
 ord_composite <- datasets %>%
-  map(~{ # rarefaction
+  imap(~{ # rarefaction
+    rarefaction <- .y
     .x %>%
-      map(~{ # dataset
+      imap(~{ # dataset
+        dsn <- .y
         dataset <- .x
         distance_methods %>%
           set_names() %>%
@@ -745,18 +847,42 @@ ord_composite <- datasets %>%
             dm <- .x
             dataset %>%
               imap(~{ # marker
-                title <- plot_text2[.y]
+                marker <- .y
+                title <- plot_text2[marker]
                 to_plot <- .x
+                
+                aov_tbl <- anovas[[rarefaction]][[dsn]][[dm]][[marker]]$depth_f %>%
+                  as_tibble(rownames="term") %>%
+                  rename(df=2,ss=3,r2=4,pseudo_f=5,p_value=6) %>%
+                  filter(term == "depth_f")
+                pstr <- case_when(
+                  aov_tbl$p_value < 0.001 ~ "italic(p)<0.001",
+                  aov_tbl$p_value < 0.01 ~ "italic(p)<0.01",
+                  TRUE ~ as.character(str_glue("italic(p)=={scales::number(aov_tbl$p_value,accuracy=0.01)}"))
+                )
                  
                 p <- plot_betadisp(to_plot, group="depth_f", method=dm, list=TRUE, usable_groups=TRUE,binary=dm != "bray")
+                
+                # record explained variances
+                pcoa_variances[[rarefaction]][[dsn]][[dm]][[marker]][["depth_f"]]$x <<- scales::percent(p$x_var,accuracy=0.1)
+                pcoa_variances[[rarefaction]][[dsn]][[dm]][[marker]][["depth_f"]]$y <<- scales::percent(p$y_var,accuracy=0.1)
+                
                 p$plot <- p$plot +
                   scale_fill_manual(values=pal,name="Depth",drop=FALSE) +
                   plotz_theme("light") +
                   xlab(str_glue("Principle Coordinate 1 ({scales::percent(p$x_var,accuracy=0.1)})")) +
                   ylab(str_glue("Principle Coordinate 2 ({scales::percent(p$y_var,accuracy=0.1)})")) +
                   theme(legend.position = "right") +
-                  guides(color="none")
-                p$plot
+                  guides(color="none") +
+                  theme(legend.position = "right", plot.subtitle = element_text(hjust=0.5))  +
+                  labs(subtitle = str_glue("{title} - {dsn}"))
+                
+                if (aov_tbl$p_value < 0.05) {
+                  p$plot <- p$plot + 
+                    expand_limits(y=-0.5) + 
+                    annotate(geom="text", x=-Inf, y=-Inf, label = pstr, hjust = -0.1, vjust = -1,parse=TRUE)#, fill="grey89", alpha=0.5)
+                }
+                return(p$plot)
               }) %>%
               reduce(`+`) +
               plot_layout(guides="collect") +
@@ -778,38 +904,64 @@ ord_plotz <- distance_methods %>%
       ord_composite$complete$benthic[[dm]] +
       plot_annotation(tag_levels = "A") &
       theme(plot.tag = element_text(face="bold"))
-    fn <- path(figure_dir,str_glue("mesophotic_ord_{dm}"))
-    save_fig(plotz,fn,fig_format,width=12,height=12,units="in")
+    # fn <- path(figure_dir,str_glue("mesophotic_ord_{dm}"))
+    # save_fig(plotz,fn,fig_format,width=12,height=12,units="in")
     return(plotz)
   })
 
 #### Figure: ordinations by site
 # generate composite ordinations figure
 ord_sites_composite <- datasets %>%
-  map(~{
+  imap(~{
+    rarefaction <- .y
     .x %>%
-      map(~{
+      imap(~{
         dataset <- .x
+        dsn <- .y
         distance_methods %>%
           set_names() %>%
           map(~{
             dm <- .x
             dataset %>%
               imap(~{
-                title <- plot_text2[.y]
+                marker <- .y
+                title <- plot_text2[marker]
                 spal <- pal[c(1,4,7)]
                 names(spal) <- .x %>%
                   sample_tibble() %>%
                   pull(station_grouping) %>%
                   unique()
+                
+                aov_tbl <- anovas[[rarefaction]][[dsn]][[dm]][[marker]]$station_grouping %>%
+                  as_tibble(rownames="term") %>%
+                  rename(df=2,ss=3,r2=4,pseudo_f=5,p_value=6) %>%
+                  filter(term == "station_grouping")
+                pstr <- case_when(
+                  aov_tbl$p_value < 0.001 ~ "italic(p)<0.001",
+                  aov_tbl$p_value < 0.01 ~ "italic(p)<0.01",
+                  TRUE ~ as.character(str_glue("italic(p)=={scales::number(aov_tbl$p_value,accuracy=0.01)}"))
+                )
+                
                 p <- plot_betadisp(.x, group="station_grouping", method=dm, list=TRUE,binary=dm != "bray")
+                
+                # record explained variances
+                pcoa_variances[[rarefaction]][[dsn]][[dm]][[marker]][[station_grouping]]$x <<- scales::percent(p$x_var,accuracy=0.1)
+                pcoa_variances[[rarefaction]][[dsn]][[dm]][[marker]][[station_grouping]]$y <<- scales::percent(p$y_var,accuracy=0.1)
+                
                 p$plot <- p$plot +
                   scale_fill_manual(values=spal,name="Site", drop=FALSE) +
                   plotz_theme("light") + 
                   xlab(str_glue("Principle Coordinate 1 ({scales::percent(p$x_var,accuracy=0.1)})")) +
                   ylab(str_glue("Principle Coordinate 2 ({scales::percent(p$y_var,accuracy=0.1)})")) +
-                  theme(legend.position = "right")
-                p$plot
+                  theme(legend.position = "right") +
+                  theme(legend.position = "right", plot.subtitle = element_text(hjust=0.5))  +
+                  labs(subtitle = str_glue("{title} - {dsn}"))
+                if (aov_tbl$p_value < 0.05) {
+                  p$plot <- p$plot + 
+                    expand_limits(y=-0.5) + 
+                    annotate(geom="text", x=-Inf, y=-Inf, label = pstr, hjust = -0.1, vjust = -1,parse=TRUE)#, fill="grey89", alpha=0.5)
+                }
+                return(p$plot)
               }) %>%
               reduce(`+`) +
               plot_layout(guides="collect") +
@@ -1432,6 +1584,7 @@ write_ms_table(bd,path(table_dir,"mesophotic_beta_diversity.csv"),
                caption="Beta diversity summary statistics",
                bold_header = TRUE)
 
+#### Supplemental table: sample replication
 reps <- datasets$complete$all %>%
   imap_dfr(~{
     dataset <- .y
@@ -1591,3 +1744,62 @@ datasets$complete %>%
   }) %>% 
   unlist() %>%
   write_lines(include_file,append=TRUE)
+
+# write pcoa explained variances
+pcoa_variances %>%
+  imap(~{ # rarefaction
+    rarefaction <- .y
+    .x %>% 
+      imap(~{ # dataset
+        dsn <- .y
+        .x %>% 
+          imap(~{ # distance method
+            dm <- .y
+            .x %>%
+              imap(~{ # marker
+                marker <- .y
+                .x %>%
+                  imap(~{ # factor
+                    plot_group <- .y
+                    .x %>%
+                      imap(~{ # axis
+                        axis <- .y
+                        str_glue("define({{{{{rarefaction}_{dsn}_{dm}_{marker}_{plot_group}_{axis}}}}},{{{{{.x}}}}})")
+                      })
+                  })
+              })
+          })
+      })
+  }) %>%
+  unlist() %>%
+  unname() %>%
+  write_lines(include_file,append=TRUE) 
+
+# write pcoa explained variances
+pcoa_variances %>%
+  imap(~{ # rarefaction
+    rarefaction <- .y
+    .x %>% 
+      imap(~{ # dataset
+        dsn <- .y
+        .x %>% 
+          imap(~{ # distance method
+            dm <- .y
+            .x %>%
+              imap(~{ # marker
+                marker <- .y
+                .x %>%
+                  imap(~{ # factor
+                    plot_group <- .y
+                    .x %>%
+                      imap(~{ # axis
+                        axis <- .y
+                        str_glue("define({{{{{rarefaction}_{dsn}_{dm}_{marker}_{plot_group}_{axis}}}}},{{{{{.x}}}}})")
+                      })
+                  })
+              })
+          })
+      })
+  }) %>%
+  unlist() %>%
+  unname()

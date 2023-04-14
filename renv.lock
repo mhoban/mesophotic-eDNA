@@ -502,6 +502,13 @@
       "Repository": "CRAN",
       "Hash": "dabc225759a2c2b241e60e42bf0e8e54"
     },
+    "fdrtool": {
+      "Package": "fdrtool",
+      "Version": "1.2.17",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "9feeb4e7a484e663a52d7de89135591a"
+    },
     "forcats": {
       "Package": "forcats",
       "Version": "0.5.1",
@@ -683,6 +690,13 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "1d10cd31c2979f9c819ffe4d16b9dc2b"
+    },
+    "indicspecies": {
+      "Package": "indicspecies",
+      "Version": "1.7.12",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "474629e04214e0e9320773863ce787e4"
     },
     "insect": {
       "Package": "insect",

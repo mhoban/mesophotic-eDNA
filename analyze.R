@@ -1,9 +1,8 @@
 # load libraries quietly
-lib <- function(...) suppressPackageStartupMessages(library(...))
 
-lib(phyloseq)
-lib(insect)
-lib(httr)
+library(phyloseq)
+library(insect)
+library(httr)
 
 ################################################################################################
 # functions to convert OTU tables & sample data to phyloseq objects, as well as do other things
@@ -303,7 +302,7 @@ ps_min_group <- function(ps,group,min) {
   filter_groups <- ps %>%
     sample_tibble() %>%
     group_by(!!enquo(group)) %>%
-    filter(n() > min) %>%
+    filter(n() >= min) %>%
     pull(sample)
   prune_samples(filter_groups,ps)
 }

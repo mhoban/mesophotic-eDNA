@@ -10,10 +10,6 @@ output/*
 working/*
 tmp/*
 
-data/*
-!data/marker_config.csv
-!data/sample_data.csv
-
 # Session Data files
 .RData
 

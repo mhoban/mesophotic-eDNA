@@ -505,36 +505,37 @@ get_indicators <- function(community,variable,fdr=0.10,permutations=999,list=TRU
 ## all taxa
 # do indicator analysis for deep v shallow
 # and just for animals
-indicators <- datasets$complete %>%
-  keep_names(c("animals","benthic")) %>%
-  map(~{
-    # stick the fish back in the list
-    .x %>%
-      # list_modify(fish = comm_ps$fish) %>%
-      map(~get_indicators(.x,variable="depth_zone45",list=FALSE,permutations = 9999))
-  })
+# indicators <- datasets$complete %>%
+#   keep_names(c("animals","benthic")) %>%
+#   map(~{
+#     # stick the fish back in the list
+#     .x %>%
+#       # list_modify(fish = comm_ps$fish) %>%
+#       map(~get_indicators(.x,variable="depth_zone45",list=FALSE,permutations = 9999))
+#   })
+# 
+# # make tables of significant indicators
+# indicator_table <- indicators %>%
+#   map(~{
+#     .x %>%
+#       enframe(name = "assay", value="indval") %>%
+#       unnest(indval) %>%
+#       filter(p_value < 0.05) %>%
+#       select(assay,group,stat,p_value,domain:species) %>%
+#       mutate(assay = plot_text2[assay]) %>%
+#       rename(Assay=assay,Depth=group,IndVal=stat,`p-value`=p_value) %>%
+#       rename_with(str_to_title,domain:species) %>%
+#       arrange(Assay,desc(Depth),Domain,Kingdom,Phylum,Class,Order,Family,Genus,Species) %>%
+#       mutate(
+#         Depth = case_when(
+#           Depth == "Shallow" ~ "Shallow\n(0--45m)",
+#           Depth == "Deep" ~ "Deep\n(60--90m)"
+#         )
+#       ) %>%
+#       mutate(Species = str_c("*",Species,"*"))
+#   })
 
-# make tables of significant indicators
-indicator_table <- indicators %>%
-  map(~{
-    .x %>%
-      enframe(name = "assay", value="indval") %>%
-      unnest(indval) %>%
-      filter(p_value < 0.05) %>%
-      select(assay,group,stat,p_value,domain:species) %>%
-      mutate(assay = plot_text2[assay]) %>%
-      rename(Assay=assay,Depth=group,IndVal=stat,`p-value`=p_value) %>%
-      rename_with(str_to_title,domain:species) %>%
-      arrange(Assay,desc(Depth),Domain,Kingdom,Phylum,Class,Order,Family,Genus,Species) %>%
-      mutate(
-        Depth = case_when(
-          Depth == "Shallow" ~ "Shallow\n(0--45m)",
-          Depth == "Deep" ~ "Deep\n(60--90m)"
-        )
-      ) %>%
-      mutate(Species = str_c("*",Species,"*"))
-  })
-
+# really start here
 
 # manuscript figures ------------------------------------------------------
 figure_dir <- dir_create(here("output/figures"),recurse=TRUE)
@@ -1583,6 +1584,29 @@ bd <- beta_pairs %>%
 write_ms_table(bd,path(table_dir,"mesophotic_beta_diversity.csv"),
                caption="Beta diversity summary statistics",
                bold_header = TRUE)
+
+#### Supplemental table: PCR success
+sample_reps <- datasets$complete$all %>%
+  imap_dfr(~{
+    dataset <- .y
+    .x %>% 
+      sample_tibble() %>%
+      count(station_grouping,depth_f) %>%
+      mutate(dataset = plot_text2[dataset])
+  }) %>%
+  arrange(station_grouping,dataset) %>%
+  # unite("station_data",station_grouping,dataset,sep=" - ") %>%
+  # pivot_wider(names_from=station_data,values_from=n) %>%
+  pivot_wider(names_from=dataset,values_from=n) %>%
+  mutate(across(3:last_col(),~replace_na(.x,0))) %>%
+  # mutate(across(everything(),~replace_na(.x,""))) %>%
+  arrange(station_grouping,depth_f) %>%
+  rename(Site=station_grouping,`Depth Zone`=depth_f) %>%
+  group_by(Site) %>%
+  mutate(Site = c(str_glue("**{Site[1]}**"),rep("",length(Site)-1))) %>%
+  ungroup()
+
+write_ms_table(sample_reps,path(table_dir,"mesophotic_filter_results.csv"),caption="Field replicates successfully passing PCR amplification and quality filtration by site and depth zone.",bold_header = TRUE)
 
 #### Supplemental table: sample replication
 reps <- datasets$complete$all %>%

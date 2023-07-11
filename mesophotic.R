@@ -1582,7 +1582,7 @@ bd <- beta_pairs %>%
            Measurement=measurement, Mean=mean, `Std. Dev.`=sd)
   })
 write_ms_table(bd,path(table_dir,"mesophotic_beta_diversity.csv"),
-               caption="Beta diversity summary statistics",
+               caption="Beta diversity summary statistics  for West Hawai&#x02BB;i eDNA samples",
                bold_header = TRUE)
 
 #### Supplemental table: PCR success
@@ -1604,7 +1604,8 @@ sample_reps <- datasets$complete$all %>%
   rename(Site=station_grouping,`Depth Zone`=depth_f) %>%
   group_by(Site) %>%
   mutate(Site = c(str_glue("**{Site[1]}**"),rep("",length(Site)-1))) %>%
-  ungroup()
+  ungroup() %>%
+  mutate(across(3:last_col(),~str_c(.x," / 2"))) 
 
 write_ms_table(sample_reps,path(table_dir,"mesophotic_filter_results.csv"),caption="Field replicates successfully passing PCR amplification and quality filtration by site and depth zone.",bold_header = TRUE)
 
@@ -1633,7 +1634,7 @@ reps <- datasets$complete$all %>%
   pivot_wider(names_from="dataset",values_from = "status") %>%
   arrange(depth_f) %>%
   rename(`Depth Zone`=depth_f)
-write_ms_table(reps,path(table_dir,"mesophotic_sample_reps.csv"),caption="Sample replicates passing QA/QC by depth zone with recovered zOTUs and percentage of total predicted diversity",bold_header=T)
+write_ms_table(reps,path(table_dir,"mesophotic_sample_reps.csv"),caption="Sample replicates passing QA/QC by depth zone with recovered zOTUs and percentage of total predicted diversity for West Hawai&#x02BB;i eDNA samples",bold_header=T)
 
 # manuscript include file -------------------------------------------------
 
